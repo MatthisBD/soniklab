@@ -38,7 +38,7 @@ const isPlaceholder = (url: string) => url === '#' || url.trim() === ''
           rel="noopener noreferrer"
           class="group/link flex items-center gap-3 px-5 py-3.5 transition-all duration-200 hover:bg-bone hover:pl-7 hover:text-void group-hover:hover:bg-void group-hover:hover:text-bone"
         >
-          <span class="flex-1 truncate">
+          <span class="min-w-0 flex-1 truncate">
             <span class="font-medium">{{ link.label }}</span>
             <span v-if="link.note" class="ml-2 font-mono text-[0.65rem] uppercase tracking-wider text-ash">
               {{ link.note }}
@@ -47,7 +47,7 @@ const isPlaceholder = (url: string) => url === '#' || url.trim() === ''
 
           <span
             v-if="isPlaceholder(link.url)"
-            class="rounded-sm border border-ash/40 px-1.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-wider text-ash"
+            class="shrink-0 whitespace-nowrap rounded-sm border border-ash/40 px-1.5 py-0.5 font-mono text-[0.6rem] uppercase tracking-wider text-ash"
           >
             à brancher
           </span>

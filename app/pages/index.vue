@@ -97,7 +97,7 @@ watch(linkGroups, () => nextTick(setupReveal))
         <Vinyl />
       </div>
 
-      <div class="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-[1.2fr_1fr] md:items-center md:py-24">
+      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 py-16 md:grid-cols-[1.2fr_1fr] md:items-center md:py-24">
         <div>
           <p class="flicker mb-4 inline-flex items-center gap-2 border border-line px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.25em] text-smoke">
             ● collectif techno — en activité
@@ -165,7 +165,7 @@ watch(linkGroups, () => nextTick(setupReveal))
         </span>
       </div>
 
-      <div class="grid gap-5 sm:grid-cols-2">
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <LinkCard
           v-for="g in linkGroups"
           :id="g.id"
