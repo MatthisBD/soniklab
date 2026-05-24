@@ -32,7 +32,9 @@ jobs:
           cache: npm
 
       - name: Installer les dépendances
-        run: npm ci
+        # npm install (et non npm ci) : résout les dépendances natives
+        # propres à Linux absentes du lockfile généré sous Windows.
+        run: npm install --no-audit --no-fund
 
       - name: Générer le site statique
         run: npm run generate
