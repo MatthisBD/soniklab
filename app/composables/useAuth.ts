@@ -27,17 +27,6 @@ export function useAuth() {
     return data.user
   }
 
-  /** Connexion via Google. Redirige vers /admin au retour. */
-  async function signInWithGoogle() {
-    const base = useRuntimeConfig().app.baseURL
-    const redirectTo = `${window.location.origin}${base}admin`
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo },
-    })
-    if (error) throw error
-  }
-
   async function signOut() {
     await supabase.auth.signOut()
     user.value = null
@@ -57,7 +46,6 @@ export function useAuth() {
     ready,
     init,
     signIn,
-    signInWithGoogle,
     signOut,
     changePassword,
     isAdmin,

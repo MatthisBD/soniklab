@@ -6,6 +6,10 @@ const year = new Date().getFullYear()
 const base = useRuntimeConfig().app.baseURL
 const logoSrc = `${base}soniklab-logo.jpeg`
 
+// État d'authentification (pour n'afficher le bouton Admin qu'aux admins).
+const auth = useAuth()
+onMounted(() => auth.init())
+
 // Données dynamiques depuis Supabase. server:false → on charge côté client,
 // donc le site reflète toujours les dernières modifs faites dans l'admin.
 const supabase = useSupabase()
@@ -61,13 +65,15 @@ watch(linkGroups, () => nextTick(setupReveal))
           </a>
         </nav>
         <div class="flex items-center gap-4">
-          <span class="hidden font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash sm:inline">le&nbsp;QG</span>
+          <span class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">le&nbsp;QG</span>
+          <!-- Bouton Admin : visible uniquement pour un admin connecté -->
           <NuxtLink
+            v-if="auth.isAdmin.value"
             to="/admin"
             class="inline-flex items-center gap-1.5 border border-line px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-smoke transition-colors hover:border-bone hover:text-bone"
           >
-            <span class="inline-block h-1.5 w-1.5 rounded-full bg-smoke" />
-            Connexion
+            <span class="inline-block h-1.5 w-1.5 rounded-full bg-bone" />
+            Admin
           </NuxtLink>
         </div>
       </div>
@@ -163,7 +169,11 @@ watch(linkGroups, () => nextTick(setupReveal))
 
       <p class="reveal mt-8 font-mono text-xs leading-relaxed text-ash">
         Les liens marqués <span class="border border-ash/40 px-1.5 py-0.5">à brancher</span> sont à
-        compléter depuis l'<NuxtLink to="/admin" class="text-smoke underline-offset-2 hover:underline">espace admin</NuxtLink>.
+        compléter
+        <template v-if="auth.isAdmin.value">
+          depuis l'<NuxtLink to="/admin" class="text-smoke underline-offset-2 hover:underline">espace admin</NuxtLink>.
+        </template>
+        <template v-else>par un admin.</template>
       </p>
     </section>
 
@@ -180,8 +190,8 @@ watch(linkGroups, () => nextTick(setupReveal))
           <Equalizer :bars="40" />
         </div>
         <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">
-          © {{ year }} · fait avec ❤ & 909 ·
-          <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink>
+          © {{ year }} · fait avec ❤ & 909<template v-if="auth.isAdmin.value"> ·
+          <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink></template>
         </p>
       </div>
     </footer>

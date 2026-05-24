@@ -228,50 +228,57 @@ Détails du workflow :
 
 ### Espace admin (`app/pages/admin.vue`)
 Trois états :
-1. **Non connecté** : bouton **« Continuer avec Google »** (pour tout le monde) +
-   un repli « connexion admin par email » (comptes créés manuellement).
+1. **Non connecté** : formulaire **email / mot de passe**.
 2. **Connecté mais pas admin** : message « compte créé, en attente de droits » +
-   déconnexion. (C'est l'état normal d'un nouveau membre tant qu'il n'est pas
-   promu.)
+   déconnexion (état de garde, ne devrait pas arriver puisqu'il n'y a plus
+   d'inscription publique).
 3. **Admin** : éditeur CRUD (groupes, liens avec réordonnancement ↑/↓, bandeau)
    + changement de mot de passe.
 
 - Auth Supabase, session en localStorage (site statique → pas de cookies SSR).
-- Composables : `useAuth.ts` (connexion email/Google, rôle, mot de passe) et
+- Composables : `useAuth.ts` (connexion email, rôle, mot de passe) et
   `useAdmin.ts` (écritures).
-- Le fond animé (grain) est **désactivé sur `/admin`** (cf. `app/app.vue`) pour
-  une surface d'édition calme.
-- Raccourci « Connexion » dans la barre du haut de la page d'accueil.
+- Le fond animé (grain) est **désactivé sur `/admin`** (cf. `app/app.vue`).
+- Le titre **SONIKLAB** de l'admin renvoie au site.
+- **Aucun accès admin n'est visible pour les non-admins** : le bouton « Admin »
+  de la barre du haut et le lien admin du footer ne s'affichent que si
+  `auth.isAdmin` est vrai. Pour se connecter, on va directement sur `/admin`.
 
-### Inscription libre & gestion des admins
-- **N'importe qui peut créer un compte** (Google), mais **personne n'est admin
-  par défaut**. C'est volontaire : Matthis n'a pas à créer/connaître les emails.
+### Comptes admin (accès réservé)
+- **Connexion email/mot de passe uniquement.** Google a été retiré de l'UI ;
+  il n'y a plus d'inscription publique. (Le provider Google peut rester
+  configuré dans le dashboard, c'est sans incidence ; on peut le désactiver
+  pour faire le ménage.)
+- **Deux comptes admin** créés directement en base (email confirmé,
+  `raw_app_meta_data.role = 'admin'`) :
+  - `matthis.bd.pro@gmail.com`
+  - `soniklab.asso@gmail.com` (compte de l'asso)
 - **Sécurité (vérifiée)** : le rôle admin est dans `app_metadata` (côté serveur,
   non modifiable par l'utilisateur). Testé : un non-admin ne peut rien écrire
   (42501), et `updateUser({ data: { role: 'admin' } })` n'écrit que dans
-  `user_metadata` → reste sans effet, écriture toujours refusée.
-- **Promouvoir quelqu'un admin** (après qu'il s'est connecté une fois) :
+  `user_metadata` → sans effet, écriture toujours refusée.
+- **Ajouter un admin** :
   ```sql
-  update auth.users
-  set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}'
-  where email = 'son-email@exemple.fr';
+  -- créer le compte (adapter email + mot de passe), puis il est admin direct
+  do $$
+  declare uid uuid := gen_random_uuid();
+    e text := 'nouvel-admin@exemple.fr'; p text := 'MotDePasseFort!';
+  begin
+    insert into auth.users (instance_id, id, aud, role, email, encrypted_password,
+      email_confirmed_at, raw_app_meta_data, raw_user_meta_data, created_at, updated_at,
+      confirmation_token, recovery_token, email_change_token_new, email_change)
+    values ('00000000-0000-0000-0000-000000000000', uid, 'authenticated', 'authenticated',
+      e, extensions.crypt(p, extensions.gen_salt('bf')), now(),
+      '{"provider":"email","providers":["email"],"role":"admin"}'::jsonb, '{}'::jsonb,
+      now(), now(), '', '', '', '');
+    insert into auth.identities (provider_id, user_id, identity_data, provider,
+      last_sign_in_at, created_at, updated_at)
+    values (uid, uid, jsonb_build_object('sub', uid::text, 'email', e, 'email_verified', true),
+      'email', now(), now(), now());
+  end $$;
   ```
-  Le rôle est pris en compte au prochain rafraîchissement de son token
-  (reconnexion).
-- Le 1er admin (`matthis.bd.pro@gmail.com`) a été créé directement en base
-  (email/mot de passe, `role = 'admin'`).
-
-### Activer Google (config dashboard — une seule fois)
-La connexion Google nécessite une config manuelle côté Supabase + Google Cloud
-(non automatisable via les outils MCP) :
-1. **Google Cloud Console** → créer un *OAuth client ID* (type Web). Redirect URI
-   autorisée : `https://yrrmxnivgwjvrasrfqzp.supabase.co/auth/v1/callback`.
-2. **Supabase → Authentication → Providers → Google** : activer, coller le
-   Client ID + Client Secret.
-3. **Supabase → Authentication → URL Configuration** :
-   - Site URL : `https://matthisbd.github.io/soniklab/`
-   - Redirect URLs : ajouter `https://matthisbd.github.io/soniklab/**`
-     (et `http://localhost:3000/**` pour le dev).
+- **Promouvoir un compte existant** : `update auth.users set raw_app_meta_data =
+  raw_app_meta_data || '{"role":"admin"}' where email = '…';`
 
 ---
 
@@ -291,6 +298,9 @@ La connexion Google nécessite une config manuelle côté Supabase + Google Clou
 - [ ] Renseigner les vraies URLs des liens **via l'admin** (côté client).
 - [x] Déployer sur GitHub Pages (repo + workflow auto).
 - [x] Back-end Supabase + espace admin (édition du contenu sans toucher au code).
-- [ ] Changer le mot de passe admin temporaire (depuis `/admin` → « Mon compte »).
+- [ ] Changer les mots de passe temporaires des 2 comptes admin
+      (`matthis.bd.pro` et `soniklab.asso`) depuis `/admin` → « Mon compte ».
+- [ ] Optionnel : désactiver le provider Google + l'inscription email dans le
+      dashboard Supabase (verrouillage total ; déjà sûr grâce au RLS).
 - [ ] Optionnel : réglages fins d'animation (vitesse vinyle/bandeau, intensité du grain).
 - [ ] Optionnel : favicon aux couleurs SONIKLAB (actuellement favicon Nuxt par défaut).
