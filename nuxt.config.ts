@@ -13,6 +13,16 @@ export default defineNuxtConfig({
   // (crée .nojekyll + 404.html dans .output/public)
   nitro: { preset: 'github_pages' },
 
+  runtimeConfig: {
+    public: {
+      // Connexion Supabase. La clé "publishable" est PUBLIQUE par conception :
+      // ce sont les règles RLS (côté base) qui protègent réellement les données.
+      // Surchargeable via les variables NUXT_PUBLIC_SUPABASE_URL / _KEY.
+      supabaseUrl: 'https://yrrmxnivgwjvrasrfqzp.supabase.co',
+      supabaseKey: 'sb_publishable_z7OMx2M5uM0OMn3iSXN-ow_nZTNkiUp',
+    },
+  },
+
   // Tailwind v4 via le plugin Vite officiel
   css: ['~/assets/css/main.css'],
   vite: {

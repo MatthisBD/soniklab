@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { linkGroups, tickerWords } from '~/data/links'
-
 const year = new Date().getFullYear()
 
 // Préfixe du chemin (/soniklab/ en prod sur GitHub Pages, / en dev)
@@ -8,24 +6,44 @@ const year = new Date().getFullYear()
 const base = useRuntimeConfig().app.baseURL
 const logoSrc = `${base}soniklab-logo.jpeg`
 
-// Apparition au scroll
-onMounted(() => {
-  const els = document.querySelectorAll<HTMLElement>('.reveal')
-  const io = new IntersectionObserver(
+// Données dynamiques depuis Supabase. server:false → on charge côté client,
+// donc le site reflète toujours les dernières modifs faites dans l'admin.
+const supabase = useSupabase()
+const { data: linkGroups } = await useAsyncData(
+  'link-groups',
+  () => fetchLinkGroups(supabase),
+  { server: false, default: () => [] },
+)
+const { data: tickerWords } = await useAsyncData(
+  'ticker-words',
+  () => fetchTickerWords(supabase),
+  { server: false, default: () => [] },
+)
+
+// Apparition au scroll — (ré)observe les éléments .reveal pas encore animés.
+// Appelée au montage ET à chaque arrivée de nouvelles cartes (données async).
+let io: IntersectionObserver | null = null
+function setupReveal() {
+  if (!import.meta.client) return
+  io ??= new IntersectionObserver(
     (entries) => {
       entries.forEach((e, idx) => {
         if (e.isIntersecting) {
           const el = e.target as HTMLElement
-          // léger décalage en cascade
           setTimeout(() => el.classList.add('in'), (idx % 4) * 90)
-          io.unobserve(el)
+          io!.unobserve(el)
         }
       })
     },
     { threshold: 0.12 },
   )
-  els.forEach((el) => io.observe(el))
-})
+  document
+    .querySelectorAll<HTMLElement>('.reveal:not(.in)')
+    .forEach((el) => io!.observe(el))
+}
+
+onMounted(setupReveal)
+watch(linkGroups, () => nextTick(setupReveal))
 </script>
 
 <template>
@@ -136,7 +154,7 @@ onMounted(() => {
 
       <p class="reveal mt-8 font-mono text-xs leading-relaxed text-ash">
         Les liens marqués <span class="border border-ash/40 px-1.5 py-0.5">à brancher</span> sont à
-        compléter dans <span class="text-smoke">app/data/links.ts</span>. Une seule ligne à changer par lien.
+        compléter depuis l'<NuxtLink to="/admin" class="text-smoke underline-offset-2 hover:underline">espace admin</NuxtLink>.
       </p>
     </section>
 
@@ -153,7 +171,8 @@ onMounted(() => {
           <Equalizer :bars="40" />
         </div>
         <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">
-          © {{ year }} · fait avec ❤ & 909
+          © {{ year }} · fait avec ❤ & 909 ·
+          <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink>
         </p>
       </div>
     </footer>
