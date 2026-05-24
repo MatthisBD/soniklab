@@ -24,6 +24,7 @@
 /* ---------- Base ---------- */
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -60,7 +61,11 @@ body {
 .grain::before {
   content: "";
   position: fixed;
-  inset: -200%;
+  /* -20% suffit largement pour couvrir le déplacement de l'animation (~6%).
+     Avant: -200% créait un élément 5× plus large que l'écran → sur mobile,
+     comme l'élément est en position:fixed (non rogné par overflow-x du body),
+     ça élargissait la page et provoquait un dézoom au chargement. */
+  inset: -20%;
   z-index: 60;
   pointer-events: none;
   opacity: 0.05;

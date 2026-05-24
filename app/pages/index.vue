@@ -103,7 +103,7 @@ watch(linkGroups, () => nextTick(setupReveal))
             ● collectif techno — en activité
           </p>
 
-          <h1 class="font-display text-6xl uppercase leading-[0.85] tracking-tight sm:text-7xl md:text-8xl">
+          <h1 class="font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
             Le repaire<br />
             du <span class="glitch inline-block">soundsystem</span>
           </h1>
