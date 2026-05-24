@@ -66,7 +66,7 @@ watch(linkGroups, () => nextTick(setupReveal))
         </nav>
         <div class="flex items-center gap-4">
           <span class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">le&nbsp;QG</span>
-          <!-- Bouton Admin : visible uniquement pour un admin connecté -->
+          <!-- Admin connecté : raccourci vers le panel -->
           <NuxtLink
             v-if="auth.isAdmin.value"
             to="/admin"
@@ -74,6 +74,14 @@ watch(linkGroups, () => nextTick(setupReveal))
           >
             <span class="inline-block h-1.5 w-1.5 rounded-full bg-bone" />
             Admin
+          </NuxtLink>
+          <!-- Personne de connecté : bouton de connexion -->
+          <NuxtLink
+            v-else-if="!auth.isLoggedIn.value"
+            to="/admin"
+            class="inline-flex items-center gap-1.5 border border-line px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-smoke transition-colors hover:border-bone hover:text-bone"
+          >
+            Connexion
           </NuxtLink>
         </div>
       </div>

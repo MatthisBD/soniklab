@@ -342,6 +342,13 @@ async function saveTicker() {
 
           <!-- liens du groupe -->
           <div class="mt-5 space-y-3 border-t border-line pt-4">
+            <div class="flex items-baseline gap-2">
+              <h3 class="font-display text-2xl uppercase tracking-wide text-bone">Liens</h3>
+              <span class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">
+                les redirections de ce groupe
+              </span>
+            </div>
+
             <div
               v-for="(l, li) in g.links"
               :key="l.id"
