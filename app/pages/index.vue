@@ -60,7 +60,16 @@ watch(linkGroups, () => nextTick(setupReveal))
             {{ g.title }}
           </a>
         </nav>
-        <span class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">le&nbsp;QG</span>
+        <div class="flex items-center gap-4">
+          <span class="hidden font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash sm:inline">le&nbsp;QG</span>
+          <NuxtLink
+            to="/admin"
+            class="inline-flex items-center gap-1.5 border border-line px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-smoke transition-colors hover:border-bone hover:text-bone"
+          >
+            <span class="inline-block h-1.5 w-1.5 rounded-full bg-smoke" />
+            Connexion
+          </NuxtLink>
+        </div>
       </div>
     </header>
 

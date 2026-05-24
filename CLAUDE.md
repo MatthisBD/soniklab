@@ -227,24 +227,51 @@ Détails du workflow :
   écriture admin OK).
 
 ### Espace admin (`app/pages/admin.vue`)
-- Connexion email/mot de passe (Supabase Auth, session en localStorage).
-- Éditeur CRUD : groupes, liens (avec réordonnancement ↑/↓), bandeau défilant,
-  + changement de mot de passe.
-- Composables : `useAuth.ts` (connexion, rôle, mot de passe) et `useAdmin.ts`
-  (écritures).
+Trois états :
+1. **Non connecté** : bouton **« Continuer avec Google »** (pour tout le monde) +
+   un repli « connexion admin par email » (comptes créés manuellement).
+2. **Connecté mais pas admin** : message « compte créé, en attente de droits » +
+   déconnexion. (C'est l'état normal d'un nouveau membre tant qu'il n'est pas
+   promu.)
+3. **Admin** : éditeur CRUD (groupes, liens avec réordonnancement ↑/↓, bandeau)
+   + changement de mot de passe.
 
-### Gérer les comptes admin
-- Le 1er admin a été créé directement en base (`auth.users` + `auth.identities`,
-  email confirmé, `raw_app_meta_data.role = 'admin'`).
-- **Ajouter un admin** : créer un utilisateur (dashboard Supabase →
-  Authentication → Add user) puis exécuter en SQL :
+- Auth Supabase, session en localStorage (site statique → pas de cookies SSR).
+- Composables : `useAuth.ts` (connexion email/Google, rôle, mot de passe) et
+  `useAdmin.ts` (écritures).
+- Le fond animé (grain) est **désactivé sur `/admin`** (cf. `app/app.vue`) pour
+  une surface d'édition calme.
+- Raccourci « Connexion » dans la barre du haut de la page d'accueil.
+
+### Inscription libre & gestion des admins
+- **N'importe qui peut créer un compte** (Google), mais **personne n'est admin
+  par défaut**. C'est volontaire : Matthis n'a pas à créer/connaître les emails.
+- **Sécurité (vérifiée)** : le rôle admin est dans `app_metadata` (côté serveur,
+  non modifiable par l'utilisateur). Testé : un non-admin ne peut rien écrire
+  (42501), et `updateUser({ data: { role: 'admin' } })` n'écrit que dans
+  `user_metadata` → reste sans effet, écriture toujours refusée.
+- **Promouvoir quelqu'un admin** (après qu'il s'est connecté une fois) :
   ```sql
   update auth.users
   set raw_app_meta_data = raw_app_meta_data || '{"role":"admin"}'
-  where email = 'nouvel-admin@exemple.fr';
+  where email = 'son-email@exemple.fr';
   ```
-- L'inscription publique n'a pas besoin d'être désactivée : un compte sans le
-  rôle admin n'a aucun droit d'écriture (RLS).
+  Le rôle est pris en compte au prochain rafraîchissement de son token
+  (reconnexion).
+- Le 1er admin (`matthis.bd.pro@gmail.com`) a été créé directement en base
+  (email/mot de passe, `role = 'admin'`).
+
+### Activer Google (config dashboard — une seule fois)
+La connexion Google nécessite une config manuelle côté Supabase + Google Cloud
+(non automatisable via les outils MCP) :
+1. **Google Cloud Console** → créer un *OAuth client ID* (type Web). Redirect URI
+   autorisée : `https://yrrmxnivgwjvrasrfqzp.supabase.co/auth/v1/callback`.
+2. **Supabase → Authentication → Providers → Google** : activer, coller le
+   Client ID + Client Secret.
+3. **Supabase → Authentication → URL Configuration** :
+   - Site URL : `https://matthisbd.github.io/soniklab/`
+   - Redirect URLs : ajouter `https://matthisbd.github.io/soniklab/**`
+     (et `http://localhost:3000/**` pour le dev).
 
 ---
 

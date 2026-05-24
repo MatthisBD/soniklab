@@ -54,16 +54,22 @@ async function onLogin() {
   loading.value = true
   try {
     await auth.signIn(email.value.trim(), password.value)
-    if (!auth.isAdmin.value) {
-      loginError.value = "Ce compte n'a pas les droits admin."
-      await auth.signOut()
-    } else {
-      password.value = ''
-    }
+    password.value = ''
+    // Un compte non-admin reste connecté : l'état « en attente de droits »
+    // est géré dans le template.
   } catch (e: any) {
     loginError.value = e.message || 'Connexion impossible.'
   } finally {
     loading.value = false
+  }
+}
+
+async function onGoogle() {
+  loginError.value = ''
+  try {
+    await auth.signInWithGoogle()
+  } catch (e: any) {
+    loginError.value = e.message || 'Connexion Google impossible.'
   }
 }
 
@@ -208,38 +214,79 @@ async function saveTicker() {
     <!-- chargement initial de l'auth -->
     <p v-if="!auth.ready.value" class="font-mono text-sm text-ash">Chargement…</p>
 
-    <!-- ============ NON CONNECTÉ : formulaire ============ -->
-    <form
-      v-else-if="!auth.isAdmin.value"
-      class="mx-auto max-w-sm space-y-4 border border-line bg-grave p-6"
-      @submit.prevent="onLogin"
-    >
-      <p class="font-mono text-xs uppercase tracking-widest text-ash">Connexion admin</p>
-      <input
-        v-model="email"
-        type="email"
-        required
-        placeholder="email"
-        autocomplete="username"
-        class="w-full border border-line bg-void px-3 py-2 font-mono text-sm outline-none focus:border-bone"
-      />
-      <input
-        v-model="password"
-        type="password"
-        required
-        placeholder="mot de passe"
-        autocomplete="current-password"
-        class="w-full border border-line bg-void px-3 py-2 font-mono text-sm outline-none focus:border-bone"
-      />
+    <!-- ============ NON CONNECTÉ ============ -->
+    <div v-else-if="!auth.isLoggedIn.value" class="mx-auto max-w-sm space-y-5">
+      <!-- Google : pour tout le monde -->
+      <div class="space-y-3 border border-line bg-grave p-6">
+        <p class="font-mono text-xs uppercase tracking-widest text-ash">Connexion / inscription</p>
+        <button
+          class="flex w-full items-center justify-center gap-3 bg-bone px-4 py-2.5 font-mono text-sm uppercase tracking-widest text-void transition-transform hover:-translate-y-0.5"
+          @click="onGoogle"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1Z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.99.66-2.26 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23Z"/>
+            <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84Z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38Z"/>
+          </svg>
+          Continuer avec Google
+        </button>
+        <p class="font-mono text-[0.65rem] leading-relaxed text-ash">
+          Un nouveau compte n'a aucun droit d'édition. Un admin doit t'activer.
+        </p>
+      </div>
+
+      <!-- Connexion admin par email (compte créé manuellement) -->
+      <details class="border border-line bg-grave p-5">
+        <summary class="cursor-pointer font-mono text-xs uppercase tracking-widest text-ash">
+          Connexion admin par email
+        </summary>
+        <form class="mt-4 space-y-3" @submit.prevent="onLogin">
+          <input
+            v-model="email"
+            type="email"
+            required
+            placeholder="email"
+            autocomplete="username"
+            class="w-full border border-line bg-void px-3 py-2 font-mono text-sm outline-none focus:border-bone"
+          />
+          <input
+            v-model="password"
+            type="password"
+            required
+            placeholder="mot de passe"
+            autocomplete="current-password"
+            class="w-full border border-line bg-void px-3 py-2 font-mono text-sm outline-none focus:border-bone"
+          />
+          <button
+            type="submit"
+            :disabled="loading"
+            class="w-full border border-line px-4 py-2.5 font-mono text-sm uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone disabled:opacity-50"
+          >
+            {{ loading ? '…' : 'Se connecter' }}
+          </button>
+        </form>
+      </details>
+
       <p v-if="loginError" class="font-mono text-xs text-red-400">{{ loginError }}</p>
+    </div>
+
+    <!-- ============ CONNECTÉ MAIS PAS ADMIN ============ -->
+    <div v-else-if="!auth.isAdmin.value" class="mx-auto max-w-sm space-y-4 border border-line bg-grave p-6 text-center">
+      <p class="font-display text-2xl uppercase tracking-wide">Compte créé ✓</p>
+      <p class="text-sm text-smoke">
+        Tu es connecté en tant que
+        <span class="font-mono text-bone">{{ auth.user.value?.email }}</span>,
+        mais tu n'as pas (encore) les droits d'édition.
+        Demande à un admin de t'activer.
+      </p>
       <button
-        type="submit"
-        :disabled="loading"
-        class="w-full bg-bone px-4 py-2.5 font-mono text-sm uppercase tracking-widest text-void transition-transform hover:-translate-y-0.5 disabled:opacity-50"
+        class="border border-line px-4 py-2 font-mono text-xs uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone"
+        @click="onLogout"
       >
-        {{ loading ? '…' : 'Se connecter' }}
+        Se déconnecter
       </button>
-    </form>
+    </div>
 
     <!-- ============ CONNECTÉ ADMIN : éditeur ============ -->
     <div v-else class="space-y-10">
