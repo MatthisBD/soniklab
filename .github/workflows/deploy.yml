@@ -1,0 +1,62 @@
+name: Déploiement GitHub Pages
+
+# Se lance à chaque push sur la branche principale
+on:
+  push:
+    branches: [main]
+  # Permet aussi de relancer le déploiement à la main depuis l'onglet Actions
+  workflow_dispatch:
+
+# Droits nécessaires pour publier sur Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installer les dépendances
+        run: npm ci
+
+      - name: Générer le site statique
+        run: npm run generate
+        env:
+          NODE_ENV: production
+
+      - name: Configurer Pages
+        uses: actions/configure-pages@v5
+        # Active automatiquement GitHub Pages sur le dépôt si besoin
+        with:
+          enablement: true
+
+      - name: Téléverser l'artefact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .output/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Déployer sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
