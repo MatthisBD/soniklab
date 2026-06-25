@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const route = useRoute()
 
-// Sur l'espace admin, on coupe le grain animé : on y édite du contenu,
-// et un fond qui bouge fatigue/distrait. On garde les scanlines (statiques).
-const surfaceClass = computed(() =>
-  route.path.startsWith('/admin') ? 'scanlines' : 'grain scanlines',
+// Sur les outils internes (admin, budget), on coupe le grain animé : on y édite
+// du contenu, et un fond qui bouge fatigue/distrait. On garde les scanlines.
+const isTool = computed(
+  () => route.path.startsWith('/admin') || route.path.startsWith('/budget'),
 )
+const surfaceClass = computed(() => (isTool.value ? 'scanlines' : 'grain scanlines'))
 </script>
 
 <template>

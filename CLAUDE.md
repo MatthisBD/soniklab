@@ -117,12 +117,14 @@ soniklab/
 │  ├─ data/links.ts           # types partagés (les DONNÉES sont en base, cf. §8 bis)
 │  ├─ pages/
 │  │  ├─ index.vue            # la page d'accueil (hero, liens, footer, reveal)
-│  │  └─ admin.vue            # ⭐ espace admin (connexion + édition du contenu)
+│  │  ├─ admin.vue            # ⭐ espace admin (connexion + édition du contenu)
+│  │  └─ budget.vue           # ⭐ page interne : budget des caissons (admin only)
 │  ├─ plugins/supabase.ts     # init du client Supabase (useSupabase())
 │  ├─ composables/
 │  │  ├─ useSupabase.ts       # accès client + lecture des données
 │  │  ├─ useAuth.ts           # connexion / rôle admin / mot de passe
-│  │  └─ useAdmin.ts          # écritures (CRUD groupes, liens, bandeau)
+│  │  ├─ useAdmin.ts          # écritures (CRUD groupes, liens, bandeau)
+│  │  └─ useBudget.ts         # budget caissons : lecture + calculs + CRUD
 │  └─ components/
 │     ├─ AppIcon.vue          # icônes SVG inline (ticket, checklist, broadcast, folder, arrow)
 │     ├─ Vinyl.vue            # disque vinyle animé
@@ -130,6 +132,7 @@ soniklab/
 │     ├─ Marquee.vue          # bandeau défilant
 │     └─ LinkCard.vue         # carte d'un groupe de liens (effet d'inversion)
 ├─ public/soniklab-logo.jpeg  # le logo
+├─ supabase/budget-caissons.sql # SQL des tables budget (à coller dans le dashboard)
 ├─ .github/workflows/deploy.yml # déploiement auto sur GitHub Pages
 ├─ nuxt.config.ts             # meta, polices, Tailwind, baseURL, config Supabase
 └─ CLAUDE.md                  # ce fichier
@@ -215,9 +218,19 @@ Détails du workflow :
 | `link_groups` | slug, track, title, tagline, icon, position |
 | `links` | group_id → link_groups, label, url, note, position |
 | `ticker_words` | word, position |
+| `budget_categories` | name, note, units, position |
+| `budget_cost_lines` | category_id → budget_categories, label, mode (`unit`\|`surface`), quantity, width_cm, height_cm, unit_price, unit_label, optional, included, position |
+| `budget_revenue_lines` | category_id → budget_categories, label, quantity, unit_price, position |
+
+> Le SQL de création des 3 tables `budget_*` (+ RLS) est dans
+> `supabase/budget-caissons.sql` — à coller **une fois** dans le SQL Editor du
+> dashboard. Sert la **page interne `/budget`** (estimation du coût des caissons,
+> avec/sans HP, lignes de recette). Voir §8 ter.
 
 ### Sécurité (RLS) — important
-- **Lecture publique** (`anon` + `authenticated`) sur les 3 tables.
+- **Lecture publique** (`anon` + `authenticated`) sur les 3 tables `links*`/`ticker_words`.
+- **Tables `budget_*` : PRIVÉES** — lecture **et** écriture réservées aux admins
+  (politiques `for all` gardées par `is_admin()`). Un non-admin ne voit rien.
 - **Écriture réservée aux admins** : politiques `for all` gardées par la fonction
   `public.is_admin()`, qui teste `app_metadata.role = 'admin'` dans le JWT.
   `app_metadata` n'est **pas** modifiable par l'utilisateur (≠ `user_metadata`)
@@ -282,6 +295,30 @@ Trois états :
 
 ---
 
+## 8 ter. Page budget caissons (`/budget`) — interne
+
+Outil interne « pour nous » d'estimation du coût des caissons (enceintes) que
+l'asso construit et parfois revend. **Réservé aux admins** (mêmes 3 états que
+`/admin` : connexion → en attente de droits → outil). Aucun accès n'est montré
+aux visiteurs : les liens « Budget » (top bar + footer de l'accueil, en-tête de
+l'admin) ne s'affichent que si `auth.isAdmin`.
+
+- **Catégories** = types de caisson. Chacune a un nom, une note, un nombre
+  d'unités à produire.
+- **Lignes de coût** (matériaux) en deux modes :
+  - `surface` : largeur × hauteur (cm) × quantité × **prix au m²** → m² auto ;
+  - `unit` : quantité × **prix unitaire** (+ étiquette d'unité libre).
+  - Chaque ligne peut être **optionnelle** et **incluse ou non** (ex. le HP :
+    parfois déjà dispo, parfois à acheter) → bascule le total en direct.
+- **Lignes de recette** : « on revend telle chose » (quantité × prix).
+- **Récap par catégorie** (computed) : coût/caisson (dont optionnel),
+  investissement total (= coût × unités), recettes, **solde** (recettes −
+  investissement).
+- Composable `app/composables/useBudget.ts` : `fetchBudget()`, fonctions de
+  calcul **pures** (`lineCost`, `unitCost`, `totalCost`, `totalRevenue`,
+  `balance`, `formatEur`) + CRUD admin. Page `app/pages/budget.vue`.
+- Le grain animé est coupé sur `/budget` (comme `/admin`, cf. `app/app.vue`).
+
 ## 9. Décisions & historique (pour le futur)
 - **Style** : monochrome gravé dérivé du logo (pas de couleur). Validé par le client (« incroyable »).
 - **shadcn-vue** : écarté volontairement (cf. §4).
@@ -296,6 +333,9 @@ Trois états :
 
 ## 10. TODO / pistes
 - [ ] Renseigner les vraies URLs des liens **via l'admin** (côté client).
+- [ ] **Exécuter `supabase/budget-caissons.sql`** dans le dashboard Supabase
+      (crée les tables `budget_*` requises par la page `/budget`).
+- [x] Page interne `/budget` : estimation du coût des caissons (admin only).
 - [x] Déployer sur GitHub Pages (repo + workflow auto).
 - [x] Back-end Supabase + espace admin (édition du contenu sans toucher au code).
 - [ ] Changer les mots de passe temporaires des 2 comptes admin

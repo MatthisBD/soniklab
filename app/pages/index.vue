@@ -66,6 +66,14 @@ watch(linkGroups, () => nextTick(setupReveal))
         </nav>
         <div class="flex items-center gap-4">
           <span class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">le&nbsp;QG</span>
+          <!-- Admin connecté : raccourci vers le budget interne -->
+          <NuxtLink
+            v-if="auth.isAdmin.value"
+            to="/budget"
+            class="inline-flex items-center gap-1.5 border border-line px-2.5 py-1 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-smoke transition-colors hover:border-bone hover:text-bone"
+          >
+            Budget
+          </NuxtLink>
           <!-- Admin connecté : raccourci vers le panel -->
           <NuxtLink
             v-if="auth.isAdmin.value"
@@ -199,6 +207,7 @@ watch(linkGroups, () => nextTick(setupReveal))
         </div>
         <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">
           © {{ year }} · fait avec ❤ & 909<template v-if="auth.isAdmin.value"> ·
+          <NuxtLink to="/budget" class="transition-colors hover:text-bone">budget</NuxtLink> ·
           <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink></template>
         </p>
       </div>

@@ -185,6 +185,7 @@ async function saveTicker() {
         </h1>
       </NuxtLink>
       <div class="flex items-center gap-4 font-mono text-xs uppercase tracking-widest">
+        <NuxtLink v-if="auth.isAdmin.value" to="/budget" class="text-ash transition-colors hover:text-bone">Budget</NuxtLink>
         <NuxtLink to="/" class="text-ash transition-colors hover:text-bone">← le site</NuxtLink>
         <button
           v-if="auth.isLoggedIn.value"
