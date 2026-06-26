@@ -28,6 +28,20 @@ const loading = ref(false)
 const message = ref('')
 const categories = ref<BudgetCategory[]>([])
 
+// Vue liste (cartes résumées) ↔ éditeur d'un seul caisson.
+// null = on voit la liste ; sinon = on édite le caisson de cet id.
+const editingId = ref<string | null>(null)
+const editing = computed(() => categories.value.find((c) => c.id === editingId.value) ?? null)
+// Liste de 0 ou 1 élément : permet de réutiliser le même markup `c` dans l'éditeur.
+const editingList = computed(() => (editing.value ? [editing.value] : []))
+
+function openEditor(c: BudgetCategory) {
+  editingId.value = c.id
+}
+function closeEditor() {
+  editingId.value = null
+}
+
 function flash(text: string) {
   message.value = text
   setTimeout(() => (message.value = ''), 2500)
@@ -88,6 +102,8 @@ async function addCategory() {
       costLines: [],
       revenueLines: [],
     })
+    // On ouvre directement le nouveau caisson en édition.
+    editingId.value = row!.id
     flash('Caisson ajouté.')
   } catch (e: any) {
     flash(`Erreur : ${e.message}`)
@@ -108,6 +124,7 @@ async function removeCategory(c: BudgetCategory, idx: number) {
   try {
     await budget.deleteCategory(c.id)
     categories.value.splice(idx, 1)
+    if (editingId.value === c.id) editingId.value = null
     flash('Caisson supprimé.')
   } catch (e: any) {
     flash(`Erreur : ${e.message}`)
@@ -274,39 +291,101 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
     </div>
 
     <!-- ============ ADMIN : l'outil ============ -->
-    <div v-else class="space-y-8">
-      <div class="flex items-end justify-between gap-4 border-b border-line pb-4">
-        <div>
-          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// la régie budget</p>
-          <h2 class="mt-1 font-display text-3xl uppercase tracking-wide">Caissons</h2>
+    <div v-else>
+      <!-- ===================== VUE LISTE (cartes) ===================== -->
+      <template v-if="!editing">
+        <div class="flex items-end justify-between gap-4 border-b border-line pb-4">
+          <div>
+            <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// la régie budget</p>
+            <h2 class="mt-1 font-display text-3xl uppercase tracking-wide">Caissons</h2>
+          </div>
+          <button
+            class="border border-line px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-smoke hover:border-bone hover:text-bone"
+            @click="addCategory"
+          >
+            + Caisson
+          </button>
         </div>
-        <button
-          class="border border-line px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-smoke hover:border-bone hover:text-bone"
-          @click="addCategory"
-        >
-          + Caisson
-        </button>
-      </div>
 
-      <p v-if="!categories.length" class="font-mono text-sm text-ash">
-        Aucun caisson pour l'instant. Clique sur « + Caisson » pour commencer.
-      </p>
+        <p v-if="!categories.length" class="mt-8 font-mono text-sm text-ash">
+          Aucun caisson pour l'instant. Clique sur « + Caisson » pour commencer.
+        </p>
 
-      <!-- une catégorie = un caisson -->
+        <!-- grille : une carte résumé par caisson, 2 par ligne -->
+        <div v-else class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <button
+            v-for="(c, ci) in categories"
+            :key="c.id"
+            type="button"
+            class="group relative flex flex-col border border-line bg-grave p-5 text-left transition-colors hover:border-bone"
+            @click="openEditor(c)"
+          >
+            <span class="absolute inset-x-0 -top-px h-px bg-bone/30" />
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <span class="font-mono text-xs tracking-widest text-ash">{{ String(ci + 1).padStart(2, '0') }}</span>
+                <h3 class="glitch mt-1 truncate font-display text-2xl uppercase leading-none tracking-wide">
+                  {{ c.name || 'Sans nom' }}
+                </h3>
+                <p v-if="c.note" class="mt-1 truncate font-mono text-xs text-ash">{{ c.note }}</p>
+              </div>
+              <span class="shrink-0 border border-line px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-widest text-smoke">
+                ×{{ c.units }}
+              </span>
+            </div>
+
+            <!-- chiffres clés -->
+            <div class="mt-4 grid grid-cols-2 gap-px border border-line bg-line">
+              <div class="bg-ink p-2.5">
+                <p class="font-mono text-[0.55rem] uppercase tracking-widest text-ash">Coût / caisson</p>
+                <p class="mt-0.5 font-display text-lg">{{ formatEur(unitCost(c)) }}</p>
+              </div>
+              <div class="bg-ink p-2.5">
+                <p class="font-mono text-[0.55rem] uppercase tracking-widest text-ash">Solde</p>
+                <p class="mt-0.5 font-display text-lg" :class="balance(c) >= 0 ? 'text-bone' : 'text-red-400'">
+                  {{ balance(c) >= 0 ? '+' : '' }}{{ formatEur(balance(c)) }}
+                </p>
+              </div>
+            </div>
+
+            <span class="mt-4 inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-smoke transition-colors group-hover:text-bone">
+              Modifier
+              <AppIcon name="arrow" class="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+            </span>
+          </button>
+        </div>
+      </template>
+
+      <!-- ===================== ÉDITEUR (un seul caisson) ===================== -->
+      <template v-else>
       <article
-        v-for="(c, ci) in categories"
+        v-for="c in editingList"
         :key="c.id"
         class="border border-line bg-grave p-5"
       >
+        <!-- barre de retour -->
+        <button
+          class="mb-5 inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-widest text-ash transition-colors hover:text-bone"
+          @click="closeEditor"
+        >
+          ← Tous les caissons
+        </button>
+
+        <!-- ===== identité du caisson ===== -->
+        <div class="mb-3 flex items-baseline gap-2">
+          <h3 class="font-display text-2xl uppercase tracking-wide text-bone">Le caisson</h3>
+          <span class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">nom, quantité, note</span>
+        </div>
+
         <!-- en-tête catégorie -->
         <div class="grid gap-3 sm:grid-cols-[1.4fr_1fr_auto] sm:items-end">
           <label class="block">
             <span class="mb-1 block font-mono text-[0.65rem] uppercase tracking-widest text-ash">Nom du caisson</span>
-            <input v-model="c.name" class="w-full border border-line bg-void px-3 py-2 text-sm outline-none focus:border-bone" />
+            <input v-model="c.name" class="w-full border border-line bg-void px-3 py-2.5 font-display text-lg uppercase tracking-wide outline-none focus:border-bone" />
           </label>
           <label class="block">
             <span class="mb-1 block font-mono text-[0.65rem] uppercase tracking-widest text-ash">Nombre à produire</span>
-            <input v-model.number="c.units" type="number" min="0" class="w-full border border-line bg-void px-3 py-2 text-sm outline-none focus:border-bone" />
+            <input v-model.number="c.units" type="number" min="0" class="w-full border border-line bg-void px-3 py-2.5 text-lg outline-none focus:border-bone" />
           </label>
           <div class="flex gap-2">
             <button
@@ -317,7 +396,7 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
             </button>
             <button
               class="border border-red-500/40 px-3 py-2 font-mono text-xs uppercase tracking-widest text-red-400 hover:bg-red-500/10"
-              @click="removeCategory(c, ci)"
+              @click="removeCategory(c, categories.indexOf(c))"
             >
               Suppr.
             </button>
@@ -490,6 +569,7 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
           </div>
         </div>
       </article>
+      </template>
     </div>
   </div>
 </template>
