@@ -18,7 +18,7 @@ defineProps<{ collab: Collaborator }>()
         :src="collab.logo_url"
         :alt="collab.name"
         loading="lazy"
-        class="h-full w-full object-contain p-1.5 grayscale"
+        class="h-full w-full object-contain p-1.5"
       />
       <span v-else class="font-display text-2xl text-bone">{{ collab.name.charAt(0).toUpperCase() }}</span>
     </div>

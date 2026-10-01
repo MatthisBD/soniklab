@@ -26,7 +26,7 @@ const subtitle = computed(() => [props.artist.role, props.artist.style].filter(B
         :src="artist.photo_url"
         :alt="artist.name"
         loading="lazy"
-        class="h-full w-full object-cover grayscale contrast-125 transition-transform duration-700 group-hover:scale-105"
+        class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
       <div v-else class="grooves flex h-full w-full items-center justify-center">
         <span

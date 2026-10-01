@@ -39,7 +39,7 @@ useReveal()
     <SiteHeader />
 
     <section class="border-b border-line">
-      <div class="mx-auto max-w-6xl px-5 py-16 md:py-20">
+      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// l'agenda & les archives</p>
         <h1 class="mt-3 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
           Événe<span class="glitch inline-block">ments</span>
@@ -49,7 +49,7 @@ useReveal()
 
     <!-- à venir -->
     <section v-if="upcoming.length" class="border-b border-line bg-ink">
-      <div class="mx-auto max-w-6xl px-5 py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <SectionHead kicker="// prochainement" title="À venir" />
         <div class="-mt-5">
           <UpcomingEvent v-for="e in upcoming" :key="e.id" :event="e" />
@@ -58,7 +58,7 @@ useReveal()
     </section>
 
     <!-- archives par année -->
-    <section class="mx-auto max-w-6xl px-5 py-16">
+    <section class="mx-auto max-w-6xl px-5 py-12">
       <template v-if="byYear.length">
         <div v-for="g in byYear" :key="g.year" class="mb-16 last:mb-0">
           <SectionHead kicker="// archives" :title="g.year" :aside="`${g.events.length} date${g.events.length > 1 ? 's' : ''}`" />

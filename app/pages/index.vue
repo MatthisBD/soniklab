@@ -71,7 +71,7 @@ useReveal()
         <Vinyl />
       </div>
 
-      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 py-16 md:grid-cols-[1.2fr_1fr] md:items-center md:py-24">
+      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 py-12 md:grid-cols-[1.2fr_1fr] md:items-center md:py-14">
         <div>
           <p class="flicker mb-4 inline-flex items-center gap-2 border border-line px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.25em] text-smoke">
             ● asso & collectif techno
@@ -134,14 +134,14 @@ useReveal()
     <Marquee v-if="tickerWords.length" :words="tickerWords" />
 
     <!-- ====================== ARTISTES ====================== -->
-    <section id="artistes" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-16 md:py-24">
+    <section id="artistes" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-12 md:py-16">
       <SectionHead
         kicker="// face A — le line-up"
         title="Les artistes"
         :aside="artists.length ? `${artists.length} au line-up` : undefined"
       />
 
-      <div v-if="artists.length" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <div v-if="artists.length" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         <ArtistCard
           v-for="(a, i) in artists"
           :key="a.id"
@@ -169,7 +169,7 @@ useReveal()
 
     <!-- ====================== PROCHAINES DATES ====================== -->
     <section id="dates" class="scroll-mt-16 border-y border-line bg-ink">
-      <div class="mx-auto max-w-6xl px-5 py-16 md:py-24">
+      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
         <SectionHead kicker="// prochainement" title="Prochaines dates" />
 
         <div v-if="upcoming.length" class="-mt-5">
@@ -187,7 +187,7 @@ useReveal()
     </section>
 
     <!-- ====================== ÉVÉNEMENTS PASSÉS ====================== -->
-    <section id="evenements" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-16 md:py-24">
+    <section id="evenements" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-12 md:py-16">
       <SectionHead kicker="// face B — les archives" title="On y était">
         <template #aside>
           <NuxtLink
@@ -225,7 +225,7 @@ useReveal()
 
     <!-- ====================== COLLABORATEURS ====================== -->
     <section id="collabs" class="scroll-mt-16 border-t border-line">
-      <div class="mx-auto max-w-6xl px-5 py-16 md:py-24">
+      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
         <SectionHead
           kicker="// on bosse avec"
           title="Collaborateurs"
@@ -243,7 +243,7 @@ useReveal()
 
     <!-- ====================== L'ASSO (teaser) ====================== -->
     <section class="border-t border-line">
-      <div class="reveal mx-auto grid max-w-6xl gap-8 px-5 py-16 md:grid-cols-[1fr_1.4fr] md:items-center md:py-24">
+      <div class="reveal mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-[1fr_1.4fr] md:items-center md:py-16">
         <div>
           <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// qui on est</p>
           <h2 class="mt-2 font-display text-5xl uppercase leading-none tracking-wide sm:text-6xl">
@@ -265,7 +265,7 @@ useReveal()
 
     <!-- ====================== BOOKING / CONTACT ====================== -->
     <section id="booking" class="scroll-mt-16 bg-bone text-void">
-      <div class="mx-auto max-w-6xl px-5 py-16 md:py-24">
+      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-void/60">// booking & contact</p>
         <h2 class="mt-2 font-display text-6xl uppercase leading-[0.95] tracking-wide sm:text-8xl">
           On ramène<br />le son ?

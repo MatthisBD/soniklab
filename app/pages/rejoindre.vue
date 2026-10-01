@@ -69,7 +69,7 @@ useReveal()
       >
         <Vinyl />
       </div>
-      <div class="relative mx-auto max-w-6xl px-5 py-16 md:py-20">
+      <div class="relative mx-auto max-w-6xl px-5 py-12 md:py-16">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// nous rejoindre</p>
         <h1 class="mt-3 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
           Monte dans<br />
@@ -82,7 +82,7 @@ useReveal()
       </div>
     </section>
 
-    <section class="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-[1fr_1.5fr] md:py-20">
+    <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[1fr_1.5fr] md:py-16">
       <!-- ce qu'on cherche -->
       <div class="reveal space-y-3">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// on cherche</p>

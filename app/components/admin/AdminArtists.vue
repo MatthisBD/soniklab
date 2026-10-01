@@ -10,32 +10,49 @@ const list = ref<Artist[]>([])
 const open = ref<string | null>(null)
 const loading = ref(true)
 
+const { mark, isDirty } = useDirty((a: Artist) => [a.name, a.role, a.style, a.bio, a.photo_url, a.links, a.visible])
+
 onMounted(async () => {
-  await run(async () => (list.value = await fetchArtists(supabase)))
+  await run(async () => {
+    list.value = await fetchArtists(supabase)
+    list.value.forEach(mark)
+  })
   loading.value = false
 })
 
 async function add() {
   await run(async () => {
-    const row = await db.insertRow<Artist>('artists', { name: 'Nouvel artiste', position: list.value.length })
-    list.value.push({ ...row, links: [] })
+    // Créé masqué : rien n'apparaît sur le site avant le premier « Enregistrer ».
+    const row = await db.insertRow<Artist>('artists', {
+      name: 'Nouvel artiste',
+      position: list.value.length,
+      visible: false,
+    })
+    const artist: Artist = { ...row, links: [] }
+    mark(artist)
+    artist.visible = true // coché par défaut → publié à l'enregistrement
+    list.value.push(artist)
     open.value = row.id
-  }, 'Artiste ajouté.')
+  }, 'Brouillon créé — remplis la fiche puis « Enregistrer ».')
 }
 
-function save(a: Artist) {
-  return run(
+async function save(a: Artist) {
+  // On ne garde que les liens remplis (aussi à l'écran, pour rester synchro).
+  const links = a.links.filter((l) => l.url.trim()).map((l) => ({ label: l.label.trim(), url: l.url.trim() }))
+  const ok = await run(
     () =>
       db.updateRow('artists', a.id, {
         ...nullify({ role: a.role, style: a.style, bio: a.bio, photo_url: a.photo_url }),
         name: a.name.trim() || 'Sans nom',
-        links: a.links
-          .filter((l) => l.url.trim())
-          .map((l) => ({ label: l.label.trim(), url: l.url.trim() })),
+        links,
         visible: a.visible,
       }),
     `« ${a.name} » enregistré.`,
   )
+  if (ok) {
+    a.links = links
+    mark(a)
+  }
 }
 
 async function remove(a: Artist, idx: number) {
@@ -70,6 +87,7 @@ const LINK_PRESETS = ['SoundCloud', 'Instagram', 'Mixcloud', 'YouTube', 'Residen
           <span class="font-mono text-xs text-ash">A{{ i + 1 }}</span>
           <span class="truncate font-display text-xl uppercase tracking-wide">{{ a.name }}</span>
           <span v-if="!a.visible" class="shrink-0 border border-ash/40 px-1.5 py-0.5 font-mono text-[0.6rem] uppercase text-ash">masqué</span>
+          <span v-if="isDirty(a)" class="shrink-0 border border-bone px-1.5 py-0.5 font-mono text-[0.6rem] uppercase text-bone">non enregistré</span>
           <span class="ml-auto font-mono text-xs text-ash">{{ open === a.id ? '▲' : '▼' }}</span>
         </button>
         <button title="Monter" class="adm-btn px-2" @click="run(() => db.move('artists', list, i, -1))">↑</button>
@@ -121,8 +139,17 @@ const LINK_PRESETS = ['SoundCloud', 'Instagram', 'Mixcloud', 'YouTube', 'Residen
         </label>
 
         <div class="flex flex-wrap gap-2 border-t border-line pt-4">
-          <button class="adm-btn" @click="save(a)">Enregistrer</button>
+          <button
+            class="adm-btn"
+            :class="isDirty(a) && 'border-bone bg-bone text-void hover:bg-transparent'"
+            @click="save(a)"
+          >
+            Enregistrer
+          </button>
           <button class="adm-btn-danger" @click="remove(a, i)">Supprimer</button>
+          <span class="self-center font-mono text-[0.65rem] uppercase tracking-widest" :class="isDirty(a) ? 'text-bone' : 'text-ash'">
+            {{ isDirty(a) ? '● modifications non enregistrées' : '✓ tout est enregistré' }}
+          </span>
         </div>
       </div>
     </article>

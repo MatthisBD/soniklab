@@ -19,8 +19,16 @@ const open = ref<string | null>(null)
 const loading = ref(true)
 const today = isoToday()
 
+// Champs enregistrés par le bouton « Enregistrer » (la galerie, elle, s'enregistre seule).
+const { mark, isDirty } = useDirty((e: SonikEvent) => [
+  e.title, e.starts_on, e.hours, e.venue, e.city, e.description, e.cover_url, e.ticket_url, e.visible,
+])
+
 onMounted(async () => {
-  await run(async () => (list.value = await fetchEvents(supabase)))
+  await run(async () => {
+    list.value = await fetchEvents(supabase)
+    list.value.forEach(mark)
+  })
   loading.value = false
 })
 
@@ -30,11 +38,19 @@ function sortList() {
 
 async function add() {
   await run(async () => {
-    const row = await db.insertRow<SonikEvent>('events', { title: 'Nouvel événement', starts_on: isoToday() })
-    list.value.unshift({ ...row, media: [] })
+    // Créé masqué : rien n'apparaît sur le site avant le premier « Enregistrer ».
+    const row = await db.insertRow<SonikEvent>('events', {
+      title: 'Nouvel événement',
+      starts_on: isoToday(),
+      visible: false,
+    })
+    const ev: SonikEvent = { ...row, media: [] }
+    mark(ev)
+    ev.visible = true // coché par défaut → publié à l'enregistrement
+    list.value.unshift(ev)
     sortList()
     open.value = row.id
-  }, 'Événement ajouté.')
+  }, 'Brouillon créé — remplis la fiche puis « Enregistrer l’événement ».')
 }
 
 async function save(e: SonikEvent) {
@@ -55,7 +71,10 @@ async function save(e: SonikEvent) {
       }),
     `« ${e.title} » enregistré.`,
   )
-  if (ok) sortList()
+  if (ok) {
+    mark(e)
+    sortList()
+  }
 }
 
 async function remove(e: SonikEvent) {
@@ -153,6 +172,7 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
         <span class="shrink-0 font-mono text-xs text-ash">{{ formatDate(e.starts_on) }}</span>
         <span class="truncate font-display text-xl uppercase tracking-wide">{{ e.title }}</span>
         <span v-if="!e.visible" class="shrink-0 border border-ash/40 px-1.5 py-0.5 font-mono text-[0.6rem] uppercase text-ash">masqué</span>
+        <span v-if="isDirty(e)" class="shrink-0 border border-bone px-1.5 py-0.5 font-mono text-[0.6rem] uppercase text-bone">non enregistré</span>
         <span class="ml-auto shrink-0 font-mono text-xs text-ash">
           {{ e.media.length ? `${e.media.length} média${e.media.length > 1 ? 's' : ''}` : '' }}
           {{ open === e.id ? '▲' : '▼' }}
@@ -197,11 +217,6 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
           <input v-model="e.visible" type="checkbox" class="accent-bone" />
           Visible sur le site
         </label>
-
-        <div class="flex flex-wrap gap-2">
-          <button class="adm-btn" @click="save(e)">Enregistrer</button>
-          <button class="adm-btn-danger" @click="remove(e)">Supprimer</button>
-        </div>
 
         <!-- galerie -->
         <div class="space-y-3 border-t border-line pt-4">
@@ -262,6 +277,21 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
             Les photos sont réduites automatiquement. Vidéos : 50 Mo max par fichier — au-delà, publie-la
             sur YouTube / Instagram et colle le lien.
           </p>
+        </div>
+
+        <!-- validation de la fiche -->
+        <div class="flex flex-wrap items-center gap-3 border-t border-line pt-4">
+          <button
+            class="adm-btn"
+            :class="isDirty(e) && 'border-bone bg-bone text-void hover:bg-transparent'"
+            @click="save(e)"
+          >
+            Enregistrer l'événement
+          </button>
+          <button class="adm-btn-danger" @click="remove(e)">Supprimer</button>
+          <span class="font-mono text-[0.65rem] uppercase tracking-widest" :class="isDirty(e) ? 'text-bone' : 'text-ash'">
+            {{ isDirty(e) ? '● modifications non enregistrées' : '✓ tout est enregistré' }}
+          </span>
         </div>
       </div>
     </article>

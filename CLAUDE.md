@@ -380,9 +380,17 @@ Artistes · Événements (+ galerie : upload multiple, liens vidéo, légendes,
 « ★ » = couverture) · Collabs · Candidatures (badge = nouvelles demandes,
 aussi rappelé sur le QG) · Textes & réseaux (+ bandeau) · Liens du QG ·
 Mon compte. Les éléments masqués (`visible = false`) restent éditables.
+- **Brouillons** : « + Artiste / Événement / Collab » crée la ligne MASQUÉE ;
+  elle n'est publiée qu'au clic sur « Enregistrer » (case « Visible » cochée
+  par défaut). Indicateur « non enregistré » via `useDirty()`.
+- **Fiche événement** (`EventGallery`) : l'affiche (`cover_url`) est le 1er
+  élément de la galerie, images au format d'origine, clic = plein écran.
 
 ## 9. Décisions & historique (pour le futur)
-- **Style** : monochrome gravé dérivé du logo (pas de couleur). Validé par le client (« incroyable »).
+- **Style** : monochrome gravé dérivé du logo. Validé par le client (« incroyable »).
+  **Oct. 2026 : les PHOTOS restent en couleur** (artistes, affiches, galeries,
+  logos de collabs) à la demande du client — l'interface reste N&B, la couleur
+  vient du contenu. Ne pas remettre de filtre `grayscale`.
 - **shadcn-vue** : écarté volontairement (cf. §4).
 - **Accessibilité vs animation** : priorité donnée à l'animation (cf. §3).
 - **GitHub Pages** : `baseURL`/preset ajoutés, site mis en ligne sous `/soniklab/`.

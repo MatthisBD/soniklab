@@ -10,24 +10,33 @@ const list = ref<Collaborator[]>([])
 const open = ref<string | null>(null)
 const loading = ref(true)
 
+const { mark, isDirty } = useDirty((c: Collaborator) => [c.name, c.kind, c.city, c.description, c.logo_url, c.url, c.visible])
+
 onMounted(async () => {
-  await run(async () => (list.value = await fetchCollaborators(supabase)))
+  await run(async () => {
+    list.value = await fetchCollaborators(supabase)
+    list.value.forEach(mark)
+  })
   loading.value = false
 })
 
 async function add() {
   await run(async () => {
+    // Créé masqué : rien n'apparaît sur le site avant le premier « Enregistrer ».
     const row = await db.insertRow<Collaborator>('collaborators', {
       name: 'Nouveau collaborateur',
       position: list.value.length,
+      visible: false,
     })
+    mark(row)
+    row.visible = true // coché par défaut → publié à l'enregistrement
     list.value.push(row)
     open.value = row.id
-  }, 'Collaborateur ajouté.')
+  }, 'Brouillon créé — remplis la fiche puis « Enregistrer ».')
 }
 
-function save(c: Collaborator) {
-  return run(
+async function save(c: Collaborator) {
+  const ok = await run(
     () =>
       db.updateRow('collaborators', c.id, {
         ...nullify({ kind: c.kind, city: c.city, description: c.description, logo_url: c.logo_url, url: c.url }),
@@ -36,6 +45,7 @@ function save(c: Collaborator) {
       }),
     `« ${c.name} » enregistré.`,
   )
+  if (ok) mark(c)
 }
 
 async function remove(c: Collaborator, idx: number) {
@@ -69,6 +79,7 @@ const KINDS = ['Bar', 'Guinguette', 'Asso', 'Festival', 'Salle', 'Label', 'Colle
           <span class="truncate font-display text-xl uppercase tracking-wide">{{ c.name }}</span>
           <span v-if="c.kind" class="shrink-0 font-mono text-[0.65rem] uppercase tracking-widest text-ash">{{ c.kind }}</span>
           <span v-if="!c.visible" class="shrink-0 border border-ash/40 px-1.5 py-0.5 font-mono text-[0.6rem] uppercase text-ash">masqué</span>
+          <span v-if="isDirty(c)" class="shrink-0 border border-bone px-1.5 py-0.5 font-mono text-[0.6rem] uppercase text-bone">non enregistré</span>
           <span class="ml-auto font-mono text-xs text-ash">{{ open === c.id ? '▲' : '▼' }}</span>
         </button>
         <button title="Monter" class="adm-btn px-2" @click="run(() => db.move('collaborators', list, i, -1))">↑</button>
@@ -107,8 +118,17 @@ const KINDS = ['Bar', 'Guinguette', 'Asso', 'Festival', 'Salle', 'Label', 'Colle
         </label>
 
         <div class="flex flex-wrap gap-2 border-t border-line pt-4">
-          <button class="adm-btn" @click="save(c)">Enregistrer</button>
+          <button
+            class="adm-btn"
+            :class="isDirty(c) && 'border-bone bg-bone text-void hover:bg-transparent'"
+            @click="save(c)"
+          >
+            Enregistrer
+          </button>
           <button class="adm-btn-danger" @click="remove(c, i)">Supprimer</button>
+          <span class="self-center font-mono text-[0.65rem] uppercase tracking-widest" :class="isDirty(c) ? 'text-bone' : 'text-ash'">
+            {{ isDirty(c) ? '● modifications non enregistrées' : '✓ tout est enregistré' }}
+          </span>
         </div>
       </div>
     </article>

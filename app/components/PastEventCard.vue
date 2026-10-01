@@ -30,7 +30,7 @@ const counts = computed(() => {
         :src="cover"
         :alt="event.title"
         loading="lazy"
-        class="h-full w-full object-cover grayscale contrast-125 transition-transform duration-700 group-hover:scale-105"
+        class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
       />
       <div v-else class="grooves h-full w-full" />
       <!-- tampon de date façon flyer -->
