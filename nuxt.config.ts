@@ -5,6 +5,11 @@ import tailwindcss from '@tailwindcss/vite'
 // En dev (npm run dev) on garde la racine "/".
 const baseURL = process.env.NODE_ENV === 'production' ? '/soniklab/' : '/'
 
+// Adresse publique complète : les aperçus de partage (Insta, WhatsApp,
+// Messenger…) exigent des URL ABSOLUES pour l'image et la page.
+const siteUrl = 'https://matthisbd.github.io/soniklab/'
+const shareText = 'Artistes, soirées et sound system : la vitrine du collectif techno SONIKLAB.'
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -33,20 +38,28 @@ export default defineNuxtConfig({
     baseURL,
     head: {
       htmlAttrs: { lang: 'fr' },
-      title: 'SONIKLAB — Le QG',
+      title: 'SONIKLAB — Collectif techno',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
           content:
-            "SONIKLAB — collectif techno. Le hub de raccourcis de l'asso : HelloAsso, gestion, réseaux et docs partagés.",
+            'SONIKLAB, association et collectif techno : nos artistes, nos soirées en bars, guinguettes et open airs, nos collaborateurs.',
         },
         { name: 'theme-color', content: '#0a0a0a' },
-        { property: 'og:title', content: 'SONIKLAB — Le QG' },
-        { property: 'og:description', content: "Le hub de l'asso techno SONIKLAB." },
-        { property: 'og:image', content: `${baseURL}soniklab-logo.jpeg` },
+        // Aperçu de partage (image 1200×630 dans public/og-image.png)
+        { property: 'og:site_name', content: 'SONIKLAB' },
+        { property: 'og:locale', content: 'fr_FR' },
         { property: 'og:type', content: 'website' },
+        { property: 'og:title', content: 'SONIKLAB — Collectif techno' },
+        { property: 'og:description', content: shareText },
+        { property: 'og:image', content: `${siteUrl}og-image.png` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: 'SONIKLAB — le son qui rassemble' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:image', content: `${siteUrl}og-image.png` },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico` },

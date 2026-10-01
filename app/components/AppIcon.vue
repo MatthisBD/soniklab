@@ -45,6 +45,65 @@ defineProps<{ name: string }>()
       <path d="M8 7h9v9" />
     </g>
 
+    <!-- soundcloud : nuage + barres -->
+    <g v-else-if="name === 'soundcloud'">
+      <path d="M11 17V8.5a5 5 0 0 1 9.6 1.9A2.8 2.8 0 0 1 20 17Z" />
+      <path d="M8 17v-6M5 17v-4M2 17v-2" />
+    </g>
+
+    <!-- instagram -->
+    <g v-else-if="name === 'instagram'">
+      <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" />
+      <circle cx="12" cy="12" r="3.8" />
+      <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" />
+    </g>
+
+    <!-- mail -->
+    <g v-else-if="name === 'mail'">
+      <rect x="3" y="5" width="18" height="14" rx="1.5" />
+      <path d="m3.5 6 8.5 7 8.5-7" />
+    </g>
+
+    <!-- lecture (vidéo) -->
+    <g v-else-if="name === 'play'">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M10 8.5v7l5.5-3.5Z" fill="currentColor" />
+    </g>
+
+    <!-- lieu -->
+    <g v-else-if="name === 'pin'">
+      <path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11Z" />
+      <circle cx="12" cy="10" r="2.3" />
+    </g>
+
+    <!-- cœur / soutien -->
+    <g v-else-if="name === 'heart'">
+      <path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.4a4.3 4.3 0 0 1 7.5 2.4C19.5 15.4 12 20 12 20Z" />
+    </g>
+
+    <!-- photos -->
+    <g v-else-if="name === 'image'">
+      <rect x="3" y="4" width="18" height="16" rx="1.5" />
+      <circle cx="8.5" cy="9.5" r="1.7" />
+      <path d="m3.5 18 5.5-5.5 4 4 3-3 4.5 4.5" />
+    </g>
+
+    <!-- menu burger / fermer -->
+    <g v-else-if="name === 'menu'">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </g>
+    <g v-else-if="name === 'close'">
+      <path d="M6 6l12 12M18 6 6 18" />
+    </g>
+
+    <!-- chevrons (galerie) -->
+    <g v-else-if="name === 'prev'">
+      <path d="m15 5-7 7 7 7" />
+    </g>
+    <g v-else-if="name === 'next'">
+      <path d="m9 5 7 7-7 7" />
+    </g>
+
     <!-- fallback : point -->
     <circle v-else cx="12" cy="12" r="3" />
   </svg>

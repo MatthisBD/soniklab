@@ -23,6 +23,13 @@ arrive, on clique, on va sur le bon outil.
 > mais depuis l'admin, et le site reflète les changements en direct.
 > Voir §8 (déploiement) et §8 bis (back-end & admin).
 
+> **Évolution (oct. 2026) — le site devient une VITRINE publique.**
+> L'accueil `/` présente l'asso au public (artistes, prochaines dates,
+> événements passés avec photos/vidéos, collaborateurs, booking). L'ancien hub
+> de raccourcis (« Le repaire du soundsystem ») a déménagé sur **`/qg`**,
+> réservé aux membres connectés, comme `/budget`. Un seul bouton
+> **« Connexion »** en haut à droite, pour les membres. Voir §8 quater.
+
 ### Le brief d'origine (demande du client)
 - Un site de **raccourcis / redirections** vers les autres outils de l'asso.
 - Liens voulus : **HelloAsso**, **To-Do / gestion**, **réseaux sociaux**,
@@ -116,23 +123,37 @@ soniklab/
 │  ├─ assets/css/main.css     # ⭐ thème (couleurs, typos) + TOUTES les animations
 │  ├─ data/links.ts           # types partagés (les DONNÉES sont en base, cf. §8 bis)
 │  ├─ pages/
-│  │  ├─ index.vue            # la page d'accueil (hero, liens, footer, reveal)
-│  │  ├─ admin.vue            # ⭐ espace admin (connexion + édition du contenu)
-│  │  └─ budget.vue           # ⭐ page interne : budget des caissons (admin only)
+│  │  ├─ index.vue            # ⭐ VITRINE publique (hero, artistes, dates, archives, collabs, booking)
+│  │  ├─ asso.vue             # page « L'asso » (qui on est, ce qu'on fait)
+│  │  ├─ evenements.vue       # tous les événements (à venir + archives par année)
+│  │  ├─ qg.vue               # 🔒 le QG : raccourcis internes (ex-accueil)
+│  │  ├─ admin.vue            # 🔒 espace admin à onglets (cf. components/admin/)
+│  │  └─ budget.vue           # 🔒 budget des caissons
 │  ├─ plugins/supabase.ts     # init du client Supabase (useSupabase())
 │  ├─ composables/
-│  │  ├─ useSupabase.ts       # accès client + lecture des données
+│  │  ├─ useSupabase.ts       # accès client + lecture liens QG / bandeau
+│  │  ├─ useShowcase.ts       # ⭐ vitrine : types, lectures, textes par défaut, CRUD admin
+│  │  ├─ useMedia.ts          # upload Storage (photos réduites en WebP) + liens YouTube/Vimeo
 │  │  ├─ useAuth.ts           # connexion / rôle admin / mot de passe
-│  │  ├─ useAdmin.ts          # écritures (CRUD groupes, liens, bandeau)
+│  │  ├─ useAdmin.ts          # écritures QG (groupes, liens, bandeau)
+│  │  ├─ useFlash.ts          # message de confirmation partagé des outils internes
+│  │  ├─ useReveal.ts         # apparition au scroll (.reveal), auto pour le contenu async
 │  │  └─ useBudget.ts         # budget caissons : lecture + calculs + CRUD
 │  └─ components/
-│     ├─ AppIcon.vue          # icônes SVG inline (ticket, checklist, broadcast, folder, arrow)
-│     ├─ Vinyl.vue            # disque vinyle animé
-│     ├─ Equalizer.vue        # barres de waveform animées
-│     ├─ Marquee.vue          # bandeau défilant
-│     └─ LinkCard.vue         # carte d'un groupe de liens (effet d'inversion)
+│     ├─ SiteHeader.vue / SiteFooter.vue  # barre + pied des pages publiques
+│     ├─ SectionHead.vue      # titre de section (kicker + titre)
+│     ├─ ArtistCard.vue · CollabCard.vue · UpcomingEvent.vue · PastEventCard.vue
+│     ├─ EventGallery.vue     # fiche événement plein écran + galerie (clavier, swipe)
+│     ├─ AuthGate.vue         # 🔒 portail connexion → droits → contenu (QG, budget, admin)
+│     ├─ ToolHeader.vue       # en-tête des pages internes (QG · Budget · Admin)
+│     ├─ admin/               # un composant par onglet de l'admin + AdminMediaField
+│     ├─ AppIcon.vue          # icônes SVG inline
+│     ├─ Vinyl.vue · Equalizer.vue · Marquee.vue · LinkCard.vue
 ├─ public/soniklab-logo.jpeg  # le logo
 ├─ supabase/budget-caissons.sql # SQL des tables budget (à coller dans le dashboard)
+├─ supabase/vitrine.sql       # SQL vitrine + bucket médias + QG privé (✅ exécuté)
+├─ supabase/rejoindre.sql     # SQL du formulaire « Nous rejoindre » (à coller, idempotent)
+├─ public/og-image.png        # image d'aperçu de partage 1200×630 (Insta, WhatsApp…)
 ├─ .github/workflows/deploy.yml # déploiement auto sur GitHub Pages
 ├─ nuxt.config.ts             # meta, polices, Tailwind, baseURL, config Supabase
 └─ CLAUDE.md                  # ce fichier
@@ -228,7 +249,8 @@ Détails du workflow :
 > avec/sans HP, lignes de recette). Voir §8 ter.
 
 ### Sécurité (RLS) — important
-- **Lecture publique** (`anon` + `authenticated`) sur les 3 tables `links*`/`ticker_words`.
+- **Lecture publique** (`anon` + `authenticated`) sur `ticker_words` et les tables vitrine (§8 quater).
+  ⚠️ `link_groups` / `links` (le QG) sont **privées** depuis `supabase/vitrine.sql`.
 - **Tables `budget_*` : PRIVÉES** — lecture **et** écriture réservées aux admins
   (politiques `for all` gardées par `is_admin()`). Un non-admin ne voit rien.
 - **Écriture réservée aux admins** : politiques `for all` gardées par la fonction
@@ -253,9 +275,9 @@ Trois états :
   `useAdmin.ts` (écritures).
 - Le fond animé (grain) est **désactivé sur `/admin`** (cf. `app/app.vue`).
 - Le titre **SONIKLAB** de l'admin renvoie au site.
-- **Aucun accès admin n'est visible pour les non-admins** : le bouton « Admin »
-  de la barre du haut et le lien admin du footer ne s'affichent que si
-  `auth.isAdmin` est vrai. Pour se connecter, on va directement sur `/admin`.
+- **Accès** : bouton « Connexion » en haut à droite de la vitrine → `/qg`
+  (devient « Espace membres » une fois connecté). Les liens QG/budget/admin du
+  footer ne s'affichent que si `auth.isAdmin` est vrai.
 
 ### Comptes admin (accès réservé)
 - **Connexion email/mot de passe uniquement.** Google a été retiré de l'UI ;
@@ -319,6 +341,46 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
   `balance`, `formatEur`) + CRUD admin. Page `app/pages/budget.vue`.
 - Le grain animé est coupé sur `/budget` (comme `/admin`, cf. `app/app.vue`).
 
+## 8 quater. Vitrine publique (oct. 2026)
+
+### Pages
+| Route | Public ? | Contenu |
+|---|---|---|
+| `/` | ✅ | hero, artistes, prochaines dates, archives (6 dernières), collabs, teaser asso, booking |
+| `/asso` | ✅ | intro, histoire, « ce qu'on fait » (piliers), appel à l'action |
+| `/evenements` | ✅ | à venir + archives groupées par année, galerie au clic |
+| `/rejoindre` | ✅ | formulaire « Nous rejoindre » (artiste, bénévole, technique, com, autre) |
+| `/qg` · `/budget` · `/admin` | 🔒 | via `AuthGate` (admins uniquement), `noindex` |
+
+### Données (cf. `supabase/vitrine.sql`)
+| Table | Rôle |
+|---|---|
+| `artists` | nom, rôle, style, bio, photo, `links` (jsonb `[{label,url}]`), visible, position |
+| `collaborators` | nom, type, ville, description, logo, url, visible, position |
+| `events` | titre, `starts_on` (date → « à venir » si ≥ aujourd'hui, sinon archive), horaires, lieu, ville, description, cover, ticket_url, visible |
+| `event_media` | event_id, kind (`image`\|`video`\|`embed`\|`link`), url, caption, position |
+| `join_requests` | demandes du formulaire `/rejoindre` : nom, email, tél., profil, liens, message, status (`new`\|`contacted`\|`archived`). **Envoi public, lecture admin** (SQL : `supabase/rejoindre.sql`) |
+| `site_settings` | clé → texte (accroche, textes de l'asso, booking, email, Instagram, SoundCloud, HelloAsso). Valeurs par défaut dans `SETTINGS_DEFAULTS` (useShowcase.ts) : vide = défaut |
+
+- **RLS** : lecture publique des lignes `visible` (les admins voient tout),
+  écriture admin. `site_settings` et `ticker_words` en lecture publique.
+- **QG privé** : le script remplace les politiques de `link_groups` / `links`
+  par « admins uniquement » (lecture comprise).
+- **Médias** : bucket Storage public `media` (upload admin uniquement, 50 Mo
+  max). Les photos sont **réduites dans le navigateur** (≤ 1600 px, WebP) avant
+  l'envoi. Vidéos lourdes → les mettre sur YouTube/Vimeo et coller le lien
+  (intégration auto en iframe). Supprimer une ligne supprime aussi ses fichiers.
+- **Chargement** : `useShowcaseData()` = rendu au build (contenu dans le HTML,
+  bon pour le SEO) **puis** rechargé dans le navigateur au montage → les
+  modifs de l'admin sont visibles tout de suite sans redéployer. En cas
+  d'erreur (table absente), on retombe sur la valeur par défaut / état vide.
+
+### Admin (onglets, `?tab=`)
+Artistes · Événements (+ galerie : upload multiple, liens vidéo, légendes,
+« ★ » = couverture) · Collabs · Candidatures (badge = nouvelles demandes,
+aussi rappelé sur le QG) · Textes & réseaux (+ bandeau) · Liens du QG ·
+Mon compte. Les éléments masqués (`visible = false`) restent éditables.
+
 ## 9. Décisions & historique (pour le futur)
 - **Style** : monochrome gravé dérivé du logo (pas de couleur). Validé par le client (« incroyable »).
 - **shadcn-vue** : écarté volontairement (cf. §4).
@@ -330,8 +392,31 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
   vers la base.
 - **Autorisation** : rôle admin dans `app_metadata` (sûr), politiques RLS
   gardées par `is_admin()`.
+- **Vitrine (oct. 2026)** : l'accueil devient public, le hub part sur `/qg`
+  (privé). Tous les comptes sont des membres de l'asso = admins ; pas
+  d'inscription publique. Pas de routes dynamiques (`/evenements/[id]`) : sur
+  GitHub Pages statique elles tomberaient en 404 au chargement direct → la
+  fiche événement est une modale (`EventGallery`).
+- **Aperçu de partage** : `public/og-image.png` (généré en HTML + Chrome
+  headless). Les URL `og:image` doivent être ABSOLUES (`siteUrl` dans
+  `nuxt.config.ts`), sinon Insta/WhatsApp n'affichent rien. Après un
+  changement, forcer le rafraîchissement du cache via le « Sharing Debugger »
+  de Facebook (vaut aussi pour Insta/WhatsApp).
+- **Formulaire « Nous rejoindre »** : anti-spam par champ piège + délai de 3 s
+  (pas de captcha). Données perso visibles des seuls admins (RLS).
+- **CSS** : `overflow-x: clip` (et non `hidden`) sur `html`/`body` — `hidden`
+  sur les deux faisait de `body` un conteneur de défilement et cassait le
+  header `sticky`.
 
 ## 10. TODO / pistes
+- [x] Exécuter `supabase/vitrine.sql` (tables vitrine, bucket `media`, QG privé).
+- [ ] **Exécuter `supabase/rejoindre.sql`** (table `join_requests` du formulaire).
+- [ ] Remplir la vitrine via l'admin : artistes, événements + photos, collabs,
+      email / Instagram / HelloAsso (onglet « Textes & réseaux »).
+- [x] Formulaire « Nous rejoindre » + image de partage (og:image).
+- [ ] Pistes : lecteur SoundCloud intégré sur les cartes artistes, page mentions
+      légales, notification mail à chaque candidature (Edge Function / webhook).
+      Press kit : écarté — on partage le drive aux artistes (logo moins exposé).
 - [ ] Renseigner les vraies URLs des liens **via l'admin** (côté client).
 - [ ] **Exécuter `supabase/budget-caissons.sql`** dans le dashboard Supabase
       (crée les tables `budget_*` requises par la page `/budget`).

@@ -14,16 +14,13 @@ import {
   formatEur,
 } from '~/composables/useBudget'
 
-useHead({ title: 'SONIKLAB — Budget' })
+useHead({ title: 'SONIKLAB — Budget', meta: [{ name: 'robots', content: 'noindex' }] })
 
 const supabase = useSupabase()
 const auth = useAuth()
 const budget = useBudget()
 
 // --- état UI ---
-const email = ref('')
-const password = ref('')
-const loginError = ref('')
 const loading = ref(false)
 const message = ref('')
 const categories = ref<BudgetCategory[]>([])
@@ -58,36 +55,12 @@ async function loadData() {
   }
 }
 
-onMounted(async () => {
-  await auth.init()
-  if (auth.isAdmin.value) await loadData()
-})
-
+// (re)charge dès qu'un membre est connecté (AuthGate gère la connexion).
 watch(
   () => auth.isAdmin.value,
-  (isAdmin) => {
-    if (isAdmin && !categories.value.length) loadData()
-  },
+  (isAdmin) => (isAdmin ? loadData() : (categories.value = [])),
+  { immediate: true },
 )
-
-// ---------------- Connexion ----------------
-async function onLogin() {
-  loginError.value = ''
-  loading.value = true
-  try {
-    await auth.signIn(email.value.trim(), password.value)
-    password.value = ''
-  } catch (e: any) {
-    loginError.value = e.message || 'Connexion impossible.'
-  } finally {
-    loading.value = false
-  }
-}
-
-async function onLogout() {
-  await auth.signOut()
-  categories.value = []
-}
 
 // ---------------- Catégories ----------------
 async function addCategory() {
@@ -209,26 +182,7 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
 
 <template>
   <div class="mx-auto max-w-5xl px-5 py-10">
-    <!-- en-tête -->
-    <header class="mb-8 flex items-center justify-between border-b border-line pb-5">
-      <NuxtLink to="/" class="group block">
-        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// budget caissons · retour au site</p>
-        <h1 class="mt-1 font-display text-4xl uppercase tracking-wide transition-colors group-hover:text-smoke">
-          SONIKLAB
-        </h1>
-      </NuxtLink>
-      <div class="flex items-center gap-4 font-mono text-xs uppercase tracking-widest">
-        <NuxtLink v-if="auth.isAdmin.value" to="/admin" class="text-ash transition-colors hover:text-bone">Admin</NuxtLink>
-        <NuxtLink to="/" class="text-ash transition-colors hover:text-bone">← le site</NuxtLink>
-        <button
-          v-if="auth.isLoggedIn.value"
-          class="border border-line px-3 py-2 text-smoke transition-colors hover:border-bone hover:text-bone"
-          @click="onLogout"
-        >
-          Déconnexion
-        </button>
-      </div>
-    </header>
+    <ToolHeader kicker="// budget caissons" />
 
     <!-- message flash -->
     <p
@@ -238,60 +192,8 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
       {{ message }}
     </p>
 
-    <!-- chargement initial de l'auth -->
-    <p v-if="!auth.ready.value" class="font-mono text-sm text-ash">Chargement…</p>
-
-    <!-- ============ NON CONNECTÉ : connexion ============ -->
-    <form
-      v-else-if="!auth.isLoggedIn.value"
-      class="mx-auto max-w-sm space-y-4 border border-line bg-grave p-6"
-      @submit.prevent="onLogin"
-    >
-      <p class="font-mono text-xs uppercase tracking-widest text-ash">Espace interne — connexion</p>
-      <input
-        v-model="email"
-        type="email"
-        required
-        placeholder="email"
-        autocomplete="username"
-        class="w-full border border-line bg-void px-3 py-2 font-mono text-sm outline-none focus:border-bone"
-      />
-      <input
-        v-model="password"
-        type="password"
-        required
-        placeholder="mot de passe"
-        autocomplete="current-password"
-        class="w-full border border-line bg-void px-3 py-2 font-mono text-sm outline-none focus:border-bone"
-      />
-      <p v-if="loginError" class="font-mono text-xs text-red-400">{{ loginError }}</p>
-      <button
-        type="submit"
-        :disabled="loading"
-        class="w-full bg-bone px-4 py-2.5 font-mono text-sm uppercase tracking-widest text-void transition-transform hover:-translate-y-0.5 disabled:opacity-50"
-      >
-        {{ loading ? '…' : 'Se connecter' }}
-      </button>
-    </form>
-
-    <!-- ============ CONNECTÉ MAIS PAS ADMIN ============ -->
-    <div v-else-if="!auth.isAdmin.value" class="mx-auto max-w-sm space-y-4 border border-line bg-grave p-6 text-center">
-      <p class="font-display text-2xl uppercase tracking-wide">Accès réservé</p>
-      <p class="text-sm text-smoke">
-        Tu es connecté en tant que
-        <span class="font-mono text-bone">{{ auth.user.value?.email }}</span>,
-        mais cet outil est réservé aux membres avec les droits d'édition.
-      </p>
-      <button
-        class="border border-line px-4 py-2 font-mono text-xs uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone"
-        @click="onLogout"
-      >
-        Se déconnecter
-      </button>
-    </div>
-
-    <!-- ============ ADMIN : l'outil ============ -->
-    <div v-else>
+    <!-- connexion → droits → l'outil -->
+    <AuthGate>
       <!-- ===================== VUE LISTE (cartes) ===================== -->
       <template v-if="!editing">
         <div class="flex items-end justify-between gap-4 border-b border-line pb-4">
@@ -570,6 +472,6 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
         </div>
       </article>
       </template>
-    </div>
+    </AuthGate>
   </div>
 </template>

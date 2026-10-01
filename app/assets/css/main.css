@@ -22,9 +22,12 @@
 }
 
 /* ---------- Base ---------- */
+/* overflow-x: clip (et non hidden) : coupe le débordement horizontal sur
+   mobile SANS faire de <body> un conteneur de défilement — sinon les barres
+   « sticky » (en-tête) ne restent plus collées en haut. */
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
@@ -32,7 +35,7 @@ body {
   color: var(--color-bone);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 ::selection {
@@ -53,6 +56,25 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-ash);
+}
+
+/* ---------- Formulaires des outils internes (admin) ---------- */
+@layer components {
+  .adm-label {
+    @apply mb-1 block font-mono text-[0.65rem] uppercase tracking-widest text-ash;
+  }
+  .adm-input {
+    @apply w-full border border-line bg-void px-3 py-2 text-sm outline-none focus:border-bone;
+  }
+  .adm-btn {
+    @apply border border-line px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone disabled:opacity-50;
+  }
+  .adm-btn-danger {
+    @apply border border-red-500/40 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-red-400 transition-colors hover:bg-red-500/10;
+  }
+  .adm-card {
+    @apply border border-line bg-grave;
+  }
 }
 
 /* ============================================================
@@ -108,6 +130,14 @@ body {
 }
 .vinyl-spin.paused {
   animation-play-state: paused;
+}
+
+/* Sillons de vinyle : fond des visuels sans photo (artiste, événement…) */
+.grooves {
+  background-color: var(--color-ink);
+  background-image:
+    radial-gradient(circle at 50% 50%, transparent 0 22%, rgba(255, 255, 255, 0.05) 22.5% 23%, transparent 23.5%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.045) 0 1px, transparent 1px 7px);
 }
 
 /* ============================================================
