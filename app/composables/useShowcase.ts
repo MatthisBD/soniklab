@@ -187,6 +187,15 @@ export function useShowcaseData<T>(key: string, fetcher: (s: SupabaseClient) => 
 }
 
 /**
+ * Textes et réglages du site. Un seul point d'entrée : la page et le pied de
+ * page partagent la même donnée (mêmes options → pas d'avertissement Nuxt).
+ */
+const settingsFallback = (): SiteSettings => ({ ...SETTINGS_DEFAULTS })
+export function useSiteSettings() {
+  return useShowcaseData('site-settings', fetchSettings, settingsFallback)
+}
+
+/**
  * « Aujourd'hui », figé au build puis mis à jour dans le navigateur
  * (évite un décalage d'hydratation si un événement est passé entre-temps).
  */

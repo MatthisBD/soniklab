@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SETTINGS_DEFAULTS, fetchSettings, paragraphs, pillars } from '~/composables/useShowcase'
+import { paragraphs, pillars } from '~/composables/useShowcase'
 
 // « L'asso » : qui on est, ce qu'on fait. Textes éditables dans /admin → Textes.
 useSeoMeta({
@@ -9,7 +9,7 @@ useSeoMeta({
   ogDescription: "Association et collectif techno : qui on est, ce qu'on fait.",
 })
 
-const settings = useShowcaseData('site-settings', fetchSettings, () => ({ ...SETTINGS_DEFAULTS }))
+const settings = useSiteSettings()
 const body = computed(() => paragraphs(settings.value.about_body))
 const blocks = computed(() => pillars(settings.value.about_pillars))
 

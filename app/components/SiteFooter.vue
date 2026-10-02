@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { SETTINGS_DEFAULTS, fetchSettings } from '~/composables/useShowcase'
-
 const year = new Date().getFullYear()
 const auth = useAuth()
-const settings = useShowcaseData('site-settings', fetchSettings, () => ({ ...SETTINGS_DEFAULTS }))
+const settings = useSiteSettings()
 
 const socials = computed(() =>
   [

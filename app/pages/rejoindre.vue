@@ -6,7 +6,6 @@ import {
   parseClosedProfiles,
   submitJoinRequest,
 } from '~/composables/useJoin'
-import { SETTINGS_DEFAULTS, fetchSettings } from '~/composables/useShowcase'
 
 // « Nous rejoindre » : artistes, bénévoles, technique, com…
 // Les demandes arrivent dans /admin → onglet « Candidatures ».
@@ -22,7 +21,7 @@ const route = useRoute()
 
 // Profils fermés pour l'instant (réglable dans /admin → Candidatures) :
 // affichés grisés et non sélectionnables.
-const settings = useShowcaseData('site-settings', fetchSettings, () => ({ ...SETTINGS_DEFAULTS }))
+const settings = useSiteSettings()
 const closed = computed(() => parseClosedProfiles(settings.value.join_closed_profiles))
 const isClosed = (id: string) => closed.value.includes(id)
 const firstOpen = () => (JOIN_PROFILES.find((p) => !isClosed(p.id))?.id ?? 'autre') as JoinProfile

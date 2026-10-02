@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {
+  type Artist,
   type SonikEvent,
-  SETTINGS_DEFAULTS,
   fetchArtists,
   fetchCollaborators,
   fetchEvents,
-  fetchSettings,
 } from '~/composables/useShowcase'
 
 // La vitrine publique de l'asso. Tout le contenu s'édite depuis /admin.
@@ -18,7 +17,7 @@ const logoSrc = `${base}soniklab-logo.jpeg`
 const artists = useShowcaseData('artists', fetchArtists, () => [])
 const events = useShowcaseData('events', fetchEvents, () => [])
 const collabs = useShowcaseData('collaborators', fetchCollaborators, () => [])
-const settings = useShowcaseData('site-settings', fetchSettings, () => ({ ...SETTINGS_DEFAULTS }))
+const settings = useSiteSettings()
 const tickerWords = useShowcaseData('ticker-words', fetchTickerWords, () => [])
 
 const today = useToday()
@@ -53,6 +52,8 @@ const contactLinks = computed(() =>
 )
 
 const opened = ref<SonikEvent | null>(null)
+// Fiche artiste ouverte (avec son n° de « piste » A1, A2…)
+const openedArtist = ref<{ artist: Artist; track: string } | null>(null)
 
 useReveal()
 </script>
@@ -147,6 +148,7 @@ useReveal()
           :key="a.id"
           :artist="a"
           :track="`A${i + 1}`"
+          @open="openedArtist = { artist: a, track: `A${i + 1}` }"
         />
       </div>
       <p v-else class="reveal border border-dashed border-line px-4 py-10 text-center font-mono text-sm text-ash">
@@ -309,5 +311,6 @@ useReveal()
     <SiteFooter />
 
     <EventGallery :event="opened" @close="opened = null" />
+    <ArtistModal :artist="openedArtist?.artist ?? null" :track="openedArtist?.track" @close="openedArtist = null" />
   </div>
 </template>

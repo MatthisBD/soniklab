@@ -3,6 +3,8 @@ import type { Artist } from '~/composables/useShowcase'
 import { linkIcon } from '~/composables/useMedia'
 
 const props = defineProps<{ artist: Artist; track: string }>()
+// Clic (ou Entrée / Espace) sur la carte → fiche complète (ArtistModal).
+defineEmits<{ open: [] }>()
 
 const initials = computed(() =>
   props.artist.name
@@ -17,7 +19,13 @@ const subtitle = computed(() => [props.artist.role, props.artist.style].filter(B
 
 <template>
   <article
-    class="group reveal relative flex flex-col border border-line bg-grave transition-colors duration-300 hover:bg-bone hover:text-void"
+    class="group reveal relative flex cursor-pointer flex-col border border-line bg-grave transition-colors duration-300 hover:bg-bone hover:text-void focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bone"
+    role="button"
+    tabindex="0"
+    :aria-label="`Voir la fiche de ${artist.name}`"
+    @click="$emit('open')"
+    @keydown.enter.prevent="$emit('open')"
+    @keydown.space.prevent="$emit('open')"
   >
     <!-- visuel : la photo, sinon un « macaron » de vinyle avec les initiales -->
     <div class="relative aspect-[4/5] overflow-hidden border-b border-line bg-ink group-hover:border-void/20">
@@ -49,18 +57,27 @@ const subtitle = computed(() => [props.artist.role, props.artist.style].filter(B
         {{ artist.bio }}
       </p>
 
-      <div v-if="artist.links.length" class="mt-auto flex flex-wrap gap-2 pt-5">
+      <div class="mt-auto flex flex-wrap items-center gap-2 pt-5">
+        <!-- les liens s'ouvrent directement, sans ouvrir la fiche -->
         <a
           v-for="l in artist.links"
           :key="l.url"
           :href="l.url"
           target="_blank"
           rel="noopener noreferrer"
+          @click.stop
+          @keydown.stop
           class="inline-flex items-center gap-1.5 border border-line px-2.5 py-1.5 font-mono text-[0.65rem] uppercase tracking-widest transition-colors hover:bg-void hover:text-bone group-hover:border-void/30"
         >
           <AppIcon :name="linkIcon(l.url)" class="h-3.5 w-3.5" />
           {{ l.label || 'Écouter' }}
         </a>
+        <span
+          class="ml-auto inline-flex items-center gap-1 font-mono text-[0.65rem] uppercase tracking-widest text-ash group-hover:text-void/60"
+        >
+          Voir la fiche
+          <AppIcon name="arrow" class="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+        </span>
       </div>
     </div>
   </article>
