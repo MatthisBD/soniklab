@@ -74,9 +74,16 @@ d'hébergement OVH.
 ## Pièges rencontrés
 - L'action `cloudflare/wrangler-action` installe wrangler **v3** par défaut :
   « Missing entry-point » sur un site statique → `wranglerVersion: "4"`.
-- Juste après la bascule, certaines box/opérateurs gardent l'ancienne IP OVH
-  en cache (~1 h) : `ERR_CONNECTION_RESET` en HTTPS alors que le site marche
-  ailleurs. Tester en 4G ou `curl --resolve soniklab.fr:443:104.21.1.235 …`.
+- Juste après la bascule, certains opérateurs (box 5G, mobile) continuaient
+  d'interroger les **anciens serveurs DNS OVH**, qui servaient toujours la
+  page « site en construction » (`213.186.33.5`) → `ERR_CONNECTION_RESET` en
+  HTTPS, ou page OVH, selon le serveur qui répond. **Correctif** : dans la
+  zone DNS OVH (onglet *DNS zone*, toujours éditable), faire pointer `@` et
+  `www` en `A` vers l'IP Cloudflare (`104.21.1.235`) et supprimer les `TXT`
+  `"1|www…"` / `"3|welcome"` (marqueurs de la page OVH). Les caches expirent
+  ensuite en ≤ 1 h. **À faire AVANT de changer les serveurs DNS** la
+  prochaine fois. Test : `nslookup soniklab.fr dns111.ovh.net` et
+  `curl --resolve soniklab.fr:443:104.21.1.235 https://soniklab.fr/`.
 
 ## Après la bascule
 - Supabase : rien à changer (connexion email/mot de passe, pas d'URL de
