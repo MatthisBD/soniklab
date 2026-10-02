@@ -21,8 +21,8 @@ concurrency:
 # ------------------------------------------------------------------
 #  Deux modes, choisis automatiquement (cf. DEPLOY.md) :
 #  - secret CLOUDFLARE_API_TOKEN présent → le site part sur Cloudflare
-#    Pages (soniklab.fr) et GitHub Pages ne sert plus qu'une page de
-#    redirection vers la nouvelle adresse ;
+#    (Worker statique « soniklab », cf. wrangler.jsonc) et GitHub Pages ne
+#    sert plus qu'une page de redirection vers la nouvelle adresse ;
 #  - sinon → le site est publié sur GitHub Pages, comme avant.
 # ------------------------------------------------------------------
 env:
@@ -59,14 +59,15 @@ jobs:
         env:
           NODE_ENV: production
 
-      # ---------- Cloudflare Pages (soniklab.fr) ----------
-      - name: Déployer sur Cloudflare Pages
+      # ---------- Cloudflare (soniklab.fr) ----------
+      - name: Déployer sur Cloudflare
         if: env.CLOUDFLARE_READY == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .output/public --project-name soniklab --branch main --commit-dirty=true
+          # lit wrangler.jsonc : envoie .output/public (+ domaines personnalisés)
+          command: deploy
 
       # ---------- GitHub Pages ----------
       - name: Préparer la redirection github.io → nouvelle adresse

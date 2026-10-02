@@ -1,0 +1,17 @@
+// Hébergement Cloudflare (compte soniklab.asso@gmail.com) — voir DEPLOY.md.
+// Site 100 % statique : pas de script Worker ("main"), Cloudflare sert
+// directement le dossier généré par `npm run generate`.
+{
+  "name": "soniklab",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./.output/public",
+    // URL inconnue → 404.html (coquille Nuxt : la page 404 s'affiche côté client)
+    "not_found_handling": "404-page"
+  }
+  // À ajouter quand soniklab.fr sera actif sur le compte Cloudflare :
+  // "routes": [
+  //   { "pattern": "soniklab.fr", "custom_domain": true },
+  //   { "pattern": "www.soniklab.fr", "custom_domain": true }
+  // ]
+}

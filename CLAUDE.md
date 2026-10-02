@@ -200,8 +200,11 @@ site pour repérer ce qui reste à compléter.
 
 ## 8. Déploiement — GitHub Pages (EN LIGNE ✅) → bientôt soniklab.fr
 
-> **Migration prévue vers https://soniklab.fr** (OVH + Cloudflare Pages, comme
-> FitBudget). Tout est prêt côté code : voir **`DEPLOY.md`**. Le workflow
+> **Migration prévue vers https://soniklab.fr** (OVH + Cloudflare, compte
+> `soniklab.asso@gmail.com`). Déjà en ligne sur
+> https://soniklab.soniklab.workers.dev (Worker 100 % statique, `wrangler.jsonc`
+> — PAS `wrangler pages project create`, qui convertit le projet en appli
+> serveur). Marche à suivre : **`DEPLOY.md`**. Le workflow
 > bascule tout seul sur Cloudflare dès que le secret `CLOUDFLARE_API_TOKEN`
 > existe ; GitHub Pages sert alors une redirection vers la nouvelle adresse.
 > `SITE_URL` (variable du dépôt) pilote baseURL, preset Nitro et og:image.
@@ -433,7 +436,7 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
 - [x] Exécuter `supabase/vitrine.sql` (tables vitrine, bucket `media`, QG privé).
 - [x] Exécuter `supabase/rejoindre.sql` (table `join_requests` du formulaire).
 - [ ] **Passer sur soniklab.fr** (avec un K ! `soniclab.fr` est pris) : acheter
-      chez OVH puis suivre `DEPLOY.md` (Cloudflare Pages + DNS + secrets GitHub).
+      chez OVH puis suivre `DEPLOY.md` (DNS Cloudflare + routes wrangler + secrets GitHub).
 - [ ] Remplir la vitrine via l'admin : artistes, événements + photos, collabs,
       email / Instagram / HelloAsso (onglet « Textes & réseaux »).
 - [x] Formulaire « Nous rejoindre » + image de partage (og:image).
