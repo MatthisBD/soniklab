@@ -75,7 +75,12 @@ export const SETTINGS_DEFAULTS = {
   instagram_url: '',
   soundcloud_url: '',
   helloasso_url: '',
+  /** Profils du formulaire /rejoindre fermés pour l'instant (ids séparés par des virgules). */
+  join_closed_profiles: 'benevole',
 }
+
+/** Réglages pour lesquels une valeur vide est un vrai choix (et non « texte par défaut »). */
+const EMPTY_ALLOWED: SettingKey[] = ['join_closed_profiles']
 
 export type SettingKey = keyof typeof SETTINGS_DEFAULTS
 export type SiteSettings = Record<SettingKey, string>
@@ -129,7 +134,8 @@ export async function fetchSettings(supabase: SupabaseClient): Promise<SiteSetti
   if (error) throw error
   const out: SiteSettings = { ...SETTINGS_DEFAULTS }
   for (const row of data ?? []) {
-    if (row.key in out && row.value.trim()) out[row.key as SettingKey] = row.value
+    const key = row.key as SettingKey
+    if (key in out && (row.value.trim() || EMPTY_ALLOWED.includes(key))) out[key] = row.value
   }
   return out
 }
@@ -226,6 +232,14 @@ export function useShowcaseAdmin() {
     await reorder(table, list.map((x) => ({ id: x.id, position: x.position })))
   }
 
+  /** Enregistre un seul réglage. */
+  async function saveSetting(key: SettingKey, value: string) {
+    const { error } = await supabase
+      .from('site_settings')
+      .upsert({ key, value: value.trim(), updated_at: new Date().toISOString() })
+    if (error) throw error
+  }
+
   async function saveSettings(settings: SiteSettings) {
     const rows = Object.entries(settings).map(([key, value]) => ({
       key,
@@ -236,7 +250,7 @@ export function useShowcaseAdmin() {
     if (error) throw error
   }
 
-  return { insertRow, updateRow, deleteRow, reorder, move, saveSettings }
+  return { insertRow, updateRow, deleteRow, reorder, move, saveSetting, saveSettings }
 }
 
 /** Champs vides → null (pour ne pas stocker de chaînes vides en base). */

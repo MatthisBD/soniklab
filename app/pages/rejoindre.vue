@@ -1,22 +1,36 @@
 <script setup lang="ts">
-import { type JoinDraft, type JoinProfile, JOIN_PROFILES, submitJoinRequest } from '~/composables/useJoin'
+import {
+  type JoinDraft,
+  type JoinProfile,
+  JOIN_PROFILES,
+  parseClosedProfiles,
+  submitJoinRequest,
+} from '~/composables/useJoin'
+import { SETTINGS_DEFAULTS, fetchSettings } from '~/composables/useShowcase'
 
 // « Nous rejoindre » : artistes, bénévoles, technique, com…
 // Les demandes arrivent dans /admin → onglet « Candidatures ».
 useSeoMeta({
   title: 'SONIKLAB — Nous rejoindre',
-  description: 'DJ, bénévole, technique, com : rejoins le collectif techno SONIKLAB.',
+  description: 'DJ, technique, com : rejoins le collectif techno SONIKLAB.',
   ogTitle: 'Rejoindre SONIKLAB',
-  ogDescription: 'DJ, bénévole, technique, com : rejoins le collectif techno SONIKLAB.',
+  ogDescription: 'DJ, technique, com : rejoins le collectif techno SONIKLAB.',
 })
 
 const supabase = useSupabase()
 const route = useRoute()
 
+// Profils fermés pour l'instant (réglable dans /admin → Candidatures) :
+// affichés grisés et non sélectionnables.
+const settings = useShowcaseData('site-settings', fetchSettings, () => ({ ...SETTINGS_DEFAULTS }))
+const closed = computed(() => parseClosedProfiles(settings.value.join_closed_profiles))
+const isClosed = (id: string) => closed.value.includes(id)
+const firstOpen = () => (JOIN_PROFILES.find((p) => !isClosed(p.id))?.id ?? 'autre') as JoinProfile
+
 // Profil présélectionné via ?profil=artiste (liens depuis la vitrine).
-const initialProfile = JOIN_PROFILES.some((p) => p.id === route.query.profil)
-  ? (route.query.profil as JoinProfile)
-  : 'artiste'
+const asked = route.query.profil
+const initialProfile =
+  JOIN_PROFILES.some((p) => p.id === asked) && !isClosed(asked as string) ? (asked as JoinProfile) : firstOpen()
 
 const form = reactive<JoinDraft>({
   name: '',
@@ -30,6 +44,11 @@ const consent = ref(false)
 // Anti-spam : champ piège invisible + délai minimum avant envoi.
 const trap = ref('')
 const openedAt = Date.now()
+
+// Si un profil se ferme pendant qu'il est sélectionné (réglages rechargés), on bascule.
+watch(closed, () => {
+  if (isClosed(form.profile)) form.profile = firstOpen()
+})
 
 const state = ref<'idle' | 'sending' | 'sent'>('idle')
 const error = ref('')
@@ -76,8 +95,8 @@ useReveal()
           le <span class="glitch inline-block">van</span>
         </h1>
         <p class="mt-6 max-w-xl text-lg text-smoke">
-          Tu mixes, tu sais tirer un câble, tu fais des photos ou tu veux juste filer un coup de main
-          sur les soirées ? Présente-toi, on te recontacte.
+          Tu mixes, tu sais tirer un câble, tu fais des photos ou tu as une idée de collab ?
+          Présente-toi, on te recontacte.
         </p>
       </div>
     </section>
@@ -90,10 +109,19 @@ useReveal()
           v-for="(p, i) in JOIN_PROFILES"
           :key="p.id"
           class="flex items-baseline gap-3 border-b border-line pb-3"
+          :class="isClosed(p.id) && 'opacity-35'"
         >
           <span class="font-mono text-xs text-ash">{{ String(i + 1).padStart(2, '0') }}</span>
-          <div>
-            <p class="font-display text-2xl uppercase leading-none tracking-wide">{{ p.label }}</p>
+          <div class="min-w-0 flex-1">
+            <p class="flex flex-wrap items-baseline gap-x-3 font-display text-2xl uppercase leading-none tracking-wide">
+              <span :class="isClosed(p.id) && 'line-through decoration-2'">{{ p.label }}</span>
+              <span
+                v-if="isClosed(p.id)"
+                class="border border-ash/60 px-1.5 py-0.5 font-mono text-[0.6rem] font-normal tracking-widest text-ash"
+              >
+                complet pour l'instant
+              </span>
+            </p>
             <p class="mt-1 text-sm text-smoke">{{ p.hint }}</p>
           </div>
         </div>
@@ -125,10 +153,24 @@ useReveal()
             <label
               v-for="p in JOIN_PROFILES"
               :key="p.id"
-              class="cursor-pointer border px-3 py-2 font-mono text-xs uppercase tracking-widest transition-colors"
-              :class="form.profile === p.id ? 'border-bone bg-bone text-void' : 'border-line text-smoke hover:border-bone'"
+              class="border px-3 py-2 font-mono text-xs uppercase tracking-widest transition-colors"
+              :class="
+                isClosed(p.id)
+                  ? 'cursor-not-allowed border-line text-ash line-through opacity-35'
+                  : form.profile === p.id
+                    ? 'cursor-pointer border-bone bg-bone text-void'
+                    : 'cursor-pointer border-line text-smoke hover:border-bone'
+              "
+              :title="isClosed(p.id) ? 'On ne recherche pas ce profil pour le moment' : undefined"
             >
-              <input v-model="form.profile" type="radio" name="profile" :value="p.id" class="sr-only" />
+              <input
+                v-model="form.profile"
+                type="radio"
+                name="profile"
+                :value="p.id"
+                :disabled="isClosed(p.id)"
+                class="sr-only"
+              />
               {{ p.label }}
             </label>
           </div>

@@ -1,22 +1,26 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import tailwindcss from '@tailwindcss/vite'
 
-// Le site est servi sous /soniklab/ sur github.io.
-// En dev (npm run dev) on garde la racine "/".
-const baseURL = process.env.NODE_ENV === 'production' ? '/soniklab/' : '/'
+// Adresse publique du site, fournie par le workflow de déploiement :
+//   - Cloudflare Pages + domaine : SITE_URL=https://soniklab.fr/
+//   - GitHub Pages (historique)  : https://matthisbd.github.io/soniklab/ (défaut)
+// Les aperçus de partage (Insta, WhatsApp…) exigent des URL ABSOLUES.
+const siteUrl = process.env.SITE_URL || 'https://matthisbd.github.io/soniklab/'
+const onGithubPages = siteUrl.includes('github.io')
 
-// Adresse publique complète : les aperçus de partage (Insta, WhatsApp,
-// Messenger…) exigent des URL ABSOLUES pour l'image et la page.
-const siteUrl = 'https://matthisbd.github.io/soniklab/'
+// Chemin de base déduit de l'adresse : "/soniklab/" sur github.io, "/" sur
+// soniklab.fr. En dev (npm run dev) on garde toujours la racine "/".
+const baseURL = process.env.NODE_ENV === 'production' ? new URL(siteUrl).pathname : '/'
 const shareText = 'Artistes, soirées et sound system : la vitrine du collectif techno SONIKLAB.'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  // Génération 100 % statique pour GitHub Pages
-  // (crée .nojekyll + 404.html dans .output/public)
-  nitro: { preset: 'github_pages' },
+  // Génération 100 % statique dans .output/public.
+  // github_pages ajoute .nojekyll ; sur Cloudflare Pages, le preset statique
+  // suffit (404.html est servi automatiquement pour les URL inconnues).
+  nitro: { preset: onGithubPages ? 'github_pages' : 'static' },
 
   runtimeConfig: {
     public: {

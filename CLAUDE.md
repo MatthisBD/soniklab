@@ -198,7 +198,13 @@ site pour repérer ce qui reste à compléter.
 
 ---
 
-## 8. Déploiement — GitHub Pages (EN LIGNE ✅)
+## 8. Déploiement — GitHub Pages (EN LIGNE ✅) → bientôt soniklab.fr
+
+> **Migration prévue vers https://soniklab.fr** (OVH + Cloudflare Pages, comme
+> FitBudget). Tout est prêt côté code : voir **`DEPLOY.md`**. Le workflow
+> bascule tout seul sur Cloudflare dès que le secret `CLOUDFLARE_API_TOKEN`
+> existe ; GitHub Pages sert alors une redirection vers la nouvelle adresse.
+> `SITE_URL` (variable du dépôt) pilote baseURL, preset Nitro et og:image.
 
 - **URL publique : https://matthisbd.github.io/soniklab/**
 - Dépôt : https://github.com/MatthisBD/soniklab (public).
@@ -410,6 +416,13 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
   `nuxt.config.ts`), sinon Insta/WhatsApp n'affichent rien. Après un
   changement, forcer le rafraîchissement du cache via le « Sharing Debugger »
   de Facebook (vaut aussi pour Insta/WhatsApp).
+- **Profils fermés** (`/rejoindre`) : réglage `join_closed_profiles`
+  (site_settings, ids séparés par des virgules, défaut `benevole`) — grisés,
+  barrés, non sélectionnables. Basculé depuis admin → Candidatures. Valeur vide
+  autorisée (= tout ouvert, cf. `EMPTY_ALLOWED` dans useShowcase.ts).
+- **vue-tsc 3.3.x** signale à tort `Cannot find name 'g'` dans
+  `evenements.vue` (v-for imbriqué) : régression de l'outil. Vérifier les types
+  avec `npx -p vue-tsc@3.1 -p typescript@5 vue-tsc --noEmit -p .nuxt/tsconfig.app.json`.
 - **Formulaire « Nous rejoindre »** : anti-spam par champ piège + délai de 3 s
   (pas de captcha). Données perso visibles des seuls admins (RLS).
 - **CSS** : `overflow-x: clip` (et non `hidden`) sur `html`/`body` — `hidden`
@@ -418,7 +431,9 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
 
 ## 10. TODO / pistes
 - [x] Exécuter `supabase/vitrine.sql` (tables vitrine, bucket `media`, QG privé).
-- [ ] **Exécuter `supabase/rejoindre.sql`** (table `join_requests` du formulaire).
+- [x] Exécuter `supabase/rejoindre.sql` (table `join_requests` du formulaire).
+- [ ] **Passer sur soniklab.fr** (avec un K ! `soniclab.fr` est pris) : acheter
+      chez OVH puis suivre `DEPLOY.md` (Cloudflare Pages + DNS + secrets GitHub).
 - [ ] Remplir la vitrine via l'admin : artistes, événements + photos, collabs,
       email / Instagram / HelloAsso (onglet « Textes & réseaux »).
 - [x] Formulaire « Nous rejoindre » + image de partage (og:image).

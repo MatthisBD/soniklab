@@ -32,6 +32,14 @@ export type JoinDraft = Pick<JoinRequest, 'name' | 'email' | 'phone' | 'profile'
 
 export const profileLabel = (id: string) => JOIN_PROFILES.find((p) => p.id === id)?.label ?? id
 
+/** « benevole,technique » → ['benevole', 'technique'] (réglage join_closed_profiles). */
+export function parseClosedProfiles(value: string): string[] {
+  return value
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+}
+
 /** Envoi public. Pas de .select() : un visiteur n'a pas le droit de relire. */
 export async function submitJoinRequest(supabase: SupabaseClient, d: JoinDraft) {
   const { error } = await supabase.from('join_requests').insert({

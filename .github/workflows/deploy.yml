@@ -1,4 +1,4 @@
-name: Déploiement GitHub Pages
+name: Déploiement
 
 # Se lance à chaque push sur la branche principale
 on:
@@ -7,7 +7,7 @@ on:
   # Permet aussi de relancer le déploiement à la main depuis l'onglet Actions
   workflow_dispatch:
 
-# Droits nécessaires pour publier sur Pages
+# Droits nécessaires pour publier sur GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -18,12 +18,30 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# ------------------------------------------------------------------
+#  Deux modes, choisis automatiquement (cf. DEPLOY.md) :
+#  - secret CLOUDFLARE_API_TOKEN présent → le site part sur Cloudflare
+#    Pages (soniklab.fr) et GitHub Pages ne sert plus qu'une page de
+#    redirection vers la nouvelle adresse ;
+#  - sinon → le site est publié sur GitHub Pages, comme avant.
+# ------------------------------------------------------------------
+env:
+  CLOUDFLARE_READY: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+  # Adresse publique (variable du dépôt, onglet Settings → Variables).
+  SITE_URL: ${{ vars.SITE_URL || 'https://matthisbd.github.io/soniklab/' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Récupérer le code
         uses: actions/checkout@v4
+
+      - name: Vérifier la configuration
+        if: env.CLOUDFLARE_READY == 'true' && contains(env.SITE_URL, 'github.io')
+        run: |
+          echo "::error::Cloudflare est configuré mais la variable SITE_URL pointe encore sur github.io. Ajoute SITE_URL=https://soniklab.fr/ (cf. DEPLOY.md)."
+          exit 1
 
       - name: Installer Node
         uses: actions/setup-node@v4
@@ -41,6 +59,36 @@ jobs:
         env:
           NODE_ENV: production
 
+      # ---------- Cloudflare Pages (soniklab.fr) ----------
+      - name: Déployer sur Cloudflare Pages
+        if: env.CLOUDFLARE_READY == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .output/public --project-name soniklab --branch main --commit-dirty=true
+
+      # ---------- GitHub Pages ----------
+      - name: Préparer la redirection github.io → nouvelle adresse
+        if: env.CLOUDFLARE_READY == 'true'
+        # Garde le chemin : /soniklab/asso → https://soniklab.fr/asso
+        run: |
+          mkdir -p redirect
+          cat > redirect/index.html <<EOF
+          <!doctype html>
+          <html lang="fr"><head><meta charset="utf-8">
+          <title>SONIKLAB a déménagé</title>
+          <meta name="robots" content="noindex">
+          <meta http-equiv="refresh" content="0; url=${SITE_URL}">
+          <link rel="canonical" href="${SITE_URL}">
+          <script>location.replace('${SITE_URL}' + location.pathname.replace(/^\/soniklab\/?/, '') + location.search + location.hash)</script>
+          </head><body style="background:#0a0a0a;color:#f3f1ea;font-family:sans-serif">
+          <p>SONIKLAB a déménagé : <a style="color:#f3f1ea" href="${SITE_URL}">${SITE_URL}</a></p>
+          </body></html>
+          EOF
+          cp redirect/index.html redirect/404.html
+          touch redirect/.nojekyll
+
       - name: Configurer Pages
         uses: actions/configure-pages@v5
         # Active automatiquement GitHub Pages sur le dépôt si besoin
@@ -50,7 +98,7 @@ jobs:
       - name: Téléverser l'artefact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .output/public
+          path: ${{ env.CLOUDFLARE_READY == 'true' && 'redirect' || '.output/public' }}
 
   deploy:
     needs: build

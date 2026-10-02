@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { type JoinRequest, type JoinStatus, fetchJoinRequests, profileLabel } from '~/composables/useJoin'
+import {
+  type JoinRequest,
+  type JoinStatus,
+  JOIN_PROFILES,
+  fetchJoinRequests,
+  parseClosedProfiles,
+  profileLabel,
+} from '~/composables/useJoin'
+import { fetchSettings } from '~/composables/useShowcase'
 
 // Demandes reçues via le formulaire public /rejoindre.
 const emit = defineEmits<{ changed: [] }>()
@@ -12,10 +20,25 @@ const list = ref<JoinRequest[]>([])
 const loading = ref(true)
 const filter = ref<JoinStatus | 'all'>('new')
 
+// Profils fermés (grisés et non cliquables sur /rejoindre).
+const closed = ref<string[]>([])
+
 onMounted(async () => {
-  await run(async () => (list.value = await fetchJoinRequests(supabase)))
+  await run(async () => {
+    list.value = await fetchJoinRequests(supabase)
+    closed.value = parseClosedProfiles((await fetchSettings(supabase)).join_closed_profiles)
+  })
   loading.value = false
 })
+
+async function toggleProfile(id: string) {
+  const next = closed.value.includes(id) ? closed.value.filter((x) => x !== id) : [...closed.value, id]
+  const ok = await run(
+    () => db.saveSetting('join_closed_profiles', next.join(',')),
+    `« ${profileLabel(id)} » ${next.includes(id) ? 'fermé' : 'ouvert'} sur le formulaire.`,
+  )
+  if (ok) closed.value = next
+}
 
 const STATUSES: { id: JoinStatus; label: string }[] = [
   { id: 'new', label: 'Nouvelles' },
@@ -66,6 +89,30 @@ function urls(text: string | null) {
         Les demandes envoyées depuis
         <NuxtLink to="/rejoindre" class="underline-offset-2 hover:text-bone hover:underline">/rejoindre</NuxtLink>.
         Données personnelles : visibles par les admins uniquement — supprime ce qui n'est plus utile.
+      </p>
+    </div>
+
+    <!-- profils recherchés -->
+    <div class="adm-card space-y-2 p-4">
+      <p class="adm-label">Profils recherchés en ce moment</p>
+      <div class="flex flex-wrap gap-2">
+        <button
+          v-for="p in JOIN_PROFILES"
+          :key="p.id"
+          type="button"
+          class="border px-3 py-1.5 font-mono text-xs uppercase tracking-widest transition-colors"
+          :class="
+            closed.includes(p.id)
+              ? 'border-line text-ash line-through opacity-50 hover:opacity-100'
+              : 'border-bone bg-bone text-void hover:bg-transparent hover:text-bone'
+          "
+          @click="toggleProfile(p.id)"
+        >
+          {{ closed.includes(p.id) ? '✕' : '✓' }} {{ p.label }}
+        </button>
+      </div>
+      <p class="font-mono text-[0.65rem] text-ash">
+        Clique pour ouvrir / fermer. Un profil fermé apparaît grisé et n'est plus sélectionnable sur le formulaire.
       </p>
     </div>
 
