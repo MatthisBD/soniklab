@@ -7,8 +7,8 @@ import { gmailComposeUrl, mailtoUrl } from '~/composables/useCopy'
 // Le contenu du bouton vient du slot ; `class` s'applique au bouton.
 defineOptions({ inheritAttrs: false })
 const props = withDefaults(
-  defineProps<{ email: string; subject?: string; body?: string; placement?: 'bottom' | 'top' }>(),
-  { subject: '', body: '', placement: 'bottom' },
+  defineProps<{ email: string; subject?: string; body?: string; placement?: 'bottom' | 'top'; block?: boolean }>(),
+  { subject: '', body: '', placement: 'bottom', block: false },
 )
 
 const open = ref(false)
@@ -48,7 +48,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <span ref="root" class="relative inline-flex">
+  <span ref="root" class="relative" :class="block ? 'flex w-full' : 'inline-flex'">
     <button
       type="button"
       v-bind="$attrs"
@@ -63,6 +63,7 @@ onBeforeUnmount(() => {
       v-if="open"
       role="menu"
       class="absolute left-0 z-40 min-w-[15rem] border border-line bg-grave p-1 text-bone shadow-2xl"
+      :style="block ? { right: 0 } : undefined"
       :class="placement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'"
     >
       <p class="truncate px-3 pb-1 pt-2 font-mono text-[0.65rem] tracking-wider text-ash">{{ email }}</p>

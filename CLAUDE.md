@@ -373,6 +373,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `/asso` | ✅ | intro, histoire, « ce qu'on fait » (piliers), appel à l'action |
 | `/evenements` | ✅ | à venir + archives groupées par année, galerie au clic |
 | `/rejoindre` | ✅ | formulaire « Nous rejoindre » (artiste, bénévole, technique, com, autre) |
+| `/liens` | ✅ | « link in bio » (bio Instagram, QR codes) : prochaine date, don HelloAsso, réseaux, liens libres, contact, pages du site |
 | `/qg` · `/budget` · `/admin` | 🔒 | via `AuthGate` (admins uniquement), `noindex` |
 
 ### Données (cf. `supabase/vitrine.sql`)
@@ -383,7 +384,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `events` | titre, `starts_on` (date → « à venir » si ≥ aujourd'hui, sinon archive), horaires, lieu, ville, description, cover, ticket_url, visible |
 | `event_media` | event_id, kind (`image`\|`video`\|`embed`\|`link`), url, caption, position |
 | `join_requests` | demandes du formulaire `/rejoindre` : nom, email, tél., profil, liens, message, status (`new`\|`contacted`\|`archived`). **Envoi public, lecture admin** (SQL : `supabase/rejoindre.sql`) |
-| `site_settings` | clé → texte (accroche, textes de l'asso, booking, email, Instagram, SoundCloud, HelloAsso). Valeurs par défaut dans `SETTINGS_DEFAULTS` (useShowcase.ts) : vide = défaut |
+| `site_settings` | clé → texte (accroche, textes de l'asso, booking, email, Instagram, SoundCloud, HelloAsso = bouton « Faire un don », `extra_links` = liens libres « Libellé \| URL » par ligne pour /liens). Valeurs par défaut dans `SETTINGS_DEFAULTS` (useShowcase.ts) : vide = défaut |
 
 - **RLS** : lecture publique des lignes `visible` (les admins voient tout),
   écriture admin. `site_settings` et `ticker_words` en lecture publique.

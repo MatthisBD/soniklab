@@ -4,7 +4,7 @@ import {
   type SonikEvent,
   fetchArtists,
   fetchCollaborators,
-  fetchEvents,
+  socialLinks,
 } from '~/composables/useShowcase'
 
 // La vitrine publique de l'asso. Tout le contenu s'édite depuis /admin.
@@ -15,7 +15,7 @@ const base = useRuntimeConfig().app.baseURL
 const logoSrc = `${base}soniklab-logo.jpeg`
 
 const artists = useShowcaseData('artists', fetchArtists, () => [])
-const events = useShowcaseData('events', fetchEvents, () => [])
+const events = useEvents()
 const collabs = useShowcaseData('collaborators', fetchCollaborators, () => [])
 const settings = useSiteSettings()
 const tickerWords = useShowcaseData('ticker-words', fetchTickerWords, () => [])
@@ -39,6 +39,9 @@ const stats = computed(() =>
 )
 
 // (l'email a son propre bouton EmailAction : menu Gmail / appli mail / copier)
+// Liens rapides du haut de page : don HelloAsso, Instagram, SoundCloud (admin → Textes & réseaux)
+const quickLinks = computed(() => socialLinks(settings.value))
+
 const contactLinks = computed(() =>
   [
     settings.value.instagram_url && { label: 'Instagram', icon: 'instagram', url: settings.value.instagram_url },
@@ -99,6 +102,22 @@ useReveal()
               class="inline-flex items-center gap-2 border border-line px-5 py-3 font-mono text-sm uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone"
             >
               Nous booker
+            </a>
+          </div>
+
+          <!-- liens rapides : visibles dès l'arrivée, sans scroller -->
+          <div v-if="quickLinks.length" class="mt-5 flex flex-wrap items-center gap-2">
+            <a
+              v-for="l in quickLinks"
+              :key="l.url"
+              :href="l.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-widest transition-colors hover:border-bone hover:bg-bone hover:text-void"
+              :class="l.icon === 'heart' ? 'border-bone/60 text-bone' : 'border-line text-smoke'"
+            >
+              <AppIcon :name="l.icon" class="h-3.5 w-3.5" />
+              {{ l.label }}
             </a>
           </div>
 

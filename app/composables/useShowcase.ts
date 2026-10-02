@@ -75,6 +75,8 @@ export const SETTINGS_DEFAULTS = {
   instagram_url: '',
   soundcloud_url: '',
   helloasso_url: '',
+  /** Liens publics en plus (page /liens) : une ligne « Libellé | https://… ». */
+  extra_links: '',
   /** Profils du formulaire /rejoindre fermés pour l'instant (ids séparés par des virgules). */
   join_closed_profiles: 'benevole',
 }
@@ -103,6 +105,32 @@ export function pillars(text: string): { title: string; text: string }[] {
       const [title, ...rest] = l.split('|')
       return { title: title!.trim(), text: rest.join('|').trim() }
     })
+}
+
+export type PublicLink = { label: string; url: string; icon: string }
+
+/** Lignes « Libellé | https://… » → liens (les lignes sans URL valide sont ignorées). */
+export function parseLinks(text: string): PublicLink[] {
+  return text
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => {
+      const at = l.lastIndexOf('|')
+      const label = (at >= 0 ? l.slice(0, at) : l).trim()
+      const url = (at >= 0 ? l.slice(at + 1) : l).trim()
+      return { label: label || url, url, icon: 'arrow' }
+    })
+    .filter((l) => /^https?:\/\//.test(l.url))
+}
+
+/** Les liens « réseaux & soutien » renseignés dans l'admin (vides = ignorés). */
+export function socialLinks(s: SiteSettings): PublicLink[] {
+  return [
+    { label: 'Faire un don', url: s.helloasso_url, icon: 'heart' },
+    { label: 'Instagram', url: s.instagram_url, icon: 'instagram' },
+    { label: 'SoundCloud', url: s.soundcloud_url, icon: 'soundcloud' },
+  ].filter((l) => l.url.trim())
 }
 
 // ---------------- Lecture (publique) ----------------
@@ -193,6 +221,12 @@ export function useShowcaseData<T>(key: string, fetcher: (s: SupabaseClient) => 
 const settingsFallback = (): SiteSettings => ({ ...SETTINGS_DEFAULTS })
 export function useSiteSettings() {
   return useShowcaseData('site-settings', fetchSettings, settingsFallback)
+}
+
+/** Les événements (même clé + mêmes options partout : accueil, /evenements, /liens). */
+const eventsFallback = (): SonikEvent[] => []
+export function useEvents() {
+  return useShowcaseData('events', fetchEvents, eventsFallback)
 }
 
 /**

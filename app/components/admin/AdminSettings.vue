@@ -37,7 +37,7 @@ const CONTACTS: Field[] = [
   { key: 'contact_email', label: 'Email de contact / booking', placeholder: 'soniklab.asso@gmail.com' },
   { key: 'instagram_url', label: 'Instagram', placeholder: 'https://instagram.com/…' },
   { key: 'soundcloud_url', label: 'SoundCloud du collectif', placeholder: 'https://soundcloud.com/…' },
-  { key: 'helloasso_url', label: 'HelloAsso — adhésion / dons', placeholder: 'https://www.helloasso.com/associations/…' },
+  { key: 'helloasso_url', label: 'HelloAsso — bouton « Faire un don »', placeholder: 'https://www.helloasso.com/associations/…' },
 ]
 
 function resetField(key: SettingKey) {
@@ -56,13 +56,29 @@ function resetField(key: SettingKey) {
           <h2 class="font-display text-2xl uppercase tracking-wide">Contact & réseaux</h2>
           <button class="adm-btn" @click="run(() => db.saveSettings(settings), 'Contacts enregistrés.')">Enregistrer</button>
         </div>
-        <p class="font-mono text-xs text-ash">Affichés dans le bloc booking et le pied de page. Vide = masqué.</p>
+        <p class="font-mono text-xs text-ash">
+          Affichés en haut de l'accueil, dans le bloc booking, le pied de page et la page
+          <NuxtLink to="/liens" class="underline-offset-2 hover:text-bone hover:underline">/liens</NuxtLink>
+          (à mettre dans la bio Instagram). Vide = masqué.
+        </p>
         <div class="grid gap-3 sm:grid-cols-2">
           <label v-for="f in CONTACTS" :key="f.key" class="block">
             <span class="adm-label">{{ f.label }}</span>
             <input v-model="settings[f.key]" :placeholder="f.placeholder" class="adm-input font-mono text-xs" />
           </label>
         </div>
+        <label class="block">
+          <span class="adm-label">Autres liens publics (page /liens)</span>
+          <textarea
+            v-model="settings.extra_links"
+            rows="4"
+            placeholder="Notre playlist | https://soundcloud.com/…&#10;Billetterie open air | https://www.helloasso.com/…"
+            class="adm-input font-mono text-xs"
+          />
+          <span class="mt-1 block font-mono text-[0.65rem] text-ash">
+            Un lien par ligne, au format : Libellé | https://…
+          </span>
+        </label>
       </div>
 
       <!-- Textes -->

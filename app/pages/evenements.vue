@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type SonikEvent, fetchEvents } from '~/composables/useShowcase'
+import type { SonikEvent } from '~/composables/useShowcase'
 
 // Tous les événements : à venir + archives avec galeries photos / vidéos.
 useSeoMeta({
@@ -9,7 +9,7 @@ useSeoMeta({
   ogDescription: 'Prochaines dates et photos de nos soirées, open airs et fêtes de la musique.',
 })
 
-const events = useShowcaseData('events', fetchEvents, () => [])
+const events = useEvents()
 const today = useToday()
 
 const upcoming = computed(() =>

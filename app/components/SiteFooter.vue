@@ -7,7 +7,7 @@ const socials = computed(() =>
   [
     { label: 'Instagram', icon: 'instagram', url: settings.value.instagram_url },
     { label: 'SoundCloud', icon: 'soundcloud', url: settings.value.soundcloud_url },
-    { label: 'Soutenir', icon: 'heart', url: settings.value.helloasso_url },
+    { label: 'Faire un don', icon: 'heart', url: settings.value.helloasso_url },
   ].filter((s) => s.url),
 )
 </script>
@@ -45,6 +45,12 @@ const socials = computed(() =>
             <span class="sr-only">{{ s.label }}</span>
           </a>
         </div>
+        <NuxtLink
+          to="/liens"
+          class="mt-3 inline-block font-mono text-[0.65rem] uppercase tracking-widest text-ash transition-colors hover:text-bone"
+        >
+          Tous nos liens →
+        </NuxtLink>
       </div>
       <div class="h-10 w-40 self-end sm:self-center">
         <Equalizer :bars="40" />
