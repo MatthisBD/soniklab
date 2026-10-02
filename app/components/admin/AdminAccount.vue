@@ -21,9 +21,8 @@ async function changePassword() {
     <form class="flex flex-wrap items-end gap-3" @submit.prevent="changePassword">
       <label class="block grow">
         <span class="adm-label">Nouveau mot de passe</span>
-        <input
+        <PasswordInput
           v-model="newPassword"
-          type="password"
           autocomplete="new-password"
           placeholder="8 caractères minimum"
           class="adm-input font-mono"

@@ -104,6 +104,17 @@ defineProps<{ name: string }>()
       <path d="m9 5 7 7-7 7" />
     </g>
 
+    <!-- œil : afficher / masquer un mot de passe -->
+    <g v-else-if="name === 'eye'">
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z" />
+      <circle cx="12" cy="12" r="3" />
+    </g>
+    <g v-else-if="name === 'eye-off'">
+      <path d="M9.9 5.7A9.6 9.6 0 0 1 12 5.5C18 5.5 21.5 12 21.5 12a17 17 0 0 1-3 3.8M6.2 7.2C3.9 8.9 2.5 12 2.5 12S6 18.5 12 18.5c1.8 0 3.3-.6 4.6-1.4" />
+      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+      <path d="M3 3l18 18" />
+    </g>
+
     <!-- fallback : point -->
     <circle v-else cx="12" cy="12" r="3" />
   </svg>

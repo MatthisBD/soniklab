@@ -49,9 +49,8 @@ async function onLogin() {
       autocomplete="username"
       class="w-full border border-line bg-void px-3 py-2 font-mono text-sm outline-none focus:border-bone"
     />
-    <input
+    <PasswordInput
       v-model="password"
-      type="password"
       required
       placeholder="mot de passe"
       autocomplete="current-password"

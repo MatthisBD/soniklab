@@ -469,4 +469,6 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
 - [ ] Optionnel : désactiver le provider Google + l'inscription email dans le
       dashboard Supabase (verrouillage total ; déjà sûr grâce au RLS).
 - [ ] Optionnel : réglages fins d'animation (vitesse vinyle/bandeau, intensité du grain).
-- [ ] Optionnel : favicon aux couleurs SONIKLAB (actuellement favicon Nuxt par défaut).
+- [x] Favicon SONIKLAB : vinyle (`public/favicon.svg`, décliné en `favicon.ico`
+      16/32/48, `apple-touch-icon.png`, `icon-192/512.png` + `site.webmanifest`),
+      PNG générés via Chrome headless depuis le SVG.

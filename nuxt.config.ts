@@ -66,7 +66,11 @@ export default defineNuxtConfig({
         { name: 'twitter:image', content: `${siteUrl}og-image.png` },
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico` },
+        // Icônes : vinyle SONIKLAB (public/favicon.svg, décliné en PNG/ICO)
+        { rel: 'icon', type: 'image/svg+xml', href: `${baseURL}favicon.svg` },
+        { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico`, sizes: '48x48' },
+        { rel: 'apple-touch-icon', href: `${baseURL}apple-touch-icon.png` },
+        { rel: 'manifest', href: `${baseURL}site.webmanifest` },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {
