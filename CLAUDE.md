@@ -327,6 +327,16 @@ Trois états :
   ```
 - **Promouvoir un compte existant** : `update auth.users set raw_app_meta_data =
   raw_app_meta_data || '{"role":"admin"}' where email = '…';`
+- **Mot de passe oublié** (volontairement PAS de réinitialisation publique sur
+  le site) : SQL Editor du dashboard Supabase, avec un mot de passe
+  temporaire, puis le changer aussitôt dans `/admin` → « Mon compte » (le SQL
+  reste dans l'historique de l'éditeur) :
+  ```sql
+  update auth.users
+  set encrypted_password = extensions.crypt('Temporaire!', extensions.gen_salt('bf')),
+      updated_at = now()
+  where email = '…';
+  ```
 
 ---
 
