@@ -5,7 +5,8 @@ Site statique (Nuxt 4 en mode `generate`), même principe que FitBudget :
 Seul le nom de domaine est payant (~7–10 €/an pour un `.fr`).
 
 ## État
-- ✅ **GitHub Pages** (adresse actuelle) : https://matthisbd.github.io/soniklab/
+- ↪️ **GitHub Pages** (ancienne adresse) : https://matthisbd.github.io/soniklab/
+  ne sert plus qu'une **redirection** vers soniklab.fr (chemins conservés).
 - ✅ **https://soniklab.fr** + `www.soniklab.fr` — Cloudflare (compte
   `soniklab.asso@gmail.com`, Worker statique `soniklab`), branché le 2 oct. 2026.
   Domaine acheté chez OVH, serveurs DNS délégués à Cloudflare
@@ -41,7 +42,7 @@ npx wrangler deploy
 ⚠️ Arrêter `npm run dev` avant : sous Windows il verrouille `.output/` et la
 génération échoue (`EBUSY`).
 
-## Mise en place restante
+## Mise en place (✅ terminée le 2 oct. 2026 — gardé pour mémoire)
 
 ### 1. Acheter le domaine — OVH
 Commander `soniklab.fr`. Si possible, mettre **l'association comme titulaire**
@@ -69,6 +70,13 @@ d'hébergement OVH.
    gh variable set SITE_URL --body "https://soniklab.fr/"
    ```
 3. `git push` (ou relancer le workflow dans l'onglet Actions).
+
+## Pièges rencontrés
+- L'action `cloudflare/wrangler-action` installe wrangler **v3** par défaut :
+  « Missing entry-point » sur un site statique → `wranglerVersion: "4"`.
+- Juste après la bascule, certaines box/opérateurs gardent l'ancienne IP OVH
+  en cache (~1 h) : `ERR_CONNECTION_RESET` en HTTPS alors que le site marche
+  ailleurs. Tester en 4G ou `curl --resolve soniklab.fr:443:104.21.1.235 …`.
 
 ## Après la bascule
 - Supabase : rien à changer (connexion email/mot de passe, pas d'URL de

@@ -198,13 +198,17 @@ site pour repérer ce qui reste à compléter.
 
 ---
 
-## 8. Déploiement — GitHub Pages (EN LIGNE ✅) → bientôt soniklab.fr
+## 8. Déploiement — https://soniklab.fr (EN LIGNE ✅ depuis le 2 oct. 2026)
 
-> **Migration prévue vers https://soniklab.fr** (OVH + Cloudflare, compte
-> `soniklab.asso@gmail.com`). Déjà en ligne sur
-> https://soniklab.soniklab.workers.dev (Worker 100 % statique, `wrangler.jsonc`
-> — PAS `wrangler pages project create`, qui convertit le projet en appli
-> serveur). Marche à suivre : **`DEPLOY.md`**. Le workflow
+> **Le site vit sur https://soniklab.fr** (+ `www`) : domaine OVH (titulaire :
+> Matthis, à passer à l'asso plus tard), DNS + hébergement Cloudflare (compte
+> `soniklab.asso@gmail.com`), Worker 100 % statique décrit par `wrangler.jsonc`
+> (PAS `wrangler pages project create`, qui convertit le projet en appli
+> serveur). Chaque `git push` sur `main` → GitHub Actions → `wrangler deploy`
+> (secrets `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`, variable
+> `SITE_URL`). L'ancienne adresse github.io ne sert plus qu'une **redirection**
+> vers soniklab.fr. Détails : **`DEPLOY.md`**. La section ci-dessous décrit
+> l'ancien fonctionnement GitHub Pages (toujours utilisé pour la redirection). Le workflow
 > bascule tout seul sur Cloudflare dès que le secret `CLOUDFLARE_API_TOKEN`
 > existe ; GitHub Pages sert alors une redirection vers la nouvelle adresse.
 > `SITE_URL` (variable du dépôt) pilote baseURL, preset Nitro et og:image.
@@ -435,8 +439,9 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
 ## 10. TODO / pistes
 - [x] Exécuter `supabase/vitrine.sql` (tables vitrine, bucket `media`, QG privé).
 - [x] Exécuter `supabase/rejoindre.sql` (table `join_requests` du formulaire).
-- [ ] **Passer sur soniklab.fr** (avec un K ! `soniclab.fr` est pris) : acheter
-      chez OVH puis suivre `DEPLOY.md` (DNS Cloudflare + routes wrangler + secrets GitHub).
+- [x] Passer sur **soniklab.fr** (OVH + Cloudflare, déploiement auto) — 2 oct. 2026.
+- [ ] Optionnel : passer le titulaire du domaine OVH au nom de l'asso
+      (onglet « Contact management ») le jour où l'asso a son compte OVH.
 - [ ] Remplir la vitrine via l'admin : artistes, événements + photos, collabs,
       email / Instagram / HelloAsso (onglet « Textes & réseaux »).
 - [x] Formulaire « Nous rejoindre » + image de partage (og:image).
