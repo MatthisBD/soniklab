@@ -6,9 +6,11 @@ Seul le nom de domaine est payant (~7–10 €/an pour un `.fr`).
 
 ## État
 - ✅ **GitHub Pages** (adresse actuelle) : https://matthisbd.github.io/soniklab/
-- ✅ **Cloudflare** (compte `soniklab.asso@gmail.com`, Worker statique `soniklab`) :
-  https://soniklab.soniklab.workers.dev — déployé à la main le 2 oct. 2026
-- ⏳ Domaine **soniklab.fr** à acheter chez OVH, puis à brancher (étape 2).
+- ✅ **https://soniklab.fr** + `www.soniklab.fr` — Cloudflare (compte
+  `soniklab.asso@gmail.com`, Worker statique `soniklab`), branché le 2 oct. 2026.
+  Domaine acheté chez OVH, serveurs DNS délégués à Cloudflare
+  (`becky` / `melnicoff.ns.cloudflare.com`), DNSSEC désactivé côté OVH.
+  L'adresse `*.workers.dev` est désactivée (une seule adresse officielle).
 - ⚠️ **soniklab.fr avec un K** — `soniclab.fr` (avec un C) est déjà pris.
 
 > Note : contrairement à FitBudget (Cloudflare « Pages »), on utilise un

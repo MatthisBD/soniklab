@@ -8,10 +8,11 @@
     "directory": "./.output/public",
     // URL inconnue → 404.html (coquille Nuxt : la page 404 s'affiche côté client)
     "not_found_handling": "404-page"
-  }
-  // À ajouter quand soniklab.fr sera actif sur le compte Cloudflare :
-  // "routes": [
-  //   { "pattern": "soniklab.fr", "custom_domain": true },
-  //   { "pattern": "www.soniklab.fr", "custom_domain": true }
-  // ]
+  },
+  // Domaines perso : Cloudflare crée les DNS et le certificat HTTPS tout seul
+  // (la zone soniklab.fr doit être active sur le même compte).
+  "routes": [
+    { "pattern": "soniklab.fr", "custom_domain": true },
+    { "pattern": "www.soniklab.fr", "custom_domain": true }
+  ]
 }
