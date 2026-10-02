@@ -66,6 +66,9 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # v4 obligatoire : la v3 installée par défaut ne gère pas les
+          # sites 100 % statiques (« Missing entry-point »).
+          wranglerVersion: "4"
           # lit wrangler.jsonc : envoie .output/public (+ domaines personnalisés)
           command: deploy
 
