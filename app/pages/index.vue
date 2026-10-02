@@ -38,17 +38,12 @@ const stats = computed(() =>
     .map(([n, label]) => `${n} ${label}${(n as number) > 1 ? 's' : ''}`),
 )
 
+// (l'email a son propre bouton EmailAction : menu Gmail / appli mail / copier)
 const contactLinks = computed(() =>
   [
-    settings.value.contact_email && {
-      label: 'Écrire un mail',
-      icon: 'mail',
-      url: `mailto:${settings.value.contact_email}`,
-      primary: true,
-    },
     settings.value.instagram_url && { label: 'Instagram', icon: 'instagram', url: settings.value.instagram_url },
     settings.value.soundcloud_url && { label: 'SoundCloud', icon: 'soundcloud', url: settings.value.soundcloud_url },
-  ].filter(Boolean) as { label: string; icon: string; url: string; primary?: boolean }[],
+  ].filter(Boolean) as { label: string; icon: string; url: string }[],
 )
 
 const opened = ref<SonikEvent | null>(null)
@@ -275,14 +270,22 @@ useReveal()
         <p class="mt-6 max-w-xl text-lg text-void/75">{{ settings.booking_text }}</p>
 
         <div class="mt-8 flex flex-wrap gap-3">
+          <EmailAction
+            v-if="settings.contact_email"
+            :email="settings.contact_email"
+            subject="Contact / booking SONIKLAB"
+            class="inline-flex items-center gap-2 bg-void px-5 py-3 font-mono text-sm uppercase tracking-widest text-bone transition-transform hover:-translate-y-0.5"
+          >
+            <AppIcon name="mail" class="h-4 w-4" />
+            Écrire un mail
+          </EmailAction>
           <a
             v-for="l in contactLinks"
             :key="l.url"
             :href="l.url"
-            :target="l.url.startsWith('mailto:') ? undefined : '_blank'"
+            target="_blank"
             rel="noopener noreferrer"
-            class="group inline-flex items-center gap-2 px-5 py-3 font-mono text-sm uppercase tracking-widest transition-transform hover:-translate-y-0.5"
-            :class="l.primary ? 'bg-void text-bone' : 'border border-void/30 hover:border-void'"
+            class="group inline-flex items-center gap-2 border border-void/30 px-5 py-3 font-mono text-sm uppercase tracking-widest transition-transform hover:-translate-y-0.5 hover:border-void"
           >
             <AppIcon :name="l.icon" class="h-4 w-4" />
             {{ l.label }}
@@ -305,6 +308,10 @@ useReveal()
             <AppIcon name="arrow" class="h-4 w-4" />
           </NuxtLink>
         </div>
+        <p v-if="settings.contact_email" class="mt-5 font-mono text-xs tracking-wider text-void/60">
+          ou directement :
+          <CopyText :text="settings.contact_email" class="text-void hover:text-void/70" />
+        </p>
       </div>
     </section>
 

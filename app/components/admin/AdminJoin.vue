@@ -70,10 +70,9 @@ function when(iso: string) {
   return new Date(iso).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' })
 }
 
-function replyLink(r: JoinRequest) {
-  const subject = encodeURIComponent('SONIKLAB — ta demande pour nous rejoindre')
-  return `mailto:${r.email}?subject=${subject}&body=${encodeURIComponent(`Salut ${r.name},\n\n`)}`
-}
+// Réponse pré-remplie (objet + « Salut … ») pour le menu « Répondre par mail ».
+const REPLY_SUBJECT = 'SONIKLAB — ta demande pour nous rejoindre'
+const replyBody = (r: JoinRequest) => `Salut ${r.name},\n\n`
 
 /** Les liens collés par la personne, rendus cliquables s'ils ressemblent à des URL. */
 function urls(text: string | null) {
@@ -144,8 +143,9 @@ function urls(text: string | null) {
       </div>
 
       <p class="flex flex-wrap gap-x-4 gap-y-1 font-mono text-xs text-smoke">
-        <a :href="`mailto:${r.email}`" class="hover:text-bone">{{ r.email }}</a>
-        <a v-if="r.phone" :href="`tel:${r.phone}`" class="hover:text-bone">{{ r.phone }}</a>
+        <!-- clic = copie dans le presse-papier -->
+        <CopyText :text="r.email" class="hover:text-bone" />
+        <CopyText v-if="r.phone" :text="r.phone" class="hover:text-bone" />
       </p>
 
       <p class="whitespace-pre-line text-sm text-bone">{{ r.message }}</p>
@@ -165,7 +165,9 @@ function urls(text: string | null) {
       </p>
 
       <div class="flex flex-wrap gap-2 border-t border-line pt-3">
-        <a :href="replyLink(r)" class="adm-btn">Répondre par mail</a>
+        <EmailAction :email="r.email" :subject="REPLY_SUBJECT" :body="replyBody(r)" class="adm-btn">
+          Répondre par mail
+        </EmailAction>
         <button v-if="r.status !== 'contacted'" class="adm-btn" @click="setStatus(r, 'contacted')">✓ Recontactée</button>
         <button v-if="r.status !== 'archived'" class="adm-btn" @click="setStatus(r, 'archived')">Archiver</button>
         <button v-if="r.status !== 'new'" class="adm-btn" @click="setStatus(r, 'new')">Remettre en nouvelle</button>

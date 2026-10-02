@@ -7,7 +7,6 @@ const socials = computed(() =>
   [
     { label: 'Instagram', icon: 'instagram', url: settings.value.instagram_url },
     { label: 'SoundCloud', icon: 'soundcloud', url: settings.value.soundcloud_url },
-    { label: 'Email', icon: 'mail', url: settings.value.contact_email && `mailto:${settings.value.contact_email}` },
     { label: 'Soutenir', icon: 'heart', url: settings.value.helloasso_url },
   ].filter((s) => s.url),
 )
@@ -21,7 +20,18 @@ const socials = computed(() =>
         <p class="mt-1 max-w-xs text-sm text-ash">
           Association & collectif techno — fête de la musique, guinguettes, bars & open airs.
         </p>
-        <div v-if="socials.length" class="mt-4 flex gap-2">
+        <div v-if="socials.length || settings.contact_email" class="mt-4 flex gap-2">
+          <!-- mail : menu Gmail / appli mail / copier (un mailto: seul ne marche pas sans appli mail) -->
+          <EmailAction
+            v-if="settings.contact_email"
+            :email="settings.contact_email"
+            placement="top"
+            title="Email"
+            class="border border-line p-2 text-smoke transition-colors hover:border-bone hover:bg-bone hover:text-void"
+          >
+            <AppIcon name="mail" class="h-4 w-4" />
+            <span class="sr-only">Email</span>
+          </EmailAction>
           <a
             v-for="s in socials"
             :key="s.label"
