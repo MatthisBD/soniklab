@@ -138,6 +138,7 @@ soniklab/
 │  │  ├─ useAdmin.ts          # écritures QG (groupes, liens, bandeau)
 │  │  ├─ useFlash.ts          # message de confirmation partagé des outils internes
 │  │  ├─ useReveal.ts         # apparition au scroll (.reveal), auto pour le contenu async
+│  │  ├─ useVisitCounter.ts   # compteur de visiteurs (filtre anti-robots, cf. §8 quater)
 │  │  └─ useBudget.ts         # budget caissons : lecture + calculs + CRUD
 │  └─ components/
 │     ├─ SiteHeader.vue / SiteFooter.vue  # barre + pied des pages publiques
@@ -147,12 +148,14 @@ soniklab/
 │     ├─ AuthGate.vue         # 🔒 portail connexion → droits → contenu (QG, budget, admin)
 │     ├─ ToolHeader.vue       # en-tête des pages internes (QG · Budget · Admin)
 │     ├─ admin/               # un composant par onglet de l'admin + AdminMediaField
+│     ├─ VisitCounter.vue     # compteur rétro à rouleaux du pied de page
 │     ├─ AppIcon.vue          # icônes SVG inline
 │     ├─ Vinyl.vue · Equalizer.vue · Marquee.vue · LinkCard.vue
 ├─ public/soniklab-logo.jpeg  # le logo
 ├─ supabase/budget-caissons.sql # SQL des tables budget (à coller dans le dashboard)
 ├─ supabase/vitrine.sql       # SQL vitrine + bucket médias + QG privé (✅ exécuté)
 ├─ supabase/rejoindre.sql     # SQL du formulaire « Nous rejoindre » (à coller, idempotent)
+├─ supabase/visites.sql       # SQL du compteur de visiteurs (✅ exécuté)
 ├─ public/og-image.png        # image d'aperçu de partage 1200×630 (Insta, WhatsApp…)
 ├─ .github/workflows/deploy.yml # déploiement auto sur GitHub Pages
 ├─ nuxt.config.ts             # meta, polices, Tailwind, baseURL, config Supabase
@@ -384,6 +387,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `events` | titre, `starts_on` (date → « à venir » si ≥ aujourd'hui, sinon archive), horaires, lieu, ville, description, cover, ticket_url, visible |
 | `event_media` | event_id, kind (`image`\|`video`\|`embed`\|`link`), url, caption, position |
 | `join_requests` | demandes du formulaire `/rejoindre` : nom, email, tél., profil, liens, message, status (`new`\|`contacted`\|`archived`). **Envoi public, lecture admin** (SQL : `supabase/rejoindre.sql`) |
+| `site_visits` | compteur de visiteurs : `day`, `visitors` (personnes distinctes ce jour), `new_visitors` (premières venues). **Aucune donnée perso.** Le public passe par les RPC `visit_total()` / `register_visit(first_time)` ; détail lisible des admins seuls (SQL : `supabase/visites.sql`) |
 | `site_settings` | clé → texte (accroche, textes de l'asso, booking, email, Instagram, SoundCloud, HelloAsso = bouton « Faire un don », `extra_links` = liens libres « Libellé \| URL » par ligne pour /liens). Valeurs par défaut dans `SETTINGS_DEFAULTS` (useShowcase.ts) : vide = défaut |
 
 - **RLS** : lecture publique des lignes `visible` (les admins voient tout),
@@ -409,6 +413,17 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
   par défaut). Indicateur « non enregistré » via `useDirty()`.
 - **Fiche événement** (`EventGallery`) : l'affiche (`cover_url`) est le 1er
   élément de la galerie, images au format d'origine, clic = plein écran.
+
+### Compteur de visiteurs (pied de page)
+`VisitCounter.vue` (rouleaux de chiffres qui défilent quand le pied de page
+apparaît) + `useVisitCounter.ts`, lancé depuis `app.vue` sur les pages
+publiques seulement. Total = personnes distinctes depuis la mise en place
+(oct. 2026, pas d'historique avant). Tri humains / robots côté navigateur :
+comptage en JS, user-agents de robots + `navigator.webdriver` écartés, ~5 s
+d'onglet visible ou vraie interaction exigées, une fois par navigateur
+(repère `soniklab:visit` en localStorage), membres connectés exclus pour
+toujours (repère `member`), jamais compté en local (dev / preview). Tant que
+la RPC échoue (SQL pas exécuté), le compteur reste invisible.
 
 ## 9. Décisions & historique (pour le futur)
 - **Style** : monochrome gravé dérivé du logo. Validé par le client (« incroyable »).
@@ -450,6 +465,8 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
 ## 10. TODO / pistes
 - [x] Exécuter `supabase/vitrine.sql` (tables vitrine, bucket `media`, QG privé).
 - [x] Exécuter `supabase/rejoindre.sql` (table `join_requests` du formulaire).
+- [x] Exécuter `supabase/visites.sql` (compteur de visiteurs du pied de page).
+- [ ] Piste : courbe des visites par jour dans l'admin (`site_visits`).
 - [x] Passer sur **soniklab.fr** (OVH + Cloudflare, déploiement auto) — 2 oct. 2026.
 - [ ] Optionnel : passer le titulaire du domaine OVH au nom de l'asso
       (onglet « Contact management ») le jour où l'asso a son compte OVH.

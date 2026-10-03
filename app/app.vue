@@ -7,6 +7,19 @@ const isTool = computed(
   () => route.path.startsWith('/admin') || route.path.startsWith('/budget'),
 )
 const surfaceClass = computed(() => (isTool.value ? 'scanlines' : 'grain scanlines'))
+
+// Compteur de visiteurs (pied de page) : on ne compte que sur les pages
+// publiques, pas sur les outils des membres (QG, budget, admin).
+const visits = useVisitCounter()
+onMounted(() => {
+  watch(
+    () => route.path,
+    (path) => {
+      if (!/^\/(qg|budget|admin)/.test(path)) visits.track()
+    },
+    { immediate: true },
+  )
+})
 </script>
 
 <template>

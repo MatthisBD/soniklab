@@ -55,12 +55,15 @@ const socials = computed(() =>
       <div class="h-10 w-40 self-end sm:self-center">
         <Equalizer :bars="40" />
       </div>
-      <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">
-        © {{ year }} · fait avec ❤ & 909<template v-if="auth.isAdmin.value"> ·
-        <NuxtLink to="/qg" class="transition-colors hover:text-bone">QG</NuxtLink> ·
-        <NuxtLink to="/budget" class="transition-colors hover:text-bone">budget</NuxtLink> ·
-        <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink></template>
-      </p>
+      <div class="flex flex-col gap-4 sm:items-end">
+        <VisitCounter />
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">
+          © {{ year }} · fait avec ❤ & 909<template v-if="auth.isAdmin.value"> ·
+          <NuxtLink to="/qg" class="transition-colors hover:text-bone">QG</NuxtLink> ·
+          <NuxtLink to="/budget" class="transition-colors hover:text-bone">budget</NuxtLink> ·
+          <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink></template>
+        </p>
+      </div>
     </div>
   </footer>
 </template>
