@@ -451,12 +451,12 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
   de Facebook (vaut aussi pour Insta/WhatsApp).
 - **Types de demande fermés** (`/collaborer`) : réglage `join_closed_profiles`
   (site_settings, ids séparés par des virgules, défaut `benevole`) — grisés,
-  barrés, non sélectionnables. Basculé depuis admin → Candidatures. Valeur vide
+  barrés, non sélectionnables. Basculé depuis admin → Demandes. Valeur vide
   autorisée (= tout ouvert, cf. `EMPTY_ALLOWED` dans useShowcase.ts).
 - **vue-tsc 3.3.x** signale à tort `Cannot find name 'g'` dans
   `evenements.vue` (v-for imbriqué) : régression de l'outil. Vérifier les types
   avec `npx -p vue-tsc@3.1 -p typescript@5 vue-tsc --noEmit -p .nuxt/tsconfig.app.json`.
-- **Formulaire « Nous rejoindre »** : anti-spam par champ piège + délai de 3 s
+- **Formulaire « Booking & collab »** (`/collaborer`) : anti-spam par champ piège + délai de 3 s
   (pas de captcha). Données perso visibles des seuls admins (RLS).
 - **CSS** : `overflow-x: clip` (et non `hidden`) sur `html`/`body` — `hidden`
   sur les deux faisait de `body` un conteneur de défilement et cassait le
