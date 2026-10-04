@@ -118,9 +118,9 @@ const btn =
         </EmailAction>
 
         <!-- pages du site -->
-        <NuxtLink to="/rejoindre" :class="btn">
+        <NuxtLink to="/collaborer" :class="btn">
           <AppIcon name="broadcast" class="h-5 w-5 shrink-0" />
-          <span class="flex-1">Nous rejoindre</span>
+          <span class="flex-1">Booker un DJ / collaborer</span>
           <AppIcon name="arrow" class="h-4 w-4 opacity-50 transition-transform group-hover:translate-x-1" />
         </NuxtLink>
         <NuxtLink to="/evenements" :class="btn">

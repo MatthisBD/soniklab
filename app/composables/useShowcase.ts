@@ -77,7 +77,7 @@ export const SETTINGS_DEFAULTS = {
   helloasso_url: '',
   /** Liens publics en plus (page /liens) : une ligne « Libellé | https://… ». */
   extra_links: '',
-  /** Profils du formulaire /rejoindre fermés pour l'instant (ids séparés par des virgules). */
+  /** Types de demande du formulaire /collaborer fermés pour l'instant (ids séparés par des virgules). */
   join_closed_profiles: 'benevole',
 }
 

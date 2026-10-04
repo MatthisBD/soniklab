@@ -170,13 +170,13 @@ useReveal()
       </p>
 
       <NuxtLink
-        to="/rejoindre?profil=artiste"
+        to="/collaborer?profil=booking"
         class="reveal group mt-8 flex items-center justify-between gap-4 border border-line px-5 py-4 transition-colors hover:bg-bone hover:text-void"
       >
         <span>
-          <span class="block font-display text-2xl uppercase tracking-wide">Tu mixes&nbsp;?</span>
+          <span class="block font-display text-2xl uppercase tracking-wide">Un DJ pour ta soirée&nbsp;?</span>
           <span class="font-mono text-xs uppercase tracking-widest text-ash group-hover:text-void/60">
-            Envoie-nous tes sets, on écoute tout
+            Bar, soirée privée, festival : on vient avec le son
           </span>
         </span>
         <AppIcon name="arrow" class="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
@@ -320,10 +320,10 @@ useReveal()
             Soutenir l'asso
           </a>
           <NuxtLink
-            to="/rejoindre"
+            to="/collaborer"
             class="inline-flex items-center gap-2 border border-void/30 px-5 py-3 font-mono text-sm uppercase tracking-widest transition-transform hover:-translate-y-0.5 hover:border-void"
           >
-            Rejoindre le collectif
+            Proposer une collab
             <AppIcon name="arrow" class="h-4 w-4" />
           </NuxtLink>
         </div>

@@ -14,7 +14,7 @@ const nav = [
   { to: '/evenements', label: 'Événements' },
   { to: '/#collabs', label: 'Collabs' },
   { to: '/asso', label: "L'asso" },
-  { to: '/rejoindre', label: 'Rejoindre' },
+  { to: '/collaborer', label: 'Booking' },
 ]
 </script>
 

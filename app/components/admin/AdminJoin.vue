@@ -9,7 +9,7 @@ import {
 } from '~/composables/useJoin'
 import { fetchSettings } from '~/composables/useShowcase'
 
-// Demandes reçues via le formulaire public /rejoindre.
+// Demandes (booking, collabs…) reçues via le formulaire public /collaborer.
 const emit = defineEmits<{ changed: [] }>()
 
 const supabase = useSupabase()
@@ -20,7 +20,7 @@ const list = ref<JoinRequest[]>([])
 const loading = ref(true)
 const filter = ref<JoinStatus | 'all'>('new')
 
-// Profils fermés (grisés et non cliquables sur /rejoindre).
+// Types de demande fermés (grisés et non cliquables sur /collaborer).
 const closed = ref<string[]>([])
 
 onMounted(async () => {
@@ -71,7 +71,7 @@ function when(iso: string) {
 }
 
 // Réponse pré-remplie (objet + « Salut … ») pour le menu « Répondre par mail ».
-const REPLY_SUBJECT = 'SONIKLAB — ta demande pour nous rejoindre'
+const REPLY_SUBJECT = 'SONIKLAB — ta demande de booking / collab'
 const replyBody = (r: JoinRequest) => `Salut ${r.name},\n\n`
 
 /** Les liens collés par la personne, rendus cliquables s'ils ressemblent à des URL. */
@@ -83,17 +83,17 @@ function urls(text: string | null) {
 <template>
   <section class="space-y-4">
     <div>
-      <h2 class="font-display text-2xl uppercase tracking-wide">Candidatures</h2>
+      <h2 class="font-display text-2xl uppercase tracking-wide">Demandes de booking & collab</h2>
       <p class="font-mono text-xs text-ash">
         Les demandes envoyées depuis
-        <NuxtLink to="/rejoindre" class="underline-offset-2 hover:text-bone hover:underline">/rejoindre</NuxtLink>.
+        <NuxtLink to="/collaborer" class="underline-offset-2 hover:text-bone hover:underline">/collaborer</NuxtLink>.
         Données personnelles : visibles par les admins uniquement — supprime ce qui n'est plus utile.
       </p>
     </div>
 
     <!-- profils recherchés -->
     <div class="adm-card space-y-2 p-4">
-      <p class="adm-label">Profils recherchés en ce moment</p>
+      <p class="adm-label">Types de demande ouverts en ce moment</p>
       <div class="flex flex-wrap gap-2">
         <button
           v-for="p in JOIN_PROFILES"
@@ -111,7 +111,7 @@ function urls(text: string | null) {
         </button>
       </div>
       <p class="font-mono text-[0.65rem] text-ash">
-        Clique pour ouvrir / fermer. Un profil fermé apparaît grisé et n'est plus sélectionnable sur le formulaire.
+        Clique pour ouvrir / fermer. Un type fermé apparaît grisé et n'est plus sélectionnable sur le formulaire.
       </p>
     </div>
 

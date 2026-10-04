@@ -9,7 +9,7 @@ const supabase = useSupabase()
 const auth = useAuth()
 const { message } = useFlash()
 
-// Badge « nouvelles candidatures » sur l'onglet correspondant.
+// Badge « nouvelles demandes » (booking & collab) sur l'onglet correspondant.
 const newRequests = ref(0)
 async function refreshCount() {
   newRequests.value = await countNewJoinRequests(supabase)
@@ -20,7 +20,7 @@ const TABS = [
   { id: 'artistes', label: 'Artistes' },
   { id: 'evenements', label: 'Événements' },
   { id: 'collabs', label: 'Collabs' },
-  { id: 'candidatures', label: 'Candidatures' },
+  { id: 'candidatures', label: 'Demandes' },
   { id: 'textes', label: 'Textes & réseaux' },
   { id: 'liens', label: 'Liens du QG' },
   { id: 'compte', label: 'Mon compte' },

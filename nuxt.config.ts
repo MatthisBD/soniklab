@@ -22,6 +22,11 @@ export default defineNuxtConfig({
   // suffit (404.html est servi automatiquement pour les URL inconnues).
   nitro: { preset: onGithubPages ? 'github_pages' : 'static' },
 
+  // Ancienne adresse du formulaire (on ne « recrute » pas : c'est du booking / collab)
+  routeRules: {
+    '/rejoindre': { redirect: { to: '/collaborer', statusCode: 301 } },
+  },
+
   runtimeConfig: {
     public: {
       // Connexion Supabase. La clé "publishable" est PUBLIQUE par conception :

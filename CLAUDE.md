@@ -375,7 +375,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `/` | ✅ | hero, artistes, prochaines dates, archives (6 dernières), collabs, teaser asso, booking |
 | `/asso` | ✅ | intro, histoire, « ce qu'on fait » (piliers), appel à l'action |
 | `/evenements` | ✅ | à venir + archives groupées par année, galerie au clic |
-| `/rejoindre` | ✅ | formulaire « Nous rejoindre » (artiste, bénévole, technique, com, autre) |
+| `/collaborer` | ✅ | formulaire « Booking & collab » (menu : « Booking ») : booker un DJ, jouer avec nous, son & technique, visuels & médias, autre projet, bénévole (fermé). **On ne recrute pas** : pas de « rejoindre ». `/rejoindre` redirige ici (routeRules) |
 | `/liens` | ✅ | « link in bio » (bio Instagram, QR codes) : prochaine date, don HelloAsso, réseaux, liens libres, contact, pages du site |
 | `/qg` · `/budget` · `/admin` | 🔒 | via `AuthGate` (admins uniquement), `noindex` |
 
@@ -386,7 +386,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `collaborators` | nom, type, ville, description, logo, url, visible, position |
 | `events` | titre, `starts_on` (date → « à venir » si ≥ aujourd'hui, sinon archive), horaires, lieu, ville, description, cover, ticket_url, visible |
 | `event_media` | event_id, kind (`image`\|`video`\|`embed`\|`link`), url, caption, position |
-| `join_requests` | demandes du formulaire `/rejoindre` : nom, email, tél., profil, liens, message, status (`new`\|`contacted`\|`archived`). **Envoi public, lecture admin** (SQL : `supabase/rejoindre.sql`) |
+| `join_requests` | demandes du formulaire `/collaborer` (admin → onglet « Demandes ») : nom, email, tél., profil, liens, message, status (`new`\|`contacted`\|`archived`). **Envoi public, lecture admin** (SQL : `supabase/rejoindre.sql`) |
 | `site_visits` | compteur de visiteurs : `day`, `visitors` (personnes distinctes ce jour), `new_visitors` (premières venues). **Aucune donnée perso.** Le public passe par les RPC `visit_total()` / `register_visit(first_time)` ; détail lisible des admins seuls (SQL : `supabase/visites.sql`) |
 | `site_settings` | clé → texte (accroche, textes de l'asso, booking, email, Instagram, SoundCloud, HelloAsso = bouton « Faire un don », `extra_links` = liens libres « Libellé \| URL » par ligne pour /liens). Valeurs par défaut dans `SETTINGS_DEFAULTS` (useShowcase.ts) : vide = défaut |
 
@@ -449,7 +449,7 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
   `nuxt.config.ts`), sinon Insta/WhatsApp n'affichent rien. Après un
   changement, forcer le rafraîchissement du cache via le « Sharing Debugger »
   de Facebook (vaut aussi pour Insta/WhatsApp).
-- **Profils fermés** (`/rejoindre`) : réglage `join_closed_profiles`
+- **Types de demande fermés** (`/collaborer`) : réglage `join_closed_profiles`
   (site_settings, ids séparés par des virgules, défaut `benevole`) — grisés,
   barrés, non sélectionnables. Basculé depuis admin → Candidatures. Valeur vide
   autorisée (= tout ouvert, cf. `EMPTY_ALLOWED` dans useShowcase.ts).
@@ -465,6 +465,9 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
 ## 10. TODO / pistes
 - [x] Exécuter `supabase/vitrine.sql` (tables vitrine, bucket `media`, QG privé).
 - [x] Exécuter `supabase/rejoindre.sql` (table `join_requests` du formulaire).
+- [ ] **Exécuter `supabase/collaborer.sql`** (ajoute le type « booking »). En
+      attendant, les demandes de booking sont enregistrées en « autre » avec
+      le préfixe « [Booker un DJ] » dans le message (rien n'est perdu).
 - [x] Exécuter `supabase/visites.sql` (compteur de visiteurs du pied de page).
 - [ ] Piste : courbe des visites par jour dans l'admin (`site_visits`).
 - [x] Passer sur **soniklab.fr** (OVH + Cloudflare, déploiement auto) — 2 oct. 2026.

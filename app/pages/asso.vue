@@ -87,10 +87,10 @@ useReveal()
             <AppIcon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </NuxtLink>
           <NuxtLink
-            to="/rejoindre"
+            to="/collaborer"
             class="inline-flex items-center gap-2 border border-line px-5 py-3 font-mono text-sm uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone"
           >
-            Nous rejoindre
+            Proposer une collab
           </NuxtLink>
           <a
             v-if="settings.helloasso_url"

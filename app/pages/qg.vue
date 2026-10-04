@@ -65,7 +65,7 @@ useReveal()
             class="mt-6 inline-flex items-center gap-2 border border-bone px-3 py-2 font-mono text-xs uppercase tracking-widest transition-colors hover:bg-bone hover:text-void"
           >
             <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-current" />
-            {{ newRequests }} nouvelle{{ newRequests > 1 ? 's' : '' }} candidature{{ newRequests > 1 ? 's' : '' }} à traiter
+            {{ newRequests }} nouvelle{{ newRequests > 1 ? 's' : '' }} demande{{ newRequests > 1 ? 's' : '' }} de booking / collab à traiter
           </NuxtLink>
 
           <div class="mt-8 flex flex-wrap gap-3">
