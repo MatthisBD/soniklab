@@ -30,6 +30,7 @@ const TEXTS: Field[] = [
     hint: 'Un bloc par ligne, au format : Titre | description',
     rows: 5,
   },
+  { key: 'gear_intro', label: 'Le sound system — introduction', hint: "Au-dessus du matériel (accueil et page Booking).", rows: 3 },
   { key: 'booking_text', label: 'Bloc booking / contact', rows: 3 },
 ]
 

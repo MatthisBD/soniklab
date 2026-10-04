@@ -23,6 +23,7 @@ const route = useRoute()
 // Types de demande fermés pour l'instant (réglable dans /admin → Demandes) :
 // affichés grisés et non sélectionnables.
 const settings = useSiteSettings()
+const gear = useGear()
 const closed = computed(() => parseClosedProfiles(settings.value.join_closed_profiles))
 const isClosed = (id: string) => closed.value.includes(id)
 const firstOpen = () => (JOIN_PROFILES.find((p) => !isClosed(p.id))?.id ?? 'autre') as JoinProfile
@@ -255,6 +256,15 @@ useReveal()
           <AppIcon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
         </button>
       </form>
+    </section>
+
+    <!-- le matériel : pour voir ce qu'on peut amener avant de demander une date -->
+    <section v-if="gear.length" class="border-t border-line bg-ink">
+      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+        <SectionHead kicker="// le matos" title="Ce qu'on peut amener" />
+        <p class="reveal -mt-2 mb-8 max-w-2xl text-smoke">{{ settings.gear_intro }}</p>
+        <GearGrid :items="gear" compact />
+      </div>
     </section>
 
     <SiteFooter />

@@ -17,6 +17,7 @@ const logoSrc = `${base}soniklab-logo.jpeg`
 const artists = useShowcaseData('artists', fetchArtists, () => [])
 const events = useEvents()
 const collabs = useShowcaseData('collaborators', fetchCollaborators, () => [])
+const gear = useGear()
 const settings = useSiteSettings()
 const tickerWords = useShowcaseData('ticker-words', fetchTickerWords, () => [])
 
@@ -94,7 +95,7 @@ useReveal()
       <div class="mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 py-12 md:grid-cols-[1.2fr_1fr] md:items-center md:py-14">
         <div>
           <p class="flicker mb-4 inline-flex items-center gap-2 border border-line px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.25em] text-smoke">
-            ● asso & collectif techno
+            ● asso & collectif techno · Saint-Nazaire
           </p>
 
           <h1 class="font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
@@ -324,6 +325,16 @@ useReveal()
             <AppIcon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </NuxtLink>
         </div>
+      </div>
+    </section>
+
+    <!-- ====================== LE SOUND SYSTEM (matériel) ====================== -->
+    <!-- masqué tant qu'aucun matériel n'est saisi dans l'admin -->
+    <section v-if="gear.length" id="materiel" class="scroll-mt-16 border-t border-line bg-ink">
+      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+        <SectionHead kicker="// le matos" title="Le sound system" />
+        <p class="reveal -mt-2 mb-8 max-w-2xl text-lg text-smoke">{{ settings.gear_intro }}</p>
+        <GearGrid :items="gear" />
       </div>
     </section>
 

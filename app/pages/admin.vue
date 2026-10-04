@@ -20,6 +20,7 @@ const TABS = [
   { id: 'artistes', label: 'Artistes' },
   { id: 'evenements', label: 'Événements' },
   { id: 'collabs', label: 'Collabs' },
+  { id: 'materiel', label: 'Matériel' },
   { id: 'candidatures', label: 'Demandes' },
   { id: 'textes', label: 'Textes & réseaux' },
   { id: 'liens', label: 'Liens du QG' },
@@ -70,6 +71,7 @@ function selectTab(id: string) {
       <AdminArtists v-if="tab === 'artistes'" />
       <AdminEvents v-else-if="tab === 'evenements'" />
       <AdminCollabs v-else-if="tab === 'collabs'" />
+      <AdminGear v-else-if="tab === 'materiel'" />
       <AdminJoin v-else-if="tab === 'candidatures'" @changed="refreshCount" />
       <AdminSettings v-else-if="tab === 'textes'" />
       <AdminLinks v-else-if="tab === 'liens'" />

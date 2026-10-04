@@ -32,6 +32,17 @@ export type Collaborator = {
   position: number
 }
 
+/** Le sound system / matériel de l'asso (cf. supabase/materiel.sql). */
+export type GearItem = {
+  id: string
+  name: string
+  kind: string | null
+  details: string | null
+  photo_url: string | null
+  visible: boolean
+  position: number
+}
+
 export type MediaKind = 'image' | 'video' | 'embed' | 'link'
 
 export type EventMedia = {
@@ -62,13 +73,15 @@ export type SonikEvent = {
 // Valeurs par défaut : le site reste propre tant que rien n'est saisi dans l'admin.
 export const SETTINGS_DEFAULTS = {
   hero_text:
-    "Association qui fait danser les bars, les guinguettes et les open airs. Des DJs, un sound system maison et l'envie de partager le son.",
+    "Association de Saint-Nazaire qui fait danser les bars, les guinguettes et les open airs. Des DJs, un sound system maison et l'envie de partager le son.",
   about_intro:
     'SONIKLAB est une association de passionnés de musique électronique. On organise, on joue et on fait vivre la techno là où on ne l’attend pas toujours.',
   about_body:
     "Né d'une bande de potes et d'un sound system construit à la main, le collectif s'est fait une place dans les bars, les guinguettes, les fêtes de la musique et les open airs.\n\nOn programme nos artistes, on monte nos propres événements et on accompagne les lieux qui veulent accueillir de la techno : son, line-up, scéno, ambiance.",
   about_pillars:
     'Soirées & open airs | Des événements pensés de A à Z : lieu, line-up, son, lumière.\nSound system | Un système son construit par nos soins, prêt à poser où il faut.\nArtistes | On fait jouer et on met en avant les DJs et lives du collectif.\nCollaborations | Bars, guinguettes, assos : on co-construit des soirées avec les lieux.',
+  gear_intro:
+    "Un sound system construit à la main par l'asso, des platines et de quoi éclairer la piste : on arrive avec tout le nécessaire pour faire sonner ton lieu.",
   booking_text:
     "Un bar, une guinguette, un festival, une asso ? On vient avec les DJs, le son et l'énergie. Écris-nous.",
   contact_email: '',
@@ -146,6 +159,12 @@ export async function fetchArtists(supabase: SupabaseClient): Promise<Artist[]> 
   const { data, error } = await supabase.from('artists').select('*').order('position')
   if (error) throw error
   return (data ?? []).map((a: any) => ({ ...a, links: Array.isArray(a.links) ? a.links : [] }))
+}
+
+export async function fetchGear(supabase: SupabaseClient): Promise<GearItem[]> {
+  const { data, error } = await supabase.from('gear_items').select('*').order('position')
+  if (error) throw error
+  return data ?? []
 }
 
 export async function fetchCollaborators(supabase: SupabaseClient): Promise<Collaborator[]> {
@@ -228,6 +247,12 @@ export function useShowcaseData<T>(key: string, fetcher: (s: SupabaseClient) => 
 const settingsFallback = (): SiteSettings => ({ ...SETTINGS_DEFAULTS })
 export function useSiteSettings() {
   return useShowcaseData('site-settings', fetchSettings, settingsFallback)
+}
+
+/** Le matériel (même clé + mêmes options : accueil et page Booking). Vide = section masquée. */
+const gearFallback = (): GearItem[] => []
+export function useGear() {
+  return useShowcaseData('gear', fetchGear, gearFallback)
 }
 
 /** Les événements (même clé + mêmes options partout : accueil, /evenements, /liens). */

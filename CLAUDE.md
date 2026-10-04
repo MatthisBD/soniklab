@@ -372,7 +372,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 ### Pages
 | Route | Public ? | Contenu |
 |---|---|---|
-| `/` | ✅ | hero, artistes, prochaines dates, archives (6 dernières), collabs, teaser asso, booking |
+| `/` | ✅ | hero, artistes, prochaines dates, archives (6 dernières), collabs, teaser asso, **sound system** (`#materiel`, masqué si vide), booking |
 | `/asso` | ✅ | intro, histoire, « ce qu'on fait » (piliers), appel à l'action |
 | `/evenements` | ✅ | à venir + archives groupées par année, galerie au clic |
 | `/collaborer` | ✅ | formulaire « Booking & collab » (menu : « Booking ») : booker un DJ, jouer avec nous, son & technique, visuels & médias, autre projet, bénévole (fermé). **On ne recrute pas** : pas de « rejoindre ». `/rejoindre` redirige ici (routeRules) |
@@ -388,6 +388,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `events` | titre, `starts_on` (date → « à venir » si ≥ aujourd'hui, sinon archive), horaires, lieu, ville, description, cover, ticket_url, visible |
 | `event_media` | event_id, kind (`image`\|`video`\|`embed`\|`link`), url, caption, position |
 | `join_requests` | demandes du formulaire `/collaborer` (admin → onglet « Demandes ») : nom, email, tél., profil, liens, message, status (`new`\|`contacted`\|`archived`). **Envoi public, lecture admin** (SQL : `supabase/rejoindre.sql`) |
+| `gear_items` | matériel / sound system : nom, type, caractéristiques (retours à la ligne gardés), photo, visible, position. Affiché sur l'accueil et sous le formulaire `/collaborer` (`GearGrid.vue`) ; admin → onglet « Matériel » ; intro = réglage `gear_intro` (SQL : `supabase/materiel.sql`) |
 | `site_visits` | compteur de visiteurs : `day`, `visitors` (personnes distinctes ce jour), `new_visitors` (premières venues). **Aucune donnée perso.** Le public passe par les RPC `visit_total()` / `register_visit(first_time)` ; détail lisible des admins seuls (SQL : `supabase/visites.sql`) |
 | `site_settings` | clé → texte (accroche, textes de l'asso, booking, email, Instagram, SoundCloud, HelloAsso = bouton « Faire un don », `extra_links` = liens libres « Libellé \| URL » par ligne pour /liens). Valeurs par défaut dans `SETTINGS_DEFAULTS` (useShowcase.ts) : vide = défaut |
 
@@ -406,7 +407,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 
 ### Admin (onglets, `?tab=`)
 Artistes · Événements (+ galerie : upload multiple, liens vidéo, légendes,
-« ★ » = couverture) · Collabs · Candidatures (badge = nouvelles demandes,
+« ★ » = couverture) · Collabs · Matériel · Demandes (badge = nouvelles demandes,
 aussi rappelé sur le QG) · Textes & réseaux (+ bandeau) · Liens du QG ·
 Mon compte. Les éléments masqués (`visible = false`) restent éditables.
 - **Brouillons** : « + Artiste / Événement / Collab » crée la ligne MASQUÉE ;
@@ -479,6 +480,8 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
 ## 10. TODO / pistes
 - [x] Exécuter `supabase/vitrine.sql` (tables vitrine, bucket `media`, QG privé).
 - [x] Exécuter `supabase/rejoindre.sql` (table `join_requests` du formulaire).
+- [ ] **Exécuter `supabase/materiel.sql`** (table `gear_items` du sound system),
+      puis ajouter le matos dans admin → « Matériel ».
 - [ ] **Exécuter `supabase/collaborer.sql`** (ajoute le type « booking »). En
       attendant, les demandes de booking sont enregistrées en « autre » avec
       le préfixe « [Booker un DJ] » dans le message (rien n'est perdu).
