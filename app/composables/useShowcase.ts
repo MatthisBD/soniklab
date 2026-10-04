@@ -75,6 +75,13 @@ export const SETTINGS_DEFAULTS = {
   instagram_url: '',
   soundcloud_url: '',
   helloasso_url: '',
+  // Mentions légales (/mentions-legales) — infos de l'association éditrice.
+  legal_name: 'SONIKLAB',
+  legal_address: '',
+  legal_rna: '',
+  legal_siret: '',
+  legal_director: '',
+  legal_phone: '',
   /** Liens publics en plus (page /liens) : une ligne « Libellé | https://… ». */
   extra_links: '',
   /** Types de demande du formulaire /collaborer fermés pour l'instant (ids séparés par des virgules). */

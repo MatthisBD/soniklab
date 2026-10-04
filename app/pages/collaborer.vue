@@ -226,7 +226,8 @@ useReveal()
           <input v-model="consent" type="checkbox" class="mt-1 accent-bone" />
           <span>
             J'accepte que SONIKLAB conserve ces informations pour me recontacter. Elles ne sont vues que par
-            les membres de l'asso et jamais partagées.
+            les membres de l'asso et jamais partagées
+            (<NuxtLink to="/mentions-legales#donnees" class="underline underline-offset-2 hover:text-bone">en savoir plus</NuxtLink>).
           </span>
         </label>
 

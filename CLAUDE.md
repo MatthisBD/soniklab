@@ -376,6 +376,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `/asso` | ✅ | intro, histoire, « ce qu'on fait » (piliers), appel à l'action |
 | `/evenements` | ✅ | à venir + archives groupées par année, galerie au clic |
 | `/collaborer` | ✅ | formulaire « Booking & collab » (menu : « Booking ») : booker un DJ, jouer avec nous, son & technique, visuels & médias, autre projet, bénévole (fermé). **On ne recrute pas** : pas de « rejoindre ». `/rejoindre` redirige ici (routeRules) |
+| `/mentions-legales` | ✅ | éditeur (infos asso réglables dans admin → Textes & réseaux → « Mentions légales » : `legal_*`), hébergeurs (Cloudflare, Supabase UE, OVH), propriété intellectuelle (logo/nom protégés), RGPD (formulaire, droits, CNIL), cookies (aucun pistage ; compteur anonyme, Google Fonts, YouTube nocookie). Ancre `#donnees` liée depuis le formulaire. Lien dans le pied de page avec « © SONIKLAB · tous droits réservés » |
 | `/liens` | ✅ | « link in bio » (bio Instagram, QR codes) : prochaine date, don HelloAsso, réseaux, liens libres, contact, pages du site |
 | `/qg` · `/budget` · `/admin` | 🔒 | via `AuthGate` (admins uniquement), `noindex` |
 
@@ -473,6 +474,14 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
 - [x] Passer sur **soniklab.fr** (OVH + Cloudflare, déploiement auto) — 2 oct. 2026.
 - [ ] Optionnel : passer le titulaire du domaine OVH au nom de l'asso
       (onglet « Contact management ») le jour où l'asso a son compte OVH.
+- [ ] **Compléter les mentions légales** dans l'admin (Textes & réseaux) :
+      adresse du siège, n° RNA, directeur·rice de la publication, téléphone
+      (sinon « à compléter » s'affiche sur /mentions-legales). Si on change un
+      traitement de données (nouvel outil, nouveau formulaire…), mettre à jour
+      la page et sa date `UPDATED`.
+- [ ] Piste : héberger les polices sur le site (au lieu de Google Fonts) pour
+      ne plus transmettre l'IP des visiteurs à Google.
+- [ ] Piste protection : dépôt de la marque SONIKLAB (nom + logo) à l'INPI.
 - [ ] Remplir la vitrine via l'admin : artistes, événements + photos, collabs,
       email / Instagram / HelloAsso (onglet « Textes & réseaux »).
 - [x] Formulaire « Nous rejoindre » + image de partage (og:image).

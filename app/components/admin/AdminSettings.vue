@@ -33,6 +33,16 @@ const TEXTS: Field[] = [
   { key: 'booking_text', label: 'Bloc booking / contact', rows: 3 },
 ]
 
+// Infos obligatoires des mentions légales (association éditrice du site).
+const LEGAL: Field[] = [
+  { key: 'legal_name', label: "Nom officiel de l'association", placeholder: 'SONIKLAB' },
+  { key: 'legal_director', label: 'Directeur·rice de la publication', placeholder: 'Prénom Nom (en général le/la président·e)' },
+  { key: 'legal_address', label: 'Adresse du siège social', placeholder: 'n°, rue, code postal, ville' },
+  { key: 'legal_rna', label: 'Numéro RNA', placeholder: 'W123456789 (récépissé de la préfecture)' },
+  { key: 'legal_siret', label: "SIRET (si l'asso en a un)", placeholder: 'optionnel' },
+  { key: 'legal_phone', label: 'Téléphone de contact', placeholder: 'demandé par la loi pour les éditeurs' },
+]
+
 const CONTACTS: Field[] = [
   { key: 'contact_email', label: 'Email de contact / booking', placeholder: 'soniklab.asso@gmail.com' },
   { key: 'instagram_url', label: 'Instagram', placeholder: 'https://instagram.com/…' },
@@ -79,6 +89,27 @@ function resetField(key: SettingKey) {
             Un lien par ligne, au format : Libellé | https://…
           </span>
         </label>
+      </div>
+
+      <!-- Mentions légales -->
+      <div class="adm-card space-y-3 p-5">
+        <div class="flex items-center justify-between gap-4">
+          <h2 class="font-display text-2xl uppercase tracking-wide">Mentions légales</h2>
+          <button class="adm-btn" @click="run(() => db.saveSettings(settings), 'Mentions légales enregistrées.')">
+            Enregistrer
+          </button>
+        </div>
+        <p class="font-mono text-xs text-ash">
+          Obligatoires pour le site d'une asso. Affichées sur
+          <NuxtLink to="/mentions-legales" class="underline-offset-2 hover:text-bone hover:underline">/mentions-legales</NuxtLink>
+          (l'email de contact ci-dessus y est repris). Un champ vide s'affiche « à compléter ».
+        </p>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <label v-for="f in LEGAL" :key="f.key" class="block">
+            <span class="adm-label">{{ f.label }}</span>
+            <input v-model="settings[f.key]" :placeholder="f.placeholder" class="adm-input text-sm" />
+          </label>
+        </div>
       </div>
 
       <!-- Textes -->

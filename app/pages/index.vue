@@ -49,6 +49,12 @@ const contactLinks = computed(() =>
   ].filter(Boolean) as { label: string; icon: string; url: string }[],
 )
 
+// Sous les artistes : booker un de nos DJ, ou nous proposer ses sets pour jouer ensemble.
+const ARTIST_CTAS = [
+  { to: '/collaborer?profil=booking', title: 'Un DJ pour ta soirée ?', text: 'Bar, soirée privée, festival : on vient avec le son' },
+  { to: '/collaborer?profil=artiste', title: 'Tu mixes ?', text: 'Envoie-nous tes sets, on écoute tout' },
+]
+
 const opened = ref<SonikEvent | null>(null)
 // Fiche artiste ouverte (avec son n° de « piste » A1, A2…)
 const openedArtist = ref<{ artist: Artist; track: string } | null>(null)
@@ -169,18 +175,23 @@ useReveal()
         Line-up en cours de pressage…
       </p>
 
-      <NuxtLink
-        to="/collaborer?profil=booking"
-        class="reveal group mt-8 flex items-center justify-between gap-4 border border-line px-5 py-4 transition-colors hover:bg-bone hover:text-void"
-      >
-        <span>
-          <span class="block font-display text-2xl uppercase tracking-wide">Un DJ pour ta soirée&nbsp;?</span>
-          <span class="font-mono text-xs uppercase tracking-widest text-ash group-hover:text-void/60">
-            Bar, soirée privée, festival : on vient avec le son
+      <!-- deux appels : booker un de nos DJ / proposer ses sets (collab, pas recrutement) -->
+      <div class="mt-8 grid gap-4 sm:grid-cols-2">
+        <NuxtLink
+          v-for="c in ARTIST_CTAS"
+          :key="c.to"
+          :to="c.to"
+          class="reveal group flex items-center justify-between gap-4 border border-line px-5 py-4 transition-colors hover:bg-bone hover:text-void"
+        >
+          <span>
+            <span class="block font-display text-2xl uppercase tracking-wide">{{ c.title }}</span>
+            <span class="font-mono text-xs uppercase tracking-widest text-ash group-hover:text-void/60">
+              {{ c.text }}
+            </span>
           </span>
-        </span>
-        <AppIcon name="arrow" class="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
-      </NuxtLink>
+          <AppIcon name="arrow" class="h-5 w-5 shrink-0 transition-transform group-hover:translate-x-1" />
+        </NuxtLink>
+      </div>
     </section>
 
     <!-- ====================== PROCHAINES DATES ====================== -->

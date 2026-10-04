@@ -57,8 +57,10 @@ const socials = computed(() =>
       </div>
       <div class="flex flex-col gap-4 sm:items-end">
         <VisitCounter />
-        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash">
-          © {{ year }} · fait avec ❤ & 909<template v-if="auth.isAdmin.value"> ·
+        <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash sm:text-right">
+          © {{ year }} {{ settings.legal_name || 'SONIKLAB' }} · tous droits réservés<br />
+          <NuxtLink to="/mentions-legales" class="transition-colors hover:text-bone">Mentions légales</NuxtLink>
+          · fait avec ❤ & 909<template v-if="auth.isAdmin.value"> ·
           <NuxtLink to="/qg" class="transition-colors hover:text-bone">QG</NuxtLink> ·
           <NuxtLink to="/budget" class="transition-colors hover:text-bone">budget</NuxtLink> ·
           <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink></template>
