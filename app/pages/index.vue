@@ -41,6 +41,9 @@ const stats = computed(() =>
 // (l'email a son propre bouton EmailAction : menu Gmail / appli mail / copier)
 // Liens rapides du haut de page : don HelloAsso, Instagram, SoundCloud (admin → Textes & réseaux)
 const quickLinks = computed(() => socialLinks(settings.value))
+// Bouton email de la rangée : adresse en minuscules (lisible), même cadre que les autres liens.
+const MAIL_BTN =
+  'inline-flex items-center gap-1.5 border border-line px-3 py-1.5 font-mono text-[0.75rem] tracking-wide text-smoke transition-colors hover:border-bone hover:bg-bone hover:text-void'
 
 const contactLinks = computed(() =>
   [
@@ -112,19 +115,41 @@ useReveal()
           </div>
 
           <!-- liens rapides : visibles dès l'arrivée, sans scroller -->
-          <div v-if="quickLinks.length" class="mt-5 flex flex-wrap items-center gap-2">
-            <a
-              v-for="l in quickLinks"
-              :key="l.url"
-              :href="l.url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-widest transition-colors hover:border-bone hover:bg-bone hover:text-void"
-              :class="l.icon === 'heart' ? 'border-bone/60 text-bone' : 'border-line text-smoke'"
+          <div v-if="quickLinks.length || settings.contact_email" class="mt-5 flex flex-wrap items-center gap-2">
+            <template v-for="l in quickLinks" :key="l.url">
+              <a
+                :href="l.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 border px-3 py-1.5 font-mono text-[0.7rem] uppercase tracking-widest transition-colors hover:border-bone hover:bg-bone hover:text-void"
+                :class="l.icon === 'heart' ? 'border-bone/60 text-bone' : 'border-line text-smoke'"
+              >
+                <AppIcon :name="l.icon" class="h-3.5 w-3.5" />
+                {{ l.label }}
+              </a>
+              <!-- l'adresse mail en clair, juste après Instagram (menu Gmail / appli / copier) -->
+              <EmailAction
+                v-if="l.icon === 'instagram' && settings.contact_email"
+                :email="settings.contact_email"
+                subject="Contact SONIKLAB"
+                placement="top"
+                :class="MAIL_BTN"
+              >
+                <AppIcon name="mail" class="h-3.5 w-3.5" />
+                {{ settings.contact_email }}
+              </EmailAction>
+            </template>
+            <!-- pas d'Instagram renseigné : l'email se place en fin de rangée -->
+            <EmailAction
+              v-if="settings.contact_email && !quickLinks.some((l) => l.icon === 'instagram')"
+              :email="settings.contact_email"
+              subject="Contact SONIKLAB"
+              placement="top"
+              :class="MAIL_BTN"
             >
-              <AppIcon :name="l.icon" class="h-3.5 w-3.5" />
-              {{ l.label }}
-            </a>
+              <AppIcon name="mail" class="h-3.5 w-3.5" />
+              {{ settings.contact_email }}
+            </EmailAction>
           </div>
 
           <p v-if="stats.length" class="mt-8 font-mono text-xs uppercase tracking-[0.25em] text-ash">

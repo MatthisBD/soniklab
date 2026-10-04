@@ -102,6 +102,19 @@ useReveal()
           Un DJ pour ta soirée, un bar ou une asso qui veut monter un événement, un projet son,
           photo ou vidéo ? Dis-nous ce que tu as en tête, on te répond vite.
         </p>
+        <!-- alternative au formulaire : l'email direct, bien visible -->
+        <p v-if="settings.contact_email" class="mt-5 flex flex-wrap items-center gap-3 font-mono text-xs uppercase tracking-widest text-ash">
+          Tu préfères écrire directement ?
+          <EmailAction
+            :email="settings.contact_email"
+            subject="Contact SONIKLAB"
+            placement="top"
+            class="inline-flex items-center gap-2 border border-line px-3 py-1.5 text-[0.8rem] normal-case tracking-wide text-bone transition-colors hover:border-bone hover:bg-bone hover:text-void"
+          >
+            <AppIcon name="mail" class="h-4 w-4" />
+            {{ settings.contact_email }}
+          </EmailAction>
+        </p>
       </div>
     </section>
 

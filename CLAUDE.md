@@ -482,6 +482,11 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
 - [ ] Piste : héberger les polices sur le site (au lieu de Google Fonts) pour
       ne plus transmettre l'IP des visiteurs à Google.
 - [ ] Piste protection : dépôt de la marque SONIKLAB (nom + logo) à l'INPI.
+- [ ] **Nouveau logo** en cours chez un graphiste (l'actuel est en partie
+      généré par IA → non protégeable par le droit d'auteur). À réception :
+      remplacer `public/soniklab-logo.jpeg`, régénérer `public/og-image.png`
+      (HTML + Chrome headless, cf. §9) et faire signer au graphiste une
+      cession de droits au profit de l'asso.
 - [ ] Remplir la vitrine via l'admin : artistes, événements + photos, collabs,
       email / Instagram / HelloAsso (onglet « Textes & réseaux »).
 - [x] Formulaire « Nous rejoindre » + image de partage (og:image).
