@@ -28,6 +28,18 @@ const upcoming = computed(() =>
 const past = computed(() => events.value.filter((e) => e.starts_on < today.value))
 const PAST_ON_HOME = 6
 
+// Données structurées pour Google (organisation, réseaux, prochaines dates).
+const siteUrl = useRuntimeConfig().public.siteUrl as string
+useHead({
+  script: [
+    {
+      key: 'ld-json',
+      type: 'application/ld+json',
+      innerHTML: computed(() => jsonLdString(buildJsonLd(siteUrl, settings.value, upcoming.value))),
+    },
+  ],
+})
+
 const stats = computed(() =>
   [
     [artists.value.length, 'artiste'],

@@ -426,6 +426,19 @@ d'onglet visible ou vraie interaction exigées, une fois par navigateur
 toujours (repère `member`), jamais compté en local (dev / preview). Tant que
 la RPC échoue (SQL pas exécuté), le compteur reste invisible.
 
+### Référencement (SEO)
+- `server/routes/sitemap.xml.ts` et `robots.txt.ts` : générés au build
+  (`nitro.prerender.routes`) à partir de `runtimeConfig.public.siteUrl`.
+  **Nouvelle page publique → l'ajouter à `PAGES` dans sitemap.xml.ts.**
+- `app.vue` : balise **canonique** + `og:url` sur chaque page (format avec
+  « / » final) → www.soniklab.fr et soniklab.fr ne sont pas vus en doublon.
+- `useStructuredData.ts` : JSON-LD sur l'accueil (Organization + WebSite +
+  MusicEvent des prochaines dates ayant un lieu) ; `sameAs` = Instagram,
+  HelloAsso, SoundCloud renseignés dans l'admin.
+- Côté humains : Google Search Console (propriété « Domaine » soniklab.fr,
+  vérif. auto via Cloudflare) + envoi du sitemap ; liens entrants (bio Insta,
+  champ « site web » HelloAsso, partenaires).
+
 ## 9. Décisions & historique (pour le futur)
 - **Style** : monochrome gravé dérivé du logo. Validé par le client (« incroyable »).
   **Oct. 2026 : les PHOTOS restent en couleur** (artistes, affiches, galeries,
@@ -479,6 +492,11 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
       (sinon « à compléter » s'affiche sur /mentions-legales). Si on change un
       traitement de données (nouvel outil, nouveau formulaire…), mettre à jour
       la page et sa date `UPDATED`.
+- [ ] **Google Search Console** : ajouter soniklab.fr (compte de l'asso),
+      envoyer `https://soniklab.fr/sitemap.xml`, demander l'indexation de
+      l'accueil. Idem Bing Webmaster Tools (import depuis Search Console).
+- [ ] Optionnel : règle de redirection Cloudflare www → soniklab.fr
+      (Rules → Redirect Rules → modèle « Redirect from WWW to root »).
 - [ ] Piste : héberger les polices sur le site (au lieu de Google Fonts) pour
       ne plus transmettre l'IP des visiteurs à Google.
 - [ ] Piste protection : dépôt de la marque SONIKLAB (nom + logo) à l'INPI.

@@ -20,7 +20,11 @@ export default defineNuxtConfig({
   // Génération 100 % statique dans .output/public.
   // github_pages ajoute .nojekyll ; sur Cloudflare Pages, le preset statique
   // suffit (404.html est servi automatiquement pour les URL inconnues).
-  nitro: { preset: onGithubPages ? 'github_pages' : 'static' },
+  nitro: {
+    preset: onGithubPages ? 'github_pages' : 'static',
+    // Fichiers pour les moteurs de recherche, générés au build (server/routes/)
+    prerender: { routes: ['/sitemap.xml', '/robots.txt'] },
+  },
 
   // Ancienne adresse du formulaire (on ne « recrute » pas : c'est du booking / collab)
   routeRules: {
@@ -29,6 +33,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      // Adresse publique (canonique, plan du site, données structurées Google).
+      siteUrl,
       // Connexion Supabase. La clé "publishable" est PUBLIQUE par conception :
       // ce sont les règles RLS (côté base) qui protègent réellement les données.
       // Surchargeable via les variables NUXT_PUBLIC_SUPABASE_URL / _KEY.

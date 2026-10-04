@@ -8,6 +8,19 @@ const isTool = computed(
 )
 const surfaceClass = computed(() => (isTool.value ? 'scanlines' : 'grain scanlines'))
 
+// Référencement : adresse « officielle » de chaque page (balise canonique).
+// soniklab.fr et www.soniklab.fr affichent le même contenu → sans ça, Google
+// peut y voir des doublons. Format avec « / » final, comme les URL servies.
+const siteUrl = useRuntimeConfig().public.siteUrl as string
+const canonical = computed(() => {
+  const path = route.path === '/' ? '' : route.path.replace(/^\//, '').replace(/\/?$/, '/')
+  return new URL(path, siteUrl).href
+})
+useHead({
+  link: [{ rel: 'canonical', href: canonical }],
+  meta: [{ property: 'og:url', content: canonical }],
+})
+
 // Compteur de visiteurs (pied de page) : on ne compte que sur les pages
 // publiques, pas sur les outils des membres (QG, budget, admin).
 const visits = useVisitCounter()
