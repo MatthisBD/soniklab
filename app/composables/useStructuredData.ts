@@ -19,6 +19,9 @@ export function buildJsonLd(site: string, s: SiteSettings, upcoming: SonikEvent[
     url,
     logo: new URL('soniklab-logo.jpeg', site).href,
     description: s.hero_text,
+    // Ville du siège (mentions légales) : aide pour les recherches locales.
+    address: { '@type': 'PostalAddress', addressLocality: 'Saint-Nazaire', addressCountry: 'FR' },
+    areaServed: 'Saint-Nazaire',
     ...(s.contact_email.trim() && { email: s.contact_email.trim() }),
     sameAs: [s.instagram_url, s.helloasso_url, s.soundcloud_url].map((u) => u.trim()).filter(Boolean),
   }

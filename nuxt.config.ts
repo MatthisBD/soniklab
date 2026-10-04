@@ -11,7 +11,7 @@ const onGithubPages = siteUrl.includes('github.io')
 // Chemin de base déduit de l'adresse : "/soniklab/" sur github.io, "/" sur
 // soniklab.fr. En dev (npm run dev) on garde toujours la racine "/".
 const baseURL = process.env.NODE_ENV === 'production' ? new URL(siteUrl).pathname : '/'
-const shareText = 'Artistes, soirées et sound system : la vitrine du collectif techno SONIKLAB.'
+const shareText = 'Artistes, soirées et sound system : la vitrine du collectif techno SONIKLAB, à Saint-Nazaire.'
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -60,7 +60,7 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'SONIKLAB, association et collectif techno : nos artistes, nos soirées en bars, guinguettes et open airs, nos collaborateurs.',
+            'SONIKLAB, association et collectif techno de Saint-Nazaire : nos DJs, nos soirées en bars, guinguettes et open airs, booking et collaborations.',
         },
         { name: 'theme-color', content: '#0a0a0a' },
         // Aperçu de partage (image 1200×630 dans public/og-image.png)
