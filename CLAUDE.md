@@ -126,6 +126,7 @@ soniklab/
 │  │  ├─ index.vue            # ⭐ VITRINE publique (hero, artistes, dates, archives, collabs, booking)
 │  │  ├─ asso.vue             # page « L'asso » (qui on est, ce qu'on fait)
 │  │  ├─ evenements.vue       # tous les événements (à venir + archives par année)
+│  │  ├─ tombola.vue          # tombolas (rubrique privée tant que non publiée, cf. §8 quinquies)
 │  │  ├─ qg.vue               # 🔒 le QG : raccourcis internes (ex-accueil)
 │  │  ├─ admin.vue            # 🔒 espace admin à onglets (cf. components/admin/)
 │  │  └─ budget.vue           # 🔒 budget des caissons
@@ -134,6 +135,7 @@ soniklab/
 │  │  ├─ useSupabase.ts       # accès client + lecture liens QG / bandeau
 │  │  ├─ useShowcase.ts       # ⭐ vitrine : types, lectures, textes par défaut, CRUD admin
 │  │  ├─ useMedia.ts          # upload Storage (photos réduites en WebP) + liens YouTube/Vimeo
+│  │  ├─ useRaffle.ts         # tombolas : types, formules, lectures, tirage, export CSV, règlement type
 │  │  ├─ useAuth.ts           # connexion / rôle admin / mot de passe
 │  │  ├─ useAdmin.ts          # écritures QG (groupes, liens, bandeau)
 │  │  ├─ useFlash.ts          # message de confirmation partagé des outils internes
@@ -145,6 +147,8 @@ soniklab/
 │     ├─ SectionHead.vue      # titre de section (kicker + titre)
 │     ├─ ArtistCard.vue · CollabCard.vue · UpcomingEvent.vue · PastEventCard.vue
 │     ├─ EventGallery.vue     # fiche événement plein écran + galerie (clavier, swipe)
+│     ├─ RaffleTicket.vue     # formule de tombola en « ticket à souche »
+│     ├─ RaffleDraw.vue       # écran de tirage plein écran (tambour de chiffres)
 │     ├─ AuthGate.vue         # 🔒 portail connexion → droits → contenu (QG, budget, admin)
 │     ├─ ToolHeader.vue       # en-tête des pages internes (QG · Budget · Admin)
 │     ├─ admin/               # un composant par onglet de l'admin + AdminMediaField
@@ -156,6 +160,7 @@ soniklab/
 ├─ supabase/vitrine.sql       # SQL vitrine + bucket médias + QG privé (✅ exécuté)
 ├─ supabase/rejoindre.sql     # SQL du formulaire « Nous rejoindre » (à coller, idempotent)
 ├─ supabase/visites.sql       # SQL du compteur de visiteurs (✅ exécuté)
+├─ supabase/tombola.sql       # SQL des tombolas (à coller, idempotent ; testé sous PGlite)
 ├─ public/og-image.png        # image d'aperçu de partage 1200×630 (Insta, WhatsApp…)
 ├─ .github/workflows/deploy.yml # déploiement auto sur GitHub Pages
 ├─ nuxt.config.ts             # meta, polices, Tailwind, baseURL, config Supabase
@@ -378,6 +383,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 | `/collaborer` | ✅ | formulaire « Booking & collab » (menu : « Booking ») : booker un DJ, jouer avec nous, son & technique, visuels & médias, autre projet, bénévole (fermé). **On ne recrute pas** : pas de « rejoindre ». `/rejoindre` redirige ici (routeRules) |
 | `/mentions-legales` | ✅ | éditeur (infos asso réglables dans admin → Textes & réseaux → « Mentions légales » : `legal_*`), hébergeurs (Cloudflare, Supabase UE, OVH), propriété intellectuelle (logo/nom protégés), RGPD (formulaire, droits, CNIL), cookies (aucun pistage ; compteur anonyme, Google Fonts, YouTube nocookie). Ancre `#donnees` liée depuis le formulaire. Lien dans le pied de page avec « © SONIKLAB · tous droits réservés » |
 | `/liens` | ✅ | « link in bio » (bio Instagram, QR codes) : prochaine date, don HelloAsso, réseaux, liens libres, contact, pages du site |
+| `/tombola` | 🔒→✅ | tombolas : lots, formules, compte à rebours, règlement, résultats. **Privée** tant que le réglage `raffle_public` est vide (aperçu admin, `noindex`, pas dans le sitemap). Cf. §8 quinquies |
 | `/qg` · `/budget` · `/admin` | 🔒 | via `AuthGate` (admins uniquement), `noindex` |
 
 ### Données (cf. `supabase/vitrine.sql`)
@@ -401,13 +407,16 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
   l'envoi. Vidéos lourdes → les mettre sur YouTube/Vimeo et coller le lien
   (intégration auto en iframe). Supprimer une ligne supprime aussi ses fichiers.
 - **Chargement** : `useShowcaseData()` = rendu au build (contenu dans le HTML,
-  bon pour le SEO) **puis** rechargé dans le navigateur au montage → les
-  modifs de l'admin sont visibles tout de suite sans redéployer. En cas
+  bon pour le SEO) **puis** rechargé dans le navigateur → les modifs de
+  l'admin sont visibles tout de suite sans redéployer. ⚠️ Le rechargement se
+  fait via `onNuxtReady` (après l'hydratation) : pendant l'hydratation, Nuxt 4
+  répond à `refresh()` avec la donnée du build sans interroger la base (le
+  rechargement « au montage » d'avant ne faisait donc rien sur une 1re visite). En cas
   d'erreur (table absente), on retombe sur la valeur par défaut / état vide.
 
 ### Admin (onglets, `?tab=`)
 Artistes · Événements (+ galerie : upload multiple, liens vidéo, légendes,
-« ★ » = couverture) · Collabs · Matériel · Demandes (badge = nouvelles demandes,
+« ★ » = couverture) · Collabs · Matériel · Tombola (cf. §8 quinquies) · Demandes (badge = nouvelles demandes,
 aussi rappelé sur le QG) · Textes & réseaux (+ bandeau) · Liens du QG ·
 Mon compte. Les éléments masqués (`visible = false`) restent éditables.
 - **Brouillons** : « + Artiste / Événement / Collab » crée la ligne MASQUÉE ;
@@ -439,6 +448,44 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
 - Côté humains : Google Search Console (propriété « Domaine » soniklab.fr,
   vérif. auto via Cloudflare) + envoi du sitemap ; liens entrants (bio Insta,
   champ « site web » HelloAsso, partenaires).
+
+## 8 quinquies. Tombolas (oct. 2026) — `/tombola` + admin → « Tombola »
+
+But : mettre du matos de l'asso en jeu plutôt que le revendre. **Pas de
+paiement sur le site** : les tickets se vendent en soirée (espèces, carte) ou
+via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
+**saisit chaque vente** dans l'admin → la base attribue les numéros.
+
+- **Tables** (`supabase/tombola.sql`) : `raffles` (titre, présentation,
+  `packs` jsonb `[{tickets, price}]`, `ticket_url`, `draw_on`, `draw_place`,
+  `max_tickets`, `permit` = autorisation du maire — `authorization` est un mot
+  réservé SQL —, `rules`, `sales_open`, `show_sold`, `visible`),
+  `raffle_prizes` (lots + `winner_ticket` / `winner_entry_id` / `winner_label`),
+  `raffle_entries` (ventes : nom, email, tél., `tickets`, `amount`, `channel`,
+  `first_ticket`). **Ventes = admins seuls** (RLS, lecture comprise).
+- **Rubrique privée/publique** : réglage `site_settings.raffle_public` (vide =
+  privée). Bascule dans admin → Tombola. Privée → la RLS ne montre AUCUNE
+  tombola au public (fonction `raffles_public()`), le menu n'affiche
+  « Tombola » qu'aux admins (avec un cadenas), la page est en `noindex`.
+  Publique → entrée « Tombola » dans le menu, bandeau « tombola en cours » sur
+  l'accueil et bouton sur `/liens` (si ventes ouvertes et pas encore tirée).
+- **Numéros** : trigger `raffle_entries_number` (verrou par tombola, plafond
+  `max_tickets`, numéros figés, plus de vente après un tirage).
+- **Tirage** : RPC `raffle_draw(prize_id)` côté serveur (hasard pgcrypto, un
+  ticket ne gagne qu'un lot, ferme les ventes). `RaffleDraw.vue` ne fait que
+  l'animer (à projeter / filmer en live). Tirage « à la main » possible (n°
+  tiré dans un chapeau). Gagnant publié = n° + `winner_label` (« Prénom I. »,
+  modifiable). `raffle_stats()` = tickets vendus, sans donnée perso.
+- **RGPD** : section « Tombolas » dans `/mentions-legales` (conservation ≤ 1 an
+  après le tirage) → bouton « Anonymiser » dans l'admin une fois tirée.
+  Export CSV des ventes (registre / mairie).
+- **Cadre légal** (rappelé dans l'admin) : autorisation préalable du maire
+  (Cerfa 11823*03, 1-2 mois avant), bénéfice 100 % pour l'asso (le matos doit
+  appartenir à l'asso / lui être donné), lots en nature, frais + achat des lots
+  ≤ 15 %, règlement écrit (bouton « règlement type »). Vente en ligne = zone
+  grise → passer par HelloAsso et le signaler à la mairie ; tirage en public.
+- Quand la rubrique devient publique durablement : ajouter `'tombola/'` à
+  `PAGES` dans `server/routes/sitemap.xml.ts`.
 
 ## 9. Décisions & historique (pour le futur)
 - **Style** : monochrome gravé dérivé du logo. Validé par le client (« incroyable »).
@@ -473,6 +520,15 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
   avec `npx -p vue-tsc@3.1 -p typescript@5 vue-tsc --noEmit -p .nuxt/tsconfig.app.json`.
 - **Formulaire « Booking & collab »** (`/collaborer`) : anti-spam par champ piège + délai de 3 s
   (pas de captcha). Données perso visibles des seuls admins (RLS).
+- **Tombola — participation gratuite contre des pubs : écartée** (oct. 2026).
+  Il faudrait une régie (Google Ad Manager « rewarded ») + bandeau cookies
+  (fin du « aucun pistage » des mentions légales), ça rapporte quelques
+  centimes par pub vue, ça dilue les chances des payants et c'est facile à
+  frauder (navigation privée, robots). Les tickets « Offert » de l'admin
+  couvrent les cas ponctuels (concours Insta, bénévoles).
+- **Tombola — paiement** : pas de paiement intégré au site (statique, zone
+  grise légale). Piste future : synchro automatique des ventes HelloAsso via
+  leur API (Edge Function Supabase + clés API de l'asso).
 - **CSS** : `overflow-x: clip` (et non `hidden`) sur `html`/`body` — `hidden`
   sur les deux faisait de `body` un conteneur de défilement et cassait le
   header `sticky`.
@@ -486,6 +542,9 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
       attendant, les demandes de booking sont enregistrées en « autre » avec
       le préfixe « [Booker un DJ] » dans le message (rien n'est perdu).
 - [x] Exécuter `supabase/visites.sql` (compteur de visiteurs du pied de page).
+- [ ] **Exécuter `supabase/tombola.sql`** (tombolas). Puis, avant toute
+      tombola réelle : autorisation du maire, règlement relu, et seulement
+      ensuite admin → Tombola → « Rendre publique ».
 - [ ] Piste : courbe des visites par jour dans l'admin (`site_visits`).
 - [x] Passer sur **soniklab.fr** (OVH + Cloudflare, déploiement auto) — 2 oct. 2026.
 - [ ] Optionnel : passer le titulaire du domaine OVH au nom de l'asso

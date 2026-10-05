@@ -8,14 +8,23 @@ const route = useRoute()
 const open = ref(false)
 watch(() => route.fullPath, () => (open.value = false))
 
-const nav = [
+// « Tombola » : dans le menu seulement quand la rubrique est publique
+// (admin → Tombola). En attendant, les admins la voient avec un cadenas.
+const settings = useSiteSettings()
+const rafflePublic = computed(() => !!settings.value.raffle_public.trim())
+
+type NavItem = { to: string; label: string; locked?: boolean }
+const nav = computed<NavItem[]>(() => [
   { to: '/#artistes', label: 'Artistes' },
   { to: '/#dates', label: 'Dates' },
   { to: '/evenements', label: 'Événements' },
   { to: '/#collabs', label: 'Collabs' },
   { to: '/asso', label: "L'asso" },
+  ...(rafflePublic.value || auth.isAdmin.value
+    ? [{ to: '/tombola', label: 'Tombola', locked: !rafflePublic.value }]
+    : []),
   { to: '/collaborer', label: 'Booking' },
-]
+])
 </script>
 
 <template>
@@ -27,7 +36,14 @@ const nav = [
       </NuxtLink>
 
       <nav class="hidden gap-6 font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash lg:flex">
-        <NuxtLink v-for="n in nav" :key="n.to" :to="n.to" class="transition-colors hover:text-bone">
+        <NuxtLink
+          v-for="n in nav"
+          :key="n.to"
+          :to="n.to"
+          class="inline-flex items-center gap-1 transition-colors hover:text-bone"
+          :title="n.locked ? 'Rubrique privée : visible des admins seulement' : undefined"
+        >
+          <AppIcon v-if="n.locked" name="lock" class="h-3 w-3" />
           {{ n.label }}
         </NuxtLink>
       </nav>
@@ -61,9 +77,10 @@ const nav = [
         v-for="n in nav"
         :key="n.to"
         :to="n.to"
-        class="block border-b border-line px-5 py-3.5 font-display text-2xl uppercase tracking-wide transition-colors last:border-b-0 hover:bg-bone hover:text-void"
+        class="flex items-center gap-2 border-b border-line px-5 py-3.5 font-display text-2xl uppercase tracking-wide transition-colors last:border-b-0 hover:bg-bone hover:text-void"
       >
         {{ n.label }}
+        <AppIcon v-if="n.locked" name="lock" class="h-4 w-4 opacity-60" />
       </NuxtLink>
     </nav>
   </header>

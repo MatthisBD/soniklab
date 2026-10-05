@@ -4,8 +4,10 @@ import {
   type SonikEvent,
   fetchArtists,
   fetchCollaborators,
+  formatDate,
   socialLinks,
 } from '~/composables/useShowcase'
+import { liveRaffle } from '~/composables/useRaffle'
 
 // La vitrine publique de l'asso. Tout le contenu s'édite depuis /admin.
 
@@ -20,6 +22,9 @@ const collabs = useShowcaseData('collaborators', fetchCollaborators, () => [])
 const gear = useGear()
 const settings = useSiteSettings()
 const tickerWords = useShowcaseData('ticker-words', fetchTickerWords, () => [])
+// Tombola en cours : bandeau sous le hero (seulement si la rubrique est publique).
+const raffles = useRaffles()
+const raffle = computed(() => liveRaffle(raffles.value, settings.value))
 
 const today = useToday()
 const upcoming = computed(() =>
@@ -191,6 +196,26 @@ useReveal()
 
     <!-- ====================== MARQUEE ====================== -->
     <Marquee v-if="tickerWords.length" :words="tickerWords" />
+
+    <!-- ====================== TOMBOLA EN COURS ====================== -->
+    <NuxtLink v-if="raffle" to="/tombola" class="group block border-b border-line bg-bone text-void">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-2 px-5 py-4">
+        <span class="inline-flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.25em]">
+          <span class="inline-block h-2 w-2 animate-pulse rounded-full bg-void" />
+          tombola en cours
+        </span>
+        <span class="min-w-0 flex-1 truncate font-display text-2xl uppercase tracking-wide">
+          {{ raffle.prizes[0] ? `À gagner : ${raffle.prizes[0].name}` : raffle.title }}
+        </span>
+        <span v-if="raffle.draw_on" class="font-mono text-xs uppercase tracking-widest text-void/60">
+          tirage le {{ formatDate(raffle.draw_on) }}
+        </span>
+        <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest">
+          Tenter ma chance
+          <AppIcon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+        </span>
+      </div>
+    </NuxtLink>
 
     <!-- ====================== ARTISTES ====================== -->
     <section id="artistes" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-12 md:py-16">

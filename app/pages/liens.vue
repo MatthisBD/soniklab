@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { dateParts, parseLinks, socialLinks } from '~/composables/useShowcase'
+import { liveRaffle } from '~/composables/useRaffle'
 
 // Page « link in bio » : le lien à mettre dans la bio Instagram ou en QR code
 // sur les flyers. Tout se règle dans /admin → Textes & réseaux.
@@ -26,6 +27,9 @@ const nextEvent = computed(
 const nextDate = computed(() => (nextEvent.value ? dateParts(nextEvent.value.starts_on) : null))
 
 const socials = computed(() => socialLinks(settings.value))
+// Tombola en cours (seulement si la rubrique est publique)
+const raffles = useRaffles()
+const raffle = computed(() => liveRaffle(raffles.value, settings.value))
 const extras = computed(() => parseLinks(settings.value.extra_links))
 
 // Style commun des gros boutons
@@ -74,6 +78,13 @@ const btn =
           <span class="shrink-0 font-mono text-[0.65rem] uppercase tracking-widest">
             {{ nextEvent.ticket_url ? 'Billets' : 'Infos' }} ↗
           </span>
+        </NuxtLink>
+
+        <!-- tombola en cours -->
+        <NuxtLink v-if="raffle" to="/tombola" :class="btn">
+          <AppIcon name="ticket" class="h-5 w-5 shrink-0" />
+          <span class="min-w-0 flex-1 truncate">Tombola{{ raffle.prizes[0] ? ` : ${raffle.prizes[0].name}` : '' }}</span>
+          <AppIcon name="arrow" class="h-4 w-4 opacity-50 transition-transform group-hover:translate-x-1" />
         </NuxtLink>
 
         <!-- réseaux & dons -->

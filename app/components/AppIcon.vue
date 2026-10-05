@@ -115,6 +115,12 @@ defineProps<{ name: string }>()
       <path d="M3 3l18 18" />
     </g>
 
+    <!-- cadenas : rubrique privée (visible des admins seulement) -->
+    <g v-else-if="name === 'lock'">
+      <rect x="5" y="10.5" width="14" height="10" rx="1.5" />
+      <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3" />
+    </g>
+
     <!-- fallback : point -->
     <circle v-else cx="12" cy="12" r="3" />
   </svg>

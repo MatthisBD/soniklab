@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Espace admin : édition de la vitrine (artistes, événements, collabs,
-// textes) et des liens du QG. Un onglet = un composant de components/admin/.
+// textes), tombolas et liens du QG. Un onglet = un composant de components/admin/.
 useHead({ title: 'SONIKLAB — Admin', meta: [{ name: 'robots', content: 'noindex' }] })
 
 const route = useRoute()
@@ -21,6 +21,7 @@ const TABS = [
   { id: 'evenements', label: 'Événements' },
   { id: 'collabs', label: 'Collabs' },
   { id: 'materiel', label: 'Matériel' },
+  { id: 'tombola', label: 'Tombola' },
   { id: 'candidatures', label: 'Demandes' },
   { id: 'textes', label: 'Textes & réseaux' },
   { id: 'liens', label: 'Liens du QG' },
@@ -72,6 +73,7 @@ function selectTab(id: string) {
       <AdminEvents v-else-if="tab === 'evenements'" />
       <AdminCollabs v-else-if="tab === 'collabs'" />
       <AdminGear v-else-if="tab === 'materiel'" />
+      <AdminRaffles v-else-if="tab === 'tombola'" />
       <AdminJoin v-else-if="tab === 'candidatures'" @changed="refreshCount" />
       <AdminSettings v-else-if="tab === 'textes'" />
       <AdminLinks v-else-if="tab === 'liens'" />

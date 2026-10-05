@@ -8,7 +8,7 @@ useSeoMeta({
   description: "Mentions légales, propriété intellectuelle et données personnelles du site de l'association SONIKLAB.",
 })
 
-const UPDATED = '4 octobre 2026'
+const UPDATED = '5 octobre 2026'
 
 const settings = useSiteSettings()
 const val = (key: SettingKey) => settings.value[key]?.trim() ?? ''
@@ -115,6 +115,21 @@ useReveal()
         <li><strong>Base légale :</strong> votre consentement, donné en cochant la case avant l'envoi.</li>
         <li><strong>Destinataires :</strong> les seuls membres de l'association en charge des demandes. Rien n'est vendu ni transmis à des tiers.</li>
         <li><strong>Durée de conservation :</strong> le temps de traiter la demande, puis au maximum 3 ans après le dernier échange.</li>
+      </ul>
+      <h3>Tombolas</h3>
+      <ul>
+        <li><strong>Données collectées :</strong> nom, email et/ou téléphone (pour prévenir les gagnants), nombre de tickets, montant et moyen de paiement.</li>
+        <li><strong>Finalité :</strong> attribuer les numéros de tickets, réaliser le tirage au sort et remettre les lots.</li>
+        <li><strong>Base légale :</strong> l'exécution du règlement de la tombola, accepté en prenant un ticket.</li>
+        <li>
+          <strong>Destinataires :</strong> les seuls membres de l'association. Les gagnants sont publiés sur le site sous
+          la forme « numéro de ticket + prénom et initiale du nom ».
+        </li>
+        <li><strong>Durée de conservation :</strong> au plus tard un an après le tirage, puis effacement.</li>
+        <li>
+          Si vous prenez vos tickets en ligne, le paiement est traité par la plateforme utilisée (HelloAsso), selon sa
+          propre politique de confidentialité.
+        </li>
       </ul>
       <h3>Vos droits</h3>
       <p>

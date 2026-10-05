@@ -248,6 +248,66 @@ body {
   text-align: center;
 }
 
+/* ============================================================
+   TOMBOLA — tickets à souche (page /tombola) + tambour du tirage
+   ============================================================ */
+/* Ticket : deux encoches rondes au niveau de la perforation, côté souche
+   (la souche fait --stub de large, à droite). */
+.raffle-ticket {
+  --stub: 8rem;
+  --notch: 0.65rem;
+  --punch-top: radial-gradient(circle var(--notch) at calc(100% - var(--stub)) 0, transparent 97%, #000);
+  --punch-bottom: radial-gradient(circle var(--notch) at calc(100% - var(--stub)) 100%, transparent 97%, #000);
+  -webkit-mask: var(--punch-top) top / 100% 51% no-repeat, var(--punch-bottom) bottom / 100% 51% no-repeat;
+  mask: var(--punch-top) top / 100% 51% no-repeat, var(--punch-bottom) bottom / 100% 51% no-repeat;
+}
+.raffle-stub {
+  width: var(--stub);
+}
+
+/* Tambour du tirage (RaffleDraw.vue) : une bande 0→9 répétée 3 fois.
+   Pendant le tirage elle défile en boucle, puis chaque chiffre s'arrête
+   tour à tour sur le numéro gagnant (léger rebond, comme une machine à sous). */
+.draw-cell {
+  position: relative;
+  display: block;
+  height: 1.3em;
+  width: 0.85em;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  background: var(--color-ink);
+}
+.draw-cell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(6, 6, 6, 0.9),
+    transparent 30%,
+    transparent 70%,
+    rgba(6, 6, 6, 0.9)
+  );
+}
+.draw-strip {
+  display: block;
+}
+.draw-strip > span {
+  display: block;
+  height: 1.3em;
+  line-height: 1.3em;
+  text-align: center;
+}
+@keyframes draw-spin {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-13em); } /* 10 chiffres × 1.3em */
+}
+.draw-strip.spinning {
+  animation: draw-spin 0.3s linear infinite;
+  filter: blur(1.5px);
+}
+
 /* Accessibilité.
    SONIKLAB est volontairement un site très animé (c'est l'identité).
    On laisse donc tourner les animations de marque (vinyle, equalizer,

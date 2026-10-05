@@ -99,6 +99,8 @@ export const SETTINGS_DEFAULTS = {
   extra_links: '',
   /** Types de demande du formulaire /collaborer fermés pour l'instant (ids séparés par des virgules). */
   join_closed_profiles: 'benevole',
+  /** Rubrique Tombola : vide = privée (admins seulement), « on » = dans le menu du site (cf. supabase/tombola.sql). */
+  raffle_public: '',
 }
 
 /** Réglages pour lesquels une valeur vide est un vrai choix (et non « texte par défaut »). */
@@ -236,7 +238,9 @@ export function useShowcaseData<T>(key: string, fetcher: (s: SupabaseClient) => 
   const result = useAsyncData(key, () => fetcher(supabase).catch(() => fallback()), {
     default: fallback,
   })
-  onMounted(() => result.refresh())
+  // Après l'hydratation, pas au montage : pendant l'hydratation, Nuxt répond
+  // à refresh() avec la donnée du build (cache) sans interroger la base.
+  onNuxtReady(() => result.refresh())
   return result.data as Ref<T>
 }
 
