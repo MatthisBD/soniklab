@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { type SonikEvent, dateParts } from '~/composables/useShowcase'
+import { type SonikEvent, dateParts, entryLabel } from '~/composables/useShowcase'
 
 const props = defineProps<{ event: SonikEvent }>()
 const d = computed(() => dateParts(props.event.starts_on))
 const place = computed(() => [props.event.venue, props.event.city].filter(Boolean).join(' — '))
+const entry = computed(() => entryLabel(props.event.entry))
 </script>
 
 <template>
@@ -20,11 +21,12 @@ const place = computed(() => [props.event.venue, props.event.city].filter(Boolea
     <div class="min-w-0">
       <h3 class="glitch font-display text-2xl uppercase leading-tight tracking-wide sm:text-3xl">{{ event.title }}</h3>
       <p
-        v-if="place || event.hours"
+        v-if="place || event.hours || entry"
         class="mt-1 flex flex-wrap items-center gap-x-3 font-mono text-xs uppercase tracking-wider text-smoke group-hover:text-void/70"
       >
         <span v-if="place" class="inline-flex items-center gap-1"><AppIcon name="pin" class="h-3.5 w-3.5" />{{ place }}</span>
         <span v-if="event.hours">{{ event.hours }}</span>
+        <span v-if="entry">{{ entry }}</span>
       </p>
       <p v-if="event.description" class="mt-2 line-clamp-2 max-w-2xl text-sm text-smoke group-hover:text-void/70">
         {{ event.description }}

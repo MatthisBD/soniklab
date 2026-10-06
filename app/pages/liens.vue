@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { dateParts, parseLinks, socialLinks } from '~/composables/useShowcase'
+import { dateParts, entryLabel, parseLinks, socialLinks } from '~/composables/useShowcase'
 import { liveRaffle } from '~/composables/useRaffle'
 
 // Page « link in bio » : le lien à mettre dans la bio Instagram ou en QR code
@@ -73,6 +73,9 @@ const btn =
             <span class="block truncate font-display text-xl uppercase leading-tight">{{ nextEvent.title }}</span>
             <span v-if="nextEvent.venue || nextEvent.city" class="block truncate text-xs text-void/70">
               {{ [nextEvent.venue, nextEvent.city].filter(Boolean).join(' — ') }}
+            </span>
+            <span v-if="nextEvent.entry" class="block truncate font-mono text-[0.6rem] uppercase tracking-widest text-void/70">
+              {{ entryLabel(nextEvent.entry) }}
             </span>
           </span>
           <span class="shrink-0 font-mono text-[0.65rem] uppercase tracking-widest">

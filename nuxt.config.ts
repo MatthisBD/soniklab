@@ -53,21 +53,21 @@ export default defineNuxtConfig({
     baseURL,
     head: {
       htmlAttrs: { lang: 'fr' },
-      title: 'SONIKLAB — Collectif techno',
+      title: 'SONIKLAB — Collectif & soirées techno à Saint-Nazaire',
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         {
           name: 'description',
           content:
-            'SONIKLAB, association et collectif techno de Saint-Nazaire : nos DJs, nos soirées en bars, guinguettes et open airs, booking et collaborations.',
+            'SONIKLAB, association et collectif techno de Saint-Nazaire : soirées techno en bars, guinguettes et open airs, nos DJs, notre sound system, booking et collaborations.',
         },
         { name: 'theme-color', content: '#0a0a0a' },
         // Aperçu de partage (image 1200×630 dans public/og-image.png)
         { property: 'og:site_name', content: 'SONIKLAB' },
         { property: 'og:locale', content: 'fr_FR' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:title', content: 'SONIKLAB — Collectif techno' },
+        { property: 'og:title', content: 'SONIKLAB — Collectif techno à Saint-Nazaire' },
         { property: 'og:description', content: shareText },
         { property: 'og:image', content: `${siteUrl}og-image.png` },
         { property: 'og:image:width', content: '1200' },

@@ -11,8 +11,9 @@ import {
 // collaboration ponctuelle (on ne recrute pas de membres).
 // Les demandes arrivent dans /admin → onglet « Demandes ».
 useSeoMeta({
-  title: 'SONIKLAB — Booking & collab',
-  description: 'Un DJ pour ta soirée, un événement à monter ensemble, un projet son ou vidéo : contacte le collectif techno SONIKLAB.',
+  title: 'Booking DJ techno à Saint-Nazaire — SONIKLAB',
+  description:
+    'Un DJ techno pour ta soirée à Saint-Nazaire et alentours (bar, guinguette, festival, soirée privée), un événement à monter ensemble, un projet son ou vidéo : contacte le collectif SONIKLAB.',
   ogTitle: 'Booker SONIKLAB',
   ogDescription: 'Un DJ pour ta soirée ou un projet à monter ensemble ? Écris au collectif techno SONIKLAB.',
 })

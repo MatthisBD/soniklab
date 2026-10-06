@@ -21,7 +21,7 @@ const today = isoToday()
 
 // Champs enregistrés par le bouton « Enregistrer » (la galerie, elle, s'enregistre seule).
 const { mark, isDirty } = useDirty((e: SonikEvent) => [
-  e.title, e.starts_on, e.hours, e.venue, e.city, e.description, e.cover_url, e.ticket_url, e.visible,
+  e.title, e.starts_on, e.hours, e.venue, e.city, e.entry, e.description, e.cover_url, e.ticket_url, e.visible,
 ])
 
 onMounted(async () => {
@@ -61,6 +61,7 @@ async function save(e: SonikEvent) {
           hours: e.hours,
           venue: e.venue,
           city: e.city,
+          entry: e.entry,
           description: e.description,
           cover_url: e.cover_url,
           ticket_url: e.ticket_url,
@@ -197,11 +198,20 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
             <span class="adm-label">Lieu</span>
             <input v-model="e.venue" placeholder="La Guinguette du port" class="adm-input" />
           </label>
-          <label class="block sm:col-span-2">
+          <label class="block">
             <span class="adm-label">Ville</span>
             <input v-model="e.city" class="adm-input" />
           </label>
+          <label class="block">
+            <span class="adm-label">Entrée</span>
+            <input v-model="e.entry" list="entry-presets" placeholder="Gratuit, 5 €, prix libre…" class="adm-input" />
+          </label>
         </div>
+        <datalist id="entry-presets">
+          <option value="Gratuit" />
+          <option value="Prix libre" />
+          <option value="5 €" />
+        </datalist>
         <label class="block">
           <span class="adm-label">Description</span>
           <textarea v-model="e.description" rows="3" class="adm-input" />

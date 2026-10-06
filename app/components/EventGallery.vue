@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type EventMedia, type SonikEvent, formatDate } from '~/composables/useShowcase'
+import { type EventMedia, type SonikEvent, entryLabel, formatDate } from '~/composables/useShowcase'
 import { embedUrl } from '~/composables/useMedia'
 
 // Fiche d'un événement en plein écran : infos + affiche + galerie photos / vidéos.
@@ -89,7 +89,7 @@ function onTouchEnd(e: TouchEvent) {
             <header class="mb-6 flex items-start justify-between gap-4 border-b border-line pb-5">
               <div class="min-w-0">
                 <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">
-                  {{ formatDate(event.starts_on) }}<template v-if="event.hours"> · {{ event.hours }}</template><template v-if="place"> · {{ place }}</template>
+                  {{ formatDate(event.starts_on) }}<template v-if="event.hours"> · {{ event.hours }}</template><template v-if="place"> · {{ place }}</template><template v-if="event.entry"> · {{ entryLabel(event.entry) }}</template>
                 </p>
                 <h2 class="mt-2 font-display text-4xl uppercase leading-none tracking-wide sm:text-5xl">
                   {{ event.title }}

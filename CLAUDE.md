@@ -161,6 +161,7 @@ soniklab/
 ├─ supabase/rejoindre.sql     # SQL du formulaire « Nous rejoindre » (à coller, idempotent)
 ├─ supabase/visites.sql       # SQL du compteur de visiteurs (✅ exécuté)
 ├─ supabase/tombola.sql       # SQL des tombolas (à coller, idempotent ; testé sous PGlite)
+├─ supabase/entree.sql        # SQL du prix d'entrée des événements (colonne events.entry, à coller)
 ├─ public/og-image.png        # image d'aperçu de partage 1200×630 (Insta, WhatsApp…)
 ├─ .github/workflows/deploy.yml # déploiement auto sur GitHub Pages
 ├─ nuxt.config.ts             # meta, polices, Tailwind, baseURL, config Supabase
@@ -391,7 +392,7 @@ l'admin) ne s'affichent que si `auth.isAdmin`.
 |---|---|
 | `artists` | nom, rôle, style, bio, photo, `links` (jsonb `[{label,url}]`), visible, position |
 | `collaborators` | nom, type, ville, description, logo, url, visible, position |
-| `events` | titre, `starts_on` (date → « à venir » si ≥ aujourd'hui, sinon archive), horaires, lieu, ville, description, cover, ticket_url, visible |
+| `events` | titre, `starts_on` (date → « à venir » si ≥ aujourd'hui, sinon archive), horaires, lieu, ville, `entry` (prix d'entrée en texte libre : « Gratuit », « 5 € »… → « Entrée gratuite » sur les cartes, `entryLabel()`), description, cover, ticket_url, visible |
 | `event_media` | event_id, kind (`image`\|`video`\|`embed`\|`link`), url, caption, position |
 | `join_requests` | demandes du formulaire `/collaborer` (admin → onglet « Demandes ») : nom, email, tél., profil, liens, message, status (`new`\|`contacted`\|`archived`). **Envoi public, lecture admin** (SQL : `supabase/rejoindre.sql`) |
 | `gear_items` | matériel / sound system : nom, type, caractéristiques (retours à la ligne gardés), photo, visible, position. Affiché sur l'accueil et sous le formulaire `/collaborer` (`GearGrid.vue`) ; admin → onglet « Matériel » ; intro = réglage `gear_intro` (SQL : `supabase/materiel.sql`) |
@@ -444,7 +445,16 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
   « / » final) → www.soniklab.fr et soniklab.fr ne sont pas vus en doublon.
 - `useStructuredData.ts` : JSON-LD sur l'accueil (Organization + WebSite +
   MusicEvent des prochaines dates ayant un lieu) ; `sameAs` = Instagram,
-  HelloAsso, SoundCloud renseignés dans l'admin.
+  HelloAsso, SoundCloud renseignés dans l'admin. Champs exigés par la Search
+  Console toujours remplis : `endDate` (déduite des horaires libres
+  « 21h30 -> 1h30 », lendemain si fin < début, heure de Paris), `description`
+  (texte saisi, sinon résumé titre/lieu/horaires), `image` (affiche → photos →
+  `og-image.png`), `performer` (le collectif, faute de line-up par date).
+  `offers` (+ `isAccessibleForFree`) dès que le champ « Entrée » se lit en prix
+  (« Gratuit » → 0, « 5 € » → 5) ou qu'un lien billetterie existe ; « Prix
+  libre » → pas de prix. `validFrom` = date de création de l'événement.
+- Titres des pages avec « Saint-Nazaire » (requêtes « soirée techno
+  Saint-Nazaire », « DJ techno Saint-Nazaire »…).
 - Côté humains : Google Search Console (propriété « Domaine » soniklab.fr,
   vérif. auto via Cloudflare) + envoi du sitemap ; liens entrants (bio Insta,
   champ « site web » HelloAsso, partenaires).
@@ -542,6 +552,8 @@ via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
       attendant, les demandes de booking sont enregistrées en « autre » avec
       le préfixe « [Booker un DJ] » dans le message (rien n'est perdu).
 - [x] Exécuter `supabase/visites.sql` (compteur de visiteurs du pied de page).
+- [ ] **Exécuter `supabase/entree.sql`** (champ « Entrée » des événements).
+      Avant ça, taper dans ce champ de l'admin fait échouer l'enregistrement.
 - [ ] **Exécuter `supabase/tombola.sql`** (tombolas). Puis, avant toute
       tombola réelle : autorisation du maire, règlement relu, et seulement
       ensuite admin → Tombola → « Rendre publique ».
@@ -557,6 +569,8 @@ via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
 - [ ] **Google Search Console** : ajouter soniklab.fr (compte de l'asso),
       envoyer `https://soniklab.fr/sitemap.xml`, demander l'indexation de
       l'accueil. Idem Bing Webmaster Tools (import depuis Search Console).
+- [ ] **Cloudflare → SSL/TLS → Certificats Edge → « Toujours utiliser HTTPS »** :
+      http://soniklab.fr répond encore en 200 (Google l'a indexé en double).
 - [ ] Optionnel : règle de redirection Cloudflare www → soniklab.fr
       (Rules → Redirect Rules → modèle « Redirect from WWW to root »).
 - [ ] Piste : héberger les polices sur le site (au lieu de Google Fonts) pour

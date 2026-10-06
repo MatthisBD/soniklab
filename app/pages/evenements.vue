@@ -3,9 +3,10 @@ import type { SonikEvent } from '~/composables/useShowcase'
 
 // Tous les événements : à venir + archives avec galeries photos / vidéos.
 useSeoMeta({
-  title: 'SONIKLAB — Événements',
-  description: 'Les soirées, open airs et dates passées et à venir du collectif SONIKLAB.',
-  ogTitle: 'SONIKLAB — Événements',
+  title: 'Soirées techno à Saint-Nazaire — Agenda SONIKLAB',
+  description:
+    'Agenda des soirées techno du collectif SONIKLAB à Saint-Nazaire et alentours : prochaines dates en bars, guinguettes et open airs, photos des soirées passées.',
+  ogTitle: 'Soirées techno à Saint-Nazaire — SONIKLAB',
   ogDescription: 'Prochaines dates et photos de nos soirées, open airs et fêtes de la musique.',
 })
 
@@ -40,7 +41,7 @@ useReveal()
 
     <section class="border-b border-line">
       <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
-        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// l'agenda & les archives</p>
+        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// soirées techno à Saint-Nazaire · agenda & archives</p>
         <h1 class="mt-3 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
           Événe<span class="glitch inline-block">ments</span>
         </h1>

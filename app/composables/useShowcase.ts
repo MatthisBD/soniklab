@@ -65,7 +65,10 @@ export type SonikEvent = {
   description: string | null
   cover_url: string | null
   ticket_url: string | null
+  /** Prix d'entrée en texte libre (« Gratuit », « 5 € »…), cf. supabase/entree.sql */
+  entry: string | null
   visible: boolean
+  created_at?: string
   media: EventMedia[]
 }
 
@@ -194,6 +197,22 @@ export async function fetchSettings(supabase: SupabaseClient): Promise<SiteSetti
     if (key in out && (row.value.trim() || EMPTY_ALLOWED.includes(key))) out[key] = row.value
   }
   return out
+}
+
+// ---------------- Prix d'entrée ----------------
+
+/** « Gratuit », « Entrée libre », « 0 € »… (mais pas « Prix libre »). */
+export function isFreeEntry(entry: string | null | undefined): boolean {
+  const v = (entry ?? '').toLowerCase().replace(/[\s!.]+$/, '').trim()
+  return /^(entr[ée]e\s+)?(gratuite?|libre|free|0\s*(€|euros?)?)$/.test(v)
+}
+
+/** Texte affiché sur les cartes : « Entrée gratuite », « Entrée : 5 € »… */
+export function entryLabel(entry: string | null | undefined): string {
+  const v = entry?.trim()
+  if (!v) return ''
+  if (/^entr[ée]e/i.test(v)) return v
+  return isFreeEntry(v) ? 'Entrée gratuite' : `Entrée : ${v}`
 }
 
 // ---------------- Dates ----------------

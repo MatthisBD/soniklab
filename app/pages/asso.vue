@@ -3,8 +3,8 @@ import { paragraphs, pillars } from '~/composables/useShowcase'
 
 // « L'asso » : qui on est, ce qu'on fait. Textes éditables dans /admin → Textes.
 useSeoMeta({
-  title: "SONIKLAB — L'asso",
-  description: "SONIKLAB, association et collectif techno : qui on est, ce qu'on fait.",
+  title: "L'asso — SONIKLAB, collectif techno de Saint-Nazaire",
+  description: "SONIKLAB, association et collectif techno de Saint-Nazaire : qui on est, ce qu'on fait.",
   ogTitle: "SONIKLAB — L'asso",
   ogDescription: "Association et collectif techno : qui on est, ce qu'on fait.",
 })
