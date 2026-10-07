@@ -91,7 +91,7 @@ onBeforeUnmount(() => {
             <!-- infos -->
             <div class="flex flex-col p-6 sm:p-8">
               <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// au line-up</p>
-              <h2 class="mt-2 pr-10 font-display text-5xl uppercase leading-[0.95] tracking-wide">
+              <h2 class="title-room mt-1 pr-10 font-display text-5xl uppercase leading-[1.12] tracking-wide">
                 {{ artist.name }}
               </h2>
               <p v-if="subtitle" class="mt-3 font-mono text-xs uppercase tracking-widest text-smoke">

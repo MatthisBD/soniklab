@@ -159,7 +159,7 @@ onBeforeUnmount(() => {
               <p class="font-mono text-xs uppercase tracking-[0.3em] text-ash">
                 Lot n° {{ rank }}<template v-if="prize.value_eur"> · valeur {{ formatPrice(Number(prize.value_eur)) }}</template>
               </p>
-              <h2 class="max-w-4xl font-display text-5xl uppercase leading-[0.95] tracking-wide sm:text-7xl">
+              <h2 class="max-w-4xl font-display text-5xl uppercase leading-[1.12] tracking-wide sm:text-7xl">
                 {{ prize.name }}
               </h2>
             </div>

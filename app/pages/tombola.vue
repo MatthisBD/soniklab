@@ -81,9 +81,9 @@ useReveal()
       <div class="pointer-events-none absolute -right-40 -top-32 h-[30rem] w-[30rem] opacity-[0.12]" aria-hidden="true">
         <Vinyl />
       </div>
-      <div class="relative mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="relative mx-auto max-w-6xl px-5 py-12">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// tombola</p>
-        <h1 class="mt-3 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
+        <h1 class="title-room mt-1 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
           Tente ta<br />
           <span class="glitch inline-block">chance</span>
         </h1>
@@ -96,7 +96,7 @@ useReveal()
 
     <!-- ====================== TOMBOLAS EN COURS ====================== -->
     <section v-for="r in current" :id="`tombola-${r.id}`" :key="r.id" class="scroll-mt-16 border-b border-line">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <p
           v-if="!r.visible"
           class="mb-6 inline-flex items-center gap-2 border border-ash/50 px-3 py-1 font-mono text-[0.65rem] uppercase tracking-widest text-ash"
@@ -161,7 +161,7 @@ useReveal()
           <!-- les infos -->
           <div class="reveal md:sticky md:top-24">
             <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// en jeu</p>
-            <h2 class="mt-2 font-display text-5xl uppercase leading-[0.95] tracking-wide sm:text-6xl">{{ r.title }}</h2>
+            <h2 class="title-room mt-1 font-display text-5xl uppercase leading-[1.12] tracking-wide sm:text-6xl">{{ r.title }}</h2>
             <p v-if="prizesValue(r)" class="mt-3 font-mono text-sm uppercase tracking-widest text-smoke">
               {{ formatPrice(prizesValue(r)) }} de lots à gagner
             </p>
@@ -263,7 +263,7 @@ useReveal()
     </section>
 
     <!-- ====================== RÉSULTATS ====================== -->
-    <section v-if="past.length" class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+    <section v-if="past.length" class="mx-auto max-w-6xl px-5 py-12">
       <SectionHead kicker="// les gagnants" title="Résultats" />
       <div class="space-y-6">
         <article v-for="r in past" :key="r.id" class="reveal border border-line">

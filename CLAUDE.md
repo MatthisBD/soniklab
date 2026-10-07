@@ -544,6 +544,13 @@ via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
 - **Tombola — paiement** : pas de paiement intégré au site (statique, zone
   grise légale). Piste future : synchro automatique des ventes HelloAsso via
   leur API (Edge Function Supabase + clés API de l'asso).
+- **Accents des titres (Anton)** : les accents des capitales dépassent de
+  ~0,19 em au-dessus de la boîte d'un titre serré → classe `title-room`
+  (`main.css`, `padding-top: 0.19em`, avec `mt-1`) sur tout gros titre posé
+  sous un sous-titre « // … » (déjà dans `SectionHead`). Titre saisi dans
+  l'admin, qui peut passer à la ligne : interligne ≥ `leading-[1.12]`.
+- **Espacement des sections** : `py-12` (48 px) partout, aussi sur desktop
+  (oct. 2026, avant `md:py-16`). Seul le hero de l'accueil garde `md:py-14`.
 - **CSS** : `overflow-x: clip` (et non `hidden`) sur `html`/`body` — `hidden`
   sur les deux faisait de `body` un conteneur de défilement et cassait le
   header `sticky`.

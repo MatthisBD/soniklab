@@ -28,9 +28,9 @@ useReveal()
       >
         <Vinyl />
       </div>
-      <div class="relative mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="relative mx-auto max-w-6xl px-5 py-12">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// l'asso</p>
-        <h1 class="mt-3 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
+        <h1 class="title-room mt-1 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
           Plus qu'un<br />
           <span class="glitch inline-block">collectif</span>
         </h1>
@@ -39,10 +39,10 @@ useReveal()
     </section>
 
     <!-- ====================== HISTOIRE ====================== -->
-    <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[1fr_1.6fr] md:py-16">
+    <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[1fr_1.6fr]">
       <div class="reveal">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// notre histoire</p>
-        <h2 class="mt-2 font-display text-4xl uppercase tracking-wide sm:text-5xl">D'où on vient</h2>
+        <h2 class="title-room mt-1 font-display text-4xl uppercase tracking-wide sm:text-5xl">D'où on vient</h2>
         <div class="mt-6 h-12 w-full max-w-xs">
           <Equalizer :bars="32" />
         </div>
@@ -54,7 +54,7 @@ useReveal()
 
     <!-- ====================== CE QU'ON FAIT ====================== -->
     <section class="border-t border-line bg-ink">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <SectionHead kicker="// notre rôle" title="Ce qu'on fait" />
         <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <article
@@ -74,7 +74,7 @@ useReveal()
 
     <!-- ====================== APPEL À L'ACTION ====================== -->
     <section class="border-t border-line">
-      <div class="reveal mx-auto flex max-w-6xl flex-col gap-6 px-5 py-12 md:flex-row md:items-center md:justify-between md:py-14">
+      <div class="reveal mx-auto flex max-w-6xl flex-col gap-6 px-5 py-12 md:flex-row md:items-center md:justify-between">
         <h2 class="font-display text-4xl uppercase leading-none tracking-wide sm:text-5xl">
           Envie de bosser<br />avec nous ?
         </h2>

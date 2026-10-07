@@ -40,9 +40,9 @@ useReveal()
     <SiteHeader />
 
     <section class="border-b border-line">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// soirées techno à Saint-Nazaire · agenda & archives</p>
-        <h1 class="mt-3 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
+        <h1 class="title-room mt-1 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
           Événe<span class="glitch inline-block">ments</span>
         </h1>
       </div>

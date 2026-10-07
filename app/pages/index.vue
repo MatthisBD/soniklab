@@ -218,7 +218,7 @@ useReveal()
     </NuxtLink>
 
     <!-- ====================== ARTISTES ====================== -->
-    <section id="artistes" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-12 md:py-16">
+    <section id="artistes" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-12">
       <SectionHead
         kicker="// face A — le line-up"
         title="Les artistes"
@@ -259,7 +259,7 @@ useReveal()
 
     <!-- ====================== PROCHAINES DATES ====================== -->
     <section id="dates" class="scroll-mt-16 border-y border-line bg-ink">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <SectionHead kicker="// prochainement" title="Prochaines dates" />
 
         <div v-if="upcoming.length" class="-mt-5">
@@ -277,7 +277,7 @@ useReveal()
     </section>
 
     <!-- ====================== ÉVÉNEMENTS PASSÉS ====================== -->
-    <section id="evenements" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-12 md:py-16">
+    <section id="evenements" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-12">
       <SectionHead kicker="// face B — les archives" title="On y était">
         <template #aside>
           <NuxtLink
@@ -315,7 +315,7 @@ useReveal()
 
     <!-- ====================== COLLABORATEURS ====================== -->
     <section id="collabs" class="scroll-mt-16 border-t border-line">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <SectionHead
           kicker="// on bosse avec"
           title="Collaborateurs"
@@ -333,10 +333,10 @@ useReveal()
 
     <!-- ====================== L'ASSO (teaser) ====================== -->
     <section class="border-t border-line">
-      <div class="reveal mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-[1fr_1.4fr] md:items-center md:py-16">
+      <div class="reveal mx-auto grid max-w-6xl gap-8 px-5 py-12 md:grid-cols-[1fr_1.4fr] md:items-center">
         <div>
           <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// qui on est</p>
-          <h2 class="mt-2 font-display text-5xl uppercase leading-none tracking-wide sm:text-6xl">
+          <h2 class="title-room mt-1 font-display text-5xl uppercase leading-none tracking-wide sm:text-6xl">
             Une asso,<br />un <span class="glitch inline-block">collectif</span>
           </h2>
         </div>
@@ -356,7 +356,7 @@ useReveal()
     <!-- ====================== LE SOUND SYSTEM (matériel) ====================== -->
     <!-- masqué tant qu'aucun matériel n'est saisi dans l'admin -->
     <section v-if="gear.length" id="materiel" class="scroll-mt-16 border-t border-line bg-ink">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <SectionHead kicker="// le matos" title="Le sound system" />
         <p class="reveal -mt-2 mb-8 max-w-2xl text-lg text-smoke">{{ settings.gear_intro }}</p>
         <GearGrid :items="gear" />
@@ -365,9 +365,9 @@ useReveal()
 
     <!-- ====================== BOOKING / CONTACT ====================== -->
     <section id="booking" class="scroll-mt-16 bg-bone text-void">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-void/60">// booking & contact</p>
-        <h2 class="mt-2 font-display text-6xl uppercase leading-[0.95] tracking-wide sm:text-8xl">
+        <h2 class="title-room mt-1 font-display text-6xl uppercase leading-[0.95] tracking-wide sm:text-8xl">
           On ramène<br />le son ?
         </h2>
         <p class="mt-6 max-w-xl text-lg text-void/75">{{ settings.booking_text }}</p>

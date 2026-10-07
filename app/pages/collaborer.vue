@@ -94,9 +94,9 @@ useReveal()
       >
         <Vinyl />
       </div>
-      <div class="relative mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="relative mx-auto max-w-6xl px-5 py-12">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// booking & collab</p>
-        <h1 class="mt-3 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
+        <h1 class="title-room mt-1 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
           On bosse<br />
           <span class="glitch inline-block">ensemble</span>&nbsp;?
         </h1>
@@ -120,7 +120,7 @@ useReveal()
       </div>
     </section>
 
-    <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[1fr_1.5fr] md:py-16">
+    <section class="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[1fr_1.5fr]">
       <!-- ce qu'on peut faire ensemble -->
       <div class="reveal space-y-3">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// ce qu'on peut faire ensemble</p>
@@ -261,7 +261,7 @@ useReveal()
 
     <!-- le matériel : pour voir ce qu'on peut amener avant de demander une date -->
     <section v-if="gear.length" class="border-t border-line bg-ink">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <SectionHead kicker="// le matos" title="Ce qu'on peut amener" />
         <p class="reveal -mt-2 mb-8 max-w-2xl text-smoke">{{ settings.gear_intro }}</p>
         <GearGrid :items="gear" compact />

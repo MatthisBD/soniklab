@@ -34,16 +34,16 @@ useReveal()
     <SiteHeader />
 
     <section class="border-b border-line">
-      <div class="mx-auto max-w-6xl px-5 py-12 md:py-16">
+      <div class="mx-auto max-w-6xl px-5 py-12">
         <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// infos légales</p>
-        <h1 class="mt-3 font-display text-5xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl">
+        <h1 class="title-room mt-1 font-display text-5xl uppercase leading-[1.12] tracking-[0.015em] sm:text-7xl">
           Mentions <span class="glitch inline-block">légales</span>
         </h1>
         <p class="mt-4 font-mono text-xs uppercase tracking-widest text-ash">Dernière mise à jour : {{ UPDATED }}</p>
       </div>
     </section>
 
-    <article class="legal mx-auto max-w-3xl px-5 py-12 md:py-16">
+    <article class="legal mx-auto max-w-3xl px-5 py-12">
       <!-- 1. Éditeur -->
       <h2>1. Éditeur du site</h2>
       <p>

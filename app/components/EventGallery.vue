@@ -96,7 +96,7 @@ function onTouchEnd(e: TouchEvent) {
                 <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">
                   {{ formatDate(event.starts_on) }}<template v-if="event.hours"> · {{ event.hours }}</template><template v-if="place"> · {{ place }}</template><template v-if="event.entry"> · {{ entryLabel(event.entry) }}</template>
                 </p>
-                <h2 class="mt-2 font-display text-4xl uppercase leading-none tracking-wide sm:text-5xl">
+                <h2 class="title-room mt-1 font-display text-4xl uppercase leading-[1.12] tracking-wide sm:text-5xl">
                   {{ event.title }}
                 </h2>
               </div>

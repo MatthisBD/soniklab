@@ -77,6 +77,18 @@ body {
   }
 }
 
+/* ---------- Gros titres en Anton : de la place pour les accents ----------
+   Les accents des capitales (É, À, Ê…) montent à 1,11 em au-dessus de la ligne
+   de base, alors que la boîte d'un titre serré (leading 1) s'arrête vers 0,92 em :
+   ils dépassent de ~0,19 em et mordaient sur le sous-titre « // … » du dessus.
+   En em, la réserve suit la taille du titre. À poser avec mt-1.
+   Même cause sur plusieurs lignes : un titre saisi dans l'admin (qui peut passer
+   à la ligne) garde un interligne ≥ 1,12, sinon l'accent de la 2e ligne touche
+   les lettres de la 1re. */
+@utility title-room {
+  padding-top: 0.19em;
+}
+
 /* ============================================================
    TEXTURES — grain + scanlines pour le côté sérigraphie/CRT
    ============================================================ */
