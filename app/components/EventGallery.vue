@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { type EventMedia, type SonikEvent, entryLabel, formatDate } from '~/composables/useShowcase'
-import { embedUrl } from '~/composables/useMedia'
+import { type EventMedia, type SonikEvent, entryLabel, formatDate, isoToday } from '~/composables/useShowcase'
+import { embedUrl, linkIcon, linkLabel } from '~/composables/useMedia'
 
 // Fiche d'un événement en plein écran : infos + affiche + galerie photos / vidéos.
 // Un clic sur une image l'ouvre en grand (zoom), ← / → pour naviguer, Échap pour fermer.
@@ -10,20 +10,25 @@ const emit = defineEmits<{ close: [] }>()
 const index = ref(0)
 const zoom = ref(false)
 
+// Les liens (Instagram, Facebook…) ne sont pas des médias à regarder :
+// ils deviennent des boutons sous la galerie.
+const gallery = computed(() => props.event?.media.filter((m) => m.kind !== 'link') ?? [])
+const links = computed(() => props.event?.media.filter((m) => m.kind === 'link') ?? [])
+
 // L'affiche passe en premier (sauf si elle fait déjà partie de la galerie) :
 // la fiche n'est jamais vide, et le flyer se voit en grand.
 const items = computed<EventMedia[]>(() => {
   const ev = props.event
   if (!ev) return []
   const cover =
-    ev.cover_url && !ev.media.some((m) => m.url === ev.cover_url)
+    ev.cover_url && !gallery.value.some((m) => m.url === ev.cover_url)
       ? [{ id: 'cover', event_id: ev.id, kind: 'image' as const, url: ev.cover_url, caption: 'Affiche', position: -1 }]
       : []
-  return [...cover, ...ev.media]
+  return [...cover, ...gallery.value]
 })
 const current = computed(() => items.value[index.value] ?? null)
 const place = computed(() => [props.event?.venue, props.event?.city].filter(Boolean).join(' — '))
-const hasGallery = computed(() => !!props.event?.media.length)
+const upcoming = computed(() => !!props.event && props.event.starts_on >= isoToday())
 
 function go(step: number) {
   const n = items.value.length
@@ -210,22 +215,42 @@ function onTouchEnd(e: TouchEvent) {
             </template>
 
             <p
-              v-if="!hasGallery"
+              v-if="!upcoming && !gallery.length"
               class="mt-6 border border-dashed border-line px-4 py-4 text-center font-mono text-xs uppercase tracking-widest text-ash"
             >
               Les photos de la soirée arrivent bientôt.
             </p>
 
-            <a
-              v-if="event.ticket_url"
-              :href="event.ticket_url"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="mt-6 inline-flex items-center gap-2 border border-line px-4 py-2.5 font-mono text-xs uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone"
-            >
-              Page de l'événement
-              <AppIcon name="arrow" class="h-3.5 w-3.5" />
-            </a>
+            <!-- billetterie + liens ajoutés dans la galerie de l'admin -->
+            <div v-if="event.ticket_url || links.length" class="mt-6 flex flex-wrap gap-3">
+              <a
+                v-if="event.ticket_url"
+                :href="event.ticket_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2.5 font-mono text-xs uppercase tracking-widest transition-colors"
+                :class="
+                  upcoming
+                    ? 'border border-bone bg-bone text-void hover:bg-transparent hover:text-bone'
+                    : 'border border-line text-smoke hover:border-bone hover:text-bone'
+                "
+              >
+                {{ upcoming ? 'Infos & billets' : "Page de l'événement" }}
+                <AppIcon name="arrow" class="h-3.5 w-3.5" />
+              </a>
+              <a
+                v-for="l in links"
+                :key="l.id"
+                :href="l.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 border border-line px-4 py-2.5 font-mono text-xs uppercase tracking-widest text-smoke transition-colors hover:border-bone hover:text-bone"
+              >
+                <AppIcon v-if="linkIcon(l.url) !== 'arrow'" :name="linkIcon(l.url)" class="h-3.5 w-3.5" />
+                {{ l.caption || linkLabel(l.url) }}
+                <span aria-hidden="true">↗</span>
+              </a>
+            </div>
           </div>
 
           <!-- ============ ZOOM plein écran ============ -->

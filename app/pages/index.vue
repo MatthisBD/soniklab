@@ -263,7 +263,7 @@ useReveal()
         <SectionHead kicker="// prochainement" title="Prochaines dates" />
 
         <div v-if="upcoming.length" class="-mt-5">
-          <UpcomingEvent v-for="e in upcoming" :key="e.id" :event="e" />
+          <UpcomingEvent v-for="e in upcoming" :key="e.id" :event="e" @open="opened = e" />
         </div>
         <p v-else class="reveal border border-dashed border-line px-4 py-10 text-center font-mono text-sm text-ash">
           Pas de date annoncée pour l'instant

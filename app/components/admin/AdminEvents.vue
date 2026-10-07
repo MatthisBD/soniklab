@@ -221,7 +221,7 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
           <input v-model="e.ticket_url" placeholder="https://…" class="adm-input font-mono text-xs" />
         </label>
 
-        <AdminMediaField v-model="e.cover_url" label="Visuel / affiche" :folder="`events/${e.id}`" @uploaded="save(e)" />
+        <AdminMediaField v-model="e.cover_url" label="Visuel / affiche (flyer, line-up…)" :folder="`events/${e.id}`" @uploaded="save(e)" />
 
         <label class="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-smoke">
           <input v-model="e.visible" type="checkbox" class="accent-bone" />
@@ -233,7 +233,7 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
           <div class="flex items-baseline gap-2">
             <h3 class="font-display text-xl uppercase tracking-wide">Galerie</h3>
             <span class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">
-              photos & vidéos — enregistrées automatiquement
+              photos, vidéos & liens — enregistrés automatiquement
             </span>
           </div>
 
@@ -250,7 +250,7 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
               </div>
               <input
                 v-model="m.caption"
-                placeholder="légende"
+                :placeholder="m.kind === 'link' ? 'texte du bouton' : 'légende'"
                 class="w-full border-y border-line bg-void px-2 py-1 text-xs outline-none focus:border-bone"
                 @change="saveCaption(m)"
               />
@@ -277,7 +277,7 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
             <form class="flex min-w-[16rem] flex-1 gap-2" @submit.prevent="addLink(e)">
               <input
                 v-model="linkDraft"
-                placeholder="ou colle un lien YouTube / Vimeo / Instagram…"
+                placeholder="ou colle un lien (YouTube, Vimeo, Instagram, Facebook…)"
                 class="adm-input font-mono text-xs"
               />
               <button type="submit" class="adm-btn shrink-0">Ajouter</button>
@@ -285,7 +285,8 @@ async function useAsCover(e: SonikEvent, m: EventMedia) {
           </div>
           <p class="font-mono text-[0.65rem] text-ash">
             Les photos sont réduites automatiquement. Vidéos : 50 Mo max par fichier — au-delà, publie-la
-            sur YouTube / Instagram et colle le lien.
+            sur YouTube et colle le lien. Les autres liens (post Instagram, event Facebook…) deviennent des
+            boutons sur la fiche de l'événement : leur légende sert de texte (sinon « Instagram », « Facebook »…).
           </p>
         </div>
 

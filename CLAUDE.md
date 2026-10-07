@@ -425,6 +425,11 @@ Mon compte. Les éléments masqués (`visible = false`) restent éditables.
   par défaut). Indicateur « non enregistré » via `useDirty()`.
 - **Fiche événement** (`EventGallery`) : l'affiche (`cover_url`) est le 1er
   élément de la galerie, images au format d'origine, clic = plein écran.
+  S'ouvre au clic sur une archive (`PastEventCard`) **et** sur une prochaine
+  date (`UpcomingEvent`, qui montre l'affiche en vignette). Les médias de type
+  `link` (post Instagram, event Facebook…) ne vont pas dans le carrousel : ce
+  sont des boutons sous la galerie, libellés par la légende (sinon
+  `linkLabel()` : « Instagram », « Facebook »… ; cf. useMedia.ts).
 
 ### Compteur de visiteurs (pied de page)
 `VisitCounter.vue` (rouleaux de chiffres qui défilent quand le pied de page

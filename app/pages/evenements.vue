@@ -53,7 +53,7 @@ useReveal()
       <div class="mx-auto max-w-6xl px-5 py-12">
         <SectionHead kicker="// prochainement" title="À venir" />
         <div class="-mt-5">
-          <UpcomingEvent v-for="e in upcoming" :key="e.id" :event="e" />
+          <UpcomingEvent v-for="e in upcoming" :key="e.id" :event="e" @open="opened = e" />
         </div>
       </div>
     </section>

@@ -104,3 +104,24 @@ export function linkIcon(url: string): string {
   if (u.startsWith('mailto:')) return 'mail'
   return 'arrow'
 }
+
+/** Texte d'un bouton de lien quand rien n'est saisi : « Instagram », « Facebook », sinon le domaine. */
+export function linkLabel(url: string): string {
+  const names: [RegExp, string][] = [
+    [/instagram\.com/, 'Instagram'],
+    [/facebook\.com|fb\.me/, 'Facebook'],
+    [/helloasso\.com/, 'HelloAsso'],
+    [/soundcloud\.com/, 'SoundCloud'],
+    [/youtu\.?be/, 'YouTube'],
+    [/tiktok\.com/, 'TikTok'],
+    [/shotgun\.live/, 'Shotgun'],
+    [/ra\.co/, 'Resident Advisor'],
+  ]
+  const hit = names.find(([re]) => re.test(url.toLowerCase()))
+  if (hit) return hit[1]
+  try {
+    return new URL(url).hostname.replace(/^www\./, '')
+  } catch {
+    return 'Lien'
+  }
+}

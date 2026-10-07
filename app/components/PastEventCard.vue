@@ -11,7 +11,7 @@ const cover = computed(
 )
 const counts = computed(() => {
   const photos = props.event.media.filter((m) => m.kind === 'image').length
-  const videos = props.event.media.length - photos
+  const videos = props.event.media.filter((m) => m.kind === 'video' || m.kind === 'embed').length
   return [photos && `${photos} photo${photos > 1 ? 's' : ''}`, videos && `${videos} vidéo${videos > 1 ? 's' : ''}`]
     .filter(Boolean)
     .join(' · ')
