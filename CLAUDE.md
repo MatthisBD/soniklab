@@ -448,6 +448,11 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
   **Nouvelle page publique → l'ajouter à `PAGES` dans sitemap.xml.ts.**
 - `app.vue` : balise **canonique** + `og:url` sur chaque page (format avec
   « / » final) → www.soniklab.fr et soniklab.fr ne sont pas vus en doublon.
+- **Liens internes avec « / » final** (`experimental.defaults.nuxtLink.trailingSlash:
+  'append'` dans `nuxt.config.ts`) : `/asso/` comme le sitemap et la canonique.
+  Avant, les liens visaient `/asso`, que Cloudflare redirige en 307 vers
+  `/asso/` → la Search Console listait les deux adresses. Pour un lien interne
+  écrit à la main (`<a href>`), mettre aussi le « / » final.
 - `useStructuredData.ts` : JSON-LD sur l'accueil (Organization + WebSite +
   MusicEvent des prochaines dates ayant un lieu) ; `sameAs` = Instagram,
   HelloAsso, SoundCloud renseignés dans l'admin. Champs exigés par la Search
@@ -564,8 +569,7 @@ via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
       attendant, les demandes de booking sont enregistrées en « autre » avec
       le préfixe « [Booker un DJ] » dans le message (rien n'est perdu).
 - [x] Exécuter `supabase/visites.sql` (compteur de visiteurs du pied de page).
-- [ ] **Exécuter `supabase/entree.sql`** (champ « Entrée » des événements).
-      Avant ça, taper dans ce champ de l'admin fait échouer l'enregistrement.
+- [x] Exécuter `supabase/entree.sql` (champ « Entrée » des événements).
 - [ ] **Exécuter `supabase/tombola.sql`** (tombolas). Puis, avant toute
       tombola réelle : autorisation du maire, règlement relu, et seulement
       ensuite admin → Tombola → « Rendre publique ».
@@ -581,8 +585,7 @@ via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
 - [ ] **Google Search Console** : ajouter soniklab.fr (compte de l'asso),
       envoyer `https://soniklab.fr/sitemap.xml`, demander l'indexation de
       l'accueil. Idem Bing Webmaster Tools (import depuis Search Console).
-- [ ] **Cloudflare → SSL/TLS → Certificats Edge → « Toujours utiliser HTTPS »** :
-      http://soniklab.fr répond encore en 200 (Google l'a indexé en double).
+- [x] Cloudflare → « Toujours utiliser HTTPS » (http → https en 301).
 - [ ] Optionnel : règle de redirection Cloudflare www → soniklab.fr
       (Rules → Redirect Rules → modèle « Redirect from WWW to root »).
 - [ ] Piste : héberger les polices sur le site (au lieu de Google Fonts) pour

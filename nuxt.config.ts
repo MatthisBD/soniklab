@@ -26,6 +26,13 @@ export default defineNuxtConfig({
     prerender: { routes: ['/sitemap.xml', '/robots.txt'] },
   },
 
+  // Liens internes avec « / » final (/asso/ et non /asso) : c'est l'adresse
+  // canonique et celle du sitemap. Sans ça, Cloudflare redirige /asso → /asso/
+  // (307 temporaire) et Google voit deux adresses par page.
+  experimental: {
+    defaults: { nuxtLink: { trailingSlash: 'append' } },
+  },
+
   // Ancienne adresse du formulaire (on ne « recrute » pas : c'est du booking / collab)
   routeRules: {
     '/rejoindre': { redirect: { to: '/collaborer', statusCode: 301 } },
