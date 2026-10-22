@@ -60,7 +60,8 @@ const socials = computed(() =>
         <p class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ash sm:text-right">
           © {{ year }} {{ settings.legal_name || 'SONIKLAB' }} · tous droits réservés<br />
           <NuxtLink to="/mentions-legales" class="transition-colors hover:text-bone">Mentions légales</NuxtLink>
-          · fait avec ❤ & 909<template v-if="auth.isAdmin.value"> ·
+          · fait avec ❤ & 909 ·
+          <a href="https://frequence-libre.com" class="transition-colors hover:text-bone">mémo prod : Fréquence Libre</a><template v-if="auth.isAdmin.value"> ·
           <NuxtLink to="/qg" class="transition-colors hover:text-bone">QG</NuxtLink> ·
           <NuxtLink to="/budget" class="transition-colors hover:text-bone">budget</NuxtLink> ·
           <NuxtLink to="/admin" class="transition-colors hover:text-bone">admin</NuxtLink></template>
