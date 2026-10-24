@@ -24,18 +24,21 @@ async function onLogout() {
         SONIKLAB
       </h1>
     </NuxtLink>
-    <div class="flex flex-wrap items-center gap-4 font-mono text-xs uppercase tracking-widest">
-      <template v-if="auth.isAdmin.value">
+    <div class="flex flex-wrap items-center gap-3 font-mono text-xs uppercase tracking-widest md:gap-4">
+      <!-- les outils : de vrais boutons, l'outil ouvert est inversé (blanc) -->
+      <nav v-if="auth.isAdmin.value" class="flex flex-wrap gap-2">
         <NuxtLink
           v-for="t in tools"
           :key="t.to"
           :to="t.to"
-          class="transition-colors hover:text-bone"
-          :class="route.path.startsWith(t.to) ? 'text-bone underline underline-offset-4' : 'text-ash'"
+          class="border px-4 py-2.5 font-display text-lg leading-none tracking-wider transition-colors md:px-6 md:py-3 md:text-2xl"
+          :class="route.path.startsWith(t.to)
+            ? 'border-bone bg-bone text-void'
+            : 'border-line text-smoke hover:border-bone hover:text-bone'"
         >
           {{ t.label }}
         </NuxtLink>
-      </template>
+      </nav>
       <NuxtLink to="/" class="text-ash transition-colors hover:text-bone">← le site</NuxtLink>
       <button
         v-if="auth.isLoggedIn.value"

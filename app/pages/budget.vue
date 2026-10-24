@@ -32,6 +32,11 @@ const editing = computed(() => categories.value.find((c) => c.id === editingId.v
 // Liste de 0 ou 1 élément : permet de réutiliser le même markup `c` dans l'éditeur.
 const editingList = computed(() => (editing.value ? [editing.value] : []))
 
+/** « caisson » ou « caissons » selon le nombre à produire. */
+function unitsLabel(c: BudgetCategory) {
+  return Number(c.units) > 1 ? 'caissons' : 'caisson'
+}
+
 function openEditor(c: BudgetCategory) {
   editingId.value = c.id
 }
@@ -213,40 +218,51 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
           Aucun caisson pour l'instant. Clique sur « + Caisson » pour commencer.
         </p>
 
-        <!-- grille : une carte résumé par caisson, 2 par ligne -->
-        <div v-else class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <!-- grille : une carte résumé par caisson, 2 par ligne sur grand écran -->
+        <div v-else class="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
           <button
             v-for="(c, ci) in categories"
             :key="c.id"
             type="button"
-            class="group relative flex flex-col border border-line bg-grave p-5 text-left transition-colors hover:border-bone"
+            class="group relative flex flex-col border border-line bg-grave p-5 text-left transition-colors hover:border-bone md:p-6"
             @click="openEditor(c)"
           >
             <span class="absolute inset-x-0 -top-px h-px bg-bone/30" />
             <div class="flex items-start justify-between gap-3">
               <div class="min-w-0">
                 <span class="font-mono text-xs tracking-widest text-ash">{{ String(ci + 1).padStart(2, '0') }}</span>
-                <h3 class="glitch mt-1 truncate font-display text-2xl uppercase leading-none tracking-wide">
+                <h3 class="glitch title-room mt-1 truncate font-display text-3xl uppercase leading-none tracking-wide md:text-4xl">
                   {{ c.name || 'Sans nom' }}
                 </h3>
-                <p v-if="c.note" class="mt-1 truncate font-mono text-xs text-ash">{{ c.note }}</p>
               </div>
-              <span class="shrink-0 border border-line px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-widest text-smoke">
-                ×{{ c.units }}
+              <!-- nombre de caissons, bien visible -->
+              <span class="shrink-0 border border-bone px-3 py-1.5 text-center">
+                <span class="block font-display text-3xl leading-none">{{ c.units }}</span>
+                <span class="mt-1 block font-mono text-[0.6rem] uppercase tracking-widest text-smoke">{{ unitsLabel(c) }}</span>
               </span>
             </div>
 
-            <!-- chiffres clés -->
-            <div class="mt-4 grid grid-cols-2 gap-px border border-line bg-line">
-              <div class="bg-ink p-2.5">
-                <p class="font-mono text-[0.55rem] uppercase tracking-widest text-ash">Coût / caisson</p>
-                <p class="mt-0.5 font-display text-lg">{{ formatEur(unitCost(c)) }}</p>
+            <!-- description : ce qu'on garde, ce qu'on revend… -->
+            <p v-if="c.note" class="mt-3 whitespace-pre-line text-sm leading-relaxed text-smoke">{{ c.note }}</p>
+            <p v-else class="mt-3 font-mono text-xs text-ash/70">Pas encore de description.</p>
+
+            <!-- chiffres clés : sans revente → avec la revente -->
+            <div class="mt-5 grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-3">
+              <div class="bg-ink p-3">
+                <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Coût / caisson</p>
+                <p class="mt-1 font-display text-2xl">{{ formatEur(unitCost(c)) }}</p>
               </div>
-              <div class="bg-ink p-2.5">
-                <p class="font-mono text-[0.55rem] uppercase tracking-widest text-ash">Solde</p>
-                <p class="mt-0.5 font-display text-lg" :class="balance(c) >= 0 ? 'text-bone' : 'text-red-400'">
+              <div class="bg-ink p-3">
+                <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Pour {{ c.units }} {{ unitsLabel(c) }}</p>
+                <p class="mt-1 font-display text-2xl">{{ formatEur(totalCost(c)) }}</p>
+                <p class="mt-0.5 font-mono text-[0.6rem] text-ash">sans revente</p>
+              </div>
+              <div class="bg-ink p-3">
+                <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Avec la revente</p>
+                <p class="mt-1 font-display text-2xl" :class="balance(c) >= 0 ? 'text-bone' : 'text-red-400'">
                   {{ balance(c) >= 0 ? '+' : '' }}{{ formatEur(balance(c)) }}
                 </p>
+                <p class="mt-0.5 font-mono text-[0.6rem] text-ash">revente {{ formatEur(totalRevenue(c)) }}</p>
               </div>
             </div>
 
@@ -276,7 +292,7 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
         <!-- ===== identité du caisson ===== -->
         <div class="mb-3 flex items-baseline gap-2">
           <h3 class="font-display text-2xl uppercase tracking-wide text-bone">Le caisson</h3>
-          <span class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">nom, quantité, note</span>
+          <span class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">nom, quantité, description</span>
         </div>
 
         <!-- en-tête catégorie -->
@@ -305,8 +321,13 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
           </div>
         </div>
         <label class="mt-3 block">
-          <span class="mb-1 block font-mono text-[0.65rem] uppercase tracking-widest text-ash">Note (optionnel)</span>
-          <input v-model="c.note" placeholder="dimensions, modèle de HP…" class="w-full border border-line bg-void px-3 py-2 text-sm outline-none focus:border-bone" />
+          <span class="mb-1 block font-mono text-[0.65rem] uppercase tracking-widest text-ash">Description (affichée sur la carte)</span>
+          <textarea
+            v-model="c.note"
+            rows="3"
+            placeholder="ex. On garde les G401, on revend les 4 MHB vides."
+            class="w-full resize-y border border-line bg-void px-3 py-2 text-sm leading-relaxed outline-none focus:border-bone"
+          />
         </label>
 
         <!-- ===== lignes de coût ===== -->
@@ -456,15 +477,16 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
             <p v-if="optionalCost(c) > 0" class="mt-0.5 font-mono text-[0.6rem] text-ash">dont optionnel {{ formatEur(optionalCost(c)) }}</p>
           </div>
           <div class="bg-ink p-3">
-            <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Investissement (×{{ c.units }})</p>
+            <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Pour {{ c.units }} {{ unitsLabel(c) }}</p>
             <p class="mt-1 font-display text-xl">{{ formatEur(totalCost(c)) }}</p>
+            <p class="mt-0.5 font-mono text-[0.6rem] text-ash">sans revente</p>
           </div>
           <div class="bg-ink p-3">
-            <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Recettes</p>
+            <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Revente</p>
             <p class="mt-1 font-display text-xl">{{ formatEur(totalRevenue(c)) }}</p>
           </div>
           <div class="bg-ink p-3">
-            <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Solde</p>
+            <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">Avec la revente</p>
             <p class="mt-1 font-display text-xl" :class="balance(c) >= 0 ? 'text-bone' : 'text-red-400'">
               {{ balance(c) >= 0 ? '+' : '' }}{{ formatEur(balance(c)) }}
             </p>
