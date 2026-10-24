@@ -246,6 +246,24 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
             <p v-if="c.note" class="mt-3 whitespace-pre-line text-sm leading-relaxed text-smoke">{{ c.note }}</p>
             <p v-else class="mt-3 font-mono text-xs text-ash/70">Pas encore de description.</p>
 
+            <!-- détail de la revente : quantité × prix à la pièce -->
+            <div v-if="c.revenueLines.length" class="mt-4 border-l-2 border-bone/40 pl-3">
+              <p class="font-mono text-[0.6rem] uppercase tracking-widest text-ash">On revend</p>
+              <ul class="mt-1.5 space-y-1">
+                <li
+                  v-for="r in c.revenueLines"
+                  :key="r.id"
+                  class="flex flex-wrap items-baseline justify-between gap-x-3 text-sm"
+                >
+                  <span class="text-bone">
+                    <span class="font-display text-base">{{ r.quantity }} ×</span> {{ r.label }}
+                    <span class="font-mono text-xs text-ash">· {{ formatEur(r.unitPrice) }} / pièce</span>
+                  </span>
+                  <span class="font-mono text-xs text-smoke">= {{ formatEur(r.quantity * r.unitPrice) }}</span>
+                </li>
+              </ul>
+            </div>
+
             <!-- chiffres clés : sans revente → avec la revente -->
             <div class="mt-5 grid grid-cols-1 gap-px border border-line bg-line sm:grid-cols-3">
               <div class="bg-ink p-3">
@@ -451,7 +469,7 @@ async function removeRevenueLine(c: BudgetCategory, idx: number) {
               <input v-model.number="r.quantity" type="number" min="0" step="any" class="w-full border border-line bg-void px-2.5 py-1.5 text-sm outline-none focus:border-bone" />
             </label>
             <label class="block">
-              <span class="mb-1 block font-mono text-[0.6rem] uppercase tracking-widest text-ash">Prix (€)</span>
+              <span class="mb-1 block font-mono text-[0.6rem] uppercase tracking-widest text-ash">Prix / pièce (€)</span>
               <input v-model.number="r.unitPrice" type="number" min="0" step="any" class="w-full border border-line bg-void px-2.5 py-1.5 text-sm outline-none focus:border-bone" />
             </label>
             <span class="pb-1.5 font-mono text-sm text-bone">{{ formatEur(r.quantity * r.unitPrice) }}</span>
