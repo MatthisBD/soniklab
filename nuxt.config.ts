@@ -84,8 +84,9 @@ export default defineNuxtConfig({
         { name: 'twitter:image', content: `${siteUrl}og-image.png` },
       ],
       link: [
-        // Icônes (favicon) : le vinyle du logo sur un disque noir (lisible
-        // sur fond clair ou sombre, onglets et résultats Google). Google veut
+        // Icônes (favicon) : le vinyle du logo, cadré serré, sur disque noir
+        // cerclé de blanc (remplit tout le carré, lisible sur onglet clair ou
+        // sombre et dans le rond des résultats Google). Google veut
         // un multiple de 48 px → PNG 96×96 + ICO 16/32/48.
         { rel: 'icon', type: 'image/png', href: `${baseURL}favicon-96x96.png`, sizes: '96x96' },
         { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico`, sizes: '48x48' },

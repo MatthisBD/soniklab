@@ -55,7 +55,9 @@ pinceau, le tout en **noir & blanc gravé**.
 > caissons → favicon), `txt.png` / `txt1.png` (tag seul, contour noir/blanc).
 > Fichiers web : `soniklab-logo.webp` (1200 px transparent : accueil, /liens),
 > `soniklab-logo.jpg` (fond noir : logo JSON-LD Google), `favicon.ico` +
-> `favicon-96x96.png` (vinyle sur disque noir), `apple-touch-icon.png`,
+> `favicon-96x96.png` (vinyle cadré serré sur disque noir + liseré blanc
+> qui remplit tout le carré : sans liseré, le disque noir disparaît sur un
+> onglet sombre et l'icône paraît minuscule), `apple-touch-icon.png`,
 > `icon-192/512.png` (vinyle sur carré noir), `og-image.png` (logo collé
 > dans le cadre de droite). Générés avec Python/Pillow.
 
