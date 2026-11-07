@@ -84,8 +84,10 @@ export default defineNuxtConfig({
         { name: 'twitter:image', content: `${siteUrl}og-image.png` },
       ],
       link: [
-        // Icônes : vinyle SONIKLAB (public/favicon.svg, décliné en PNG/ICO)
-        { rel: 'icon', type: 'image/svg+xml', href: `${baseURL}favicon.svg` },
+        // Icônes (favicon) : le vinyle du logo sur un disque noir (lisible
+        // sur fond clair ou sombre, onglets et résultats Google). Google veut
+        // un multiple de 48 px → PNG 96×96 + ICO 16/32/48.
+        { rel: 'icon', type: 'image/png', href: `${baseURL}favicon-96x96.png`, sizes: '96x96' },
         { rel: 'icon', type: 'image/x-icon', href: `${baseURL}favicon.ico`, sizes: '48x48' },
         { rel: 'apple-touch-icon', href: `${baseURL}apple-touch-icon.png` },
         { rel: 'manifest', href: `${baseURL}site.webmanifest` },

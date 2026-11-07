@@ -43,10 +43,21 @@ arrive, on clique, on va sur le bon outil.
 
 ## 2. Direction artistique
 
-L'identité vient **directement du logo** (`public/soniklab-logo.jpeg`) :
+L'identité vient **directement du logo** (`public/soniklab-logo.webp`) :
 vinyle central, line-array, foule en festival, le van de tournée, un voilier au
 clair de lune (vibe guinguette), des waveforms partout, lettrage « SONIKLAB » au
 pinceau, le tout en **noir & blanc gravé**.
+
+> **Nov. 2026 — nouveau logo** (graphiste) : platine/vinyle mécanique, tag
+> « SONIKLAB » au centre, deux caissons en bas, N&B encré. Sources HD dans
+> `image/Logo/` (non versionné, 16 Mo/fichier) : `Logo.png` (entier,
+> transparent), `logo - web.jpg` (fond noir), `Vynile.png` (vinyle seul, sans
+> caissons → favicon), `txt.png` / `txt1.png` (tag seul, contour noir/blanc).
+> Fichiers web : `soniklab-logo.webp` (1200 px transparent : accueil, /liens),
+> `soniklab-logo.jpg` (fond noir : logo JSON-LD Google), `favicon.ico` +
+> `favicon-96x96.png` (vinyle sur disque noir), `apple-touch-icon.png`,
+> `icon-192/512.png` (vinyle sur carré noir), `og-image.png` (logo collé
+> dans le cadre de droite). Générés avec Python/Pillow.
 
 On a donc fait un site **monochrome, façon affiche sérigraphiée / pochette de
 vinyle, underground** :
@@ -155,7 +166,7 @@ soniklab/
 │     ├─ VisitCounter.vue     # compteur rétro à rouleaux du pied de page
 │     ├─ AppIcon.vue          # icônes SVG inline
 │     ├─ Vinyl.vue · Equalizer.vue · Marquee.vue · LinkCard.vue
-├─ public/soniklab-logo.jpeg  # le logo
+├─ public/soniklab-logo.webp  # le logo (+ .jpg fond noir pour Google)
 ├─ supabase/budget-caissons.sql # SQL des tables budget (à coller dans le dashboard)
 ├─ supabase/vitrine.sql       # SQL vitrine + bucket médias + QG privé (✅ exécuté)
 ├─ supabase/rejoindre.sql     # SQL du formulaire « Nous rejoindre » (à coller, idempotent)
@@ -591,11 +602,11 @@ via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
 - [ ] Piste : héberger les polices sur le site (au lieu de Google Fonts) pour
       ne plus transmettre l'IP des visiteurs à Google.
 - [ ] Piste protection : dépôt de la marque SONIKLAB (nom + logo) à l'INPI.
-- [ ] **Nouveau logo** en cours chez un graphiste (l'actuel est en partie
-      généré par IA → non protégeable par le droit d'auteur). À réception :
-      remplacer `public/soniklab-logo.jpeg`, régénérer `public/og-image.png`
-      (HTML + Chrome headless, cf. §9) et faire signer au graphiste une
-      cession de droits au profit de l'asso.
+- [x] **Nouveau logo** du graphiste en place (7 nov. 2026) : logo, favicon,
+      og-image (cf. §2).
+- [ ] Faire signer au graphiste une **cession de droits** sur le nouveau logo
+      au profit de l'asso (+ forcer le cache de l'aperçu de partage via le
+      « Sharing Debugger » de Facebook).
 - [ ] Remplir la vitrine via l'admin : artistes, événements + photos, collabs,
       email / Instagram / HelloAsso (onglet « Textes & réseaux »).
 - [x] Formulaire « Nous rejoindre » + image de partage (og:image).
@@ -613,6 +624,6 @@ via un formulaire HelloAsso (une formule = un tarif HelloAsso), puis un admin
 - [ ] Optionnel : désactiver le provider Google + l'inscription email dans le
       dashboard Supabase (verrouillage total ; déjà sûr grâce au RLS).
 - [ ] Optionnel : réglages fins d'animation (vitesse vinyle/bandeau, intensité du grain).
-- [x] Favicon SONIKLAB : vinyle (`public/favicon.svg`, décliné en `favicon.ico`
-      16/32/48, `apple-touch-icon.png`, `icon-192/512.png` + `site.webmanifest`),
-      PNG générés via Chrome headless depuis le SVG.
+- [x] Favicon SONIKLAB : le vinyle du nouveau logo (nov. 2026, remplace
+      l'ancien `favicon.svg`) → `favicon.ico` 16/32/48, `favicon-96x96.png`,
+      `apple-touch-icon.png`, `icon-192/512.png` + `site.webmanifest`.

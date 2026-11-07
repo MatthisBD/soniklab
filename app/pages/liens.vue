@@ -12,7 +12,7 @@ useSeoMeta({
 })
 
 const base = useRuntimeConfig().app.baseURL
-const logoSrc = `${base}soniklab-logo.jpeg`
+const logoSrc = `${base}soniklab-logo.webp`
 
 const settings = useSiteSettings()
 const events = useEvents()
@@ -47,7 +47,7 @@ const btn =
       <!-- en-tête -->
       <NuxtLink to="/" class="group flex flex-col items-center text-center">
         <span class="block h-28 w-28 overflow-hidden rounded-full border border-line bg-ink">
-          <img :src="logoSrc" alt="Logo SONIKLAB" class="h-full w-full object-cover mix-blend-screen" />
+          <img :src="logoSrc" alt="Logo SONIKLAB" width="1200" height="1200" class="h-full w-full object-contain p-1.5" />
         </span>
         <h1 class="glitch mt-5 font-display text-5xl uppercase tracking-wide">SONIKLAB</h1>
         <p class="mt-1 font-mono text-[0.7rem] uppercase tracking-[0.25em] text-ash">asso & collectif techno</p>

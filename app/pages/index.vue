@@ -14,7 +14,7 @@ import { liveRaffle } from '~/composables/useRaffle'
 // Préfixe du chemin (/soniklab/ en prod sur GitHub Pages, / en dev)
 // pour que les fichiers de public/ se chargent quel que soit l'hébergement.
 const base = useRuntimeConfig().app.baseURL
-const logoSrc = `${base}soniklab-logo.jpeg`
+const logoSrc = `${base}soniklab-logo.webp`
 
 const artists = useShowcaseData('artists', fetchArtists, () => [])
 const events = useEvents()
@@ -181,7 +181,9 @@ useReveal()
             <img
               :src="logoSrc"
               alt="Logo SONIKLAB"
-              class="h-full w-full object-cover mix-blend-screen"
+              width="1200"
+              height="1200"
+              class="h-full w-full object-contain p-4"
               loading="eager"
             />
             <span class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-bone/10" />

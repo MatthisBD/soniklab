@@ -79,7 +79,7 @@ export function buildJsonLd(site: string, s: SiteSettings, upcoming: SonikEvent[
     '@id': `${url}#organisation`,
     name,
     url,
-    logo: new URL('soniklab-logo.jpeg', site).href,
+    logo: new URL('soniklab-logo.jpg', site).href,
     description: s.hero_text,
     // Ville du siège (mentions légales) : aide pour les recherches locales.
     address: {
