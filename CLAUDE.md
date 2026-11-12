@@ -467,7 +467,12 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
   `/asso/` → la Search Console listait les deux adresses. Pour un lien interne
   écrit à la main (`<a href>`), mettre aussi le « / » final.
 - `useStructuredData.ts` : JSON-LD sur l'accueil (Organization + WebSite +
-  MusicEvent des prochaines dates ayant un lieu) ; `sameAs` = Instagram,
+  WebPage + MusicEvent des prochaines dates ayant un lieu) ; le `WebPage`
+  désigne `soniklab-logo.jpg` (carré, fond noir) comme `primaryImageOfPage`
+  → **vignette du résultat Google**. Sans ça, Google prenait l'og:image
+  1200×630 et en découpait un carré dans le texte de gauche (« SONIKLAB / le
+  son qui rassemble ») — arrivé en nov. 2026 quand l'ancien
+  `soniklab-logo.jpeg` (l'ancienne vignette) a disparu avec le nouveau logo ; `sameAs` = Instagram,
   HelloAsso, SoundCloud renseignés dans l'admin. Champs exigés par la Search
   Console toujours remplis : `endDate` (déduite des horaires libres
   « 21h30 -> 1h30 », lendemain si fin < début, heure de Paris), `description`

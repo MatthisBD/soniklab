@@ -73,13 +73,27 @@ export function buildJsonLd(site: string, s: SiteSettings, upcoming: SonikEvent[
   const url = new URL('', site).href
   const name = s.legal_name?.trim() || 'SONIKLAB'
   const fallbackImage = new URL('og-image.png', site).href
+  // Logo carré sur fond noir : c'est l'image qu'on veut en vignette à côté du
+  // résultat Google. Sans indication, Google prend l'og:image (1200×630) et
+  // en découpe un carré dans le texte de gauche (« SONIKLAB / le son qui
+  // rassemble ») au lieu du logo.
+  const logoImage = {
+    '@type': 'ImageObject',
+    '@id': `${url}#logo`,
+    url: new URL('soniklab-logo.jpg', site).href,
+    contentUrl: new URL('soniklab-logo.jpg', site).href,
+    width: 1200,
+    height: 1200,
+    caption: `Logo ${name}`,
+  }
 
   const organization = {
     '@type': 'Organization',
     '@id': `${url}#organisation`,
     name,
     url,
-    logo: new URL('soniklab-logo.jpg', site).href,
+    logo: logoImage,
+    image: { '@id': logoImage['@id'] },
     description: s.hero_text,
     // Ville du siège (mentions légales) : aide pour les recherches locales.
     address: {
@@ -101,6 +115,21 @@ export function buildJsonLd(site: string, s: SiteSettings, upcoming: SonikEvent[
     url,
     inLanguage: 'fr-FR',
     publisher: { '@id': organization['@id'] },
+  }
+
+  // La page d'accueil elle-même : son image principale (primaryImageOfPage)
+  // est la façon documentée par Google de choisir la vignette du résultat.
+  const homePage = {
+    '@type': 'WebPage',
+    '@id': `${url}#accueil`,
+    url,
+    name: `${name} — Collectif & soirées techno à Saint-Nazaire`,
+    inLanguage: 'fr-FR',
+    isPartOf: { '@id': website['@id'] },
+    about: { '@id': organization['@id'] },
+    mainEntity: { '@id': organization['@id'] },
+    primaryImageOfPage: { '@id': logoImage['@id'] },
+    image: { '@id': logoImage['@id'] },
   }
 
   // Les soirées sont jouées par les DJs du collectif : SONIKLAB est l'artiste
@@ -161,7 +190,7 @@ export function buildJsonLd(site: string, s: SiteSettings, upcoming: SonikEvent[
       }
     })
 
-  return { '@context': 'https://schema.org', '@graph': [organization, website, ...events] }
+  return { '@context': 'https://schema.org', '@graph': [organization, website, homePage, ...events] }
 }
 
 /** JSON sûr à injecter dans une balise <script> (pas de « </script> » possible). */
