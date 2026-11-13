@@ -53,7 +53,10 @@ pinceau, le tout en **noir & blanc gravé**.
 > `image/Logo/` (non versionné, 16 Mo/fichier) : `Logo.png` (entier,
 > transparent), `logo - web.jpg` (fond noir), `Vynile.png` (vinyle seul, sans
 > caissons → favicon), `txt.png` / `txt1.png` (tag seul, contour noir/blanc).
-> Fichiers web : `soniklab-logo.webp` (1200 px transparent : accueil, /liens),
+> Fichiers web : `soniklab-logo.webp` (1200 px, fond **opaque** `ink`
+> #060606 : accueil, /asso, /liens — toujours posé dans un cadre `bg-ink`, donc
+> invisible ; surtout PAS transparent : Google a pris ce logo-là en vignette
+> et a rempli la transparence en BLANC),
 > `soniklab-logo.jpg` (fond noir : logo JSON-LD Google), `favicon.ico` +
 > `favicon-96x96.png` (vinyle cadré serré sur disque noir + liseré blanc
 > qui remplit tout le carré : sans liseré, le disque noir disparaît sur un
@@ -472,7 +475,15 @@ la RPC échoue (SQL pas exécuté), le compteur reste invisible.
   → **vignette du résultat Google**. Sans ça, Google prenait l'og:image
   1200×630 et en découpait un carré dans le texte de gauche (« SONIKLAB / le
   son qui rassemble ») — arrivé en nov. 2026 quand l'ancien
-  `soniklab-logo.jpeg` (l'ancienne vignette) a disparu avec le nouveau logo ; `sameAs` = Instagram,
+  `soniklab-logo.jpeg` (l'ancienne vignette) a disparu avec le nouveau logo.
+  Les **autres pages publiques** (/asso, /evenements…) reçoivent un JSON-LD
+  `WebPage` minimal avec le même `primaryImageOfPage` (`buildPageJsonLd`, posé
+  dans `app.vue`) : sinon Google y découpe aussi l'og:image. /asso affiche en
+  plus le logo en haut de page (comme l'accueil). Nov. 2026 : Google a pris le
+  logo **visible** (webp transparent) et l'a affiché sur fond blanc → webp
+  rendu opaque (cf. §2). La vignette se met à jour au prochain passage du
+  robot (Search Console → Inspection de l'URL → « Demander l'indexation »
+  pour accélérer) ; `sameAs` = Instagram,
   HelloAsso, SoundCloud renseignés dans l'admin. Champs exigés par la Search
   Console toujours remplis : `endDate` (déduite des horaires libres
   « 21h30 -> 1h30 », lendemain si fin < début, heure de Paris), `description`

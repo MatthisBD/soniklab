@@ -16,9 +16,19 @@ const canonical = computed(() => {
   const path = route.path === '/' ? '' : route.path.replace(/^\//, '').replace(/\/?$/, '/')
   return new URL(path, siteUrl).href
 })
+// Pages publiques autres que l'accueil (qui a son propre JSON-LD, plus complet) :
+// on désigne le logo comme image principale → c'est lui que Google affiche
+// en vignette du résultat (et pas un bout découpé de l'og:image).
+const isPrivate = computed(() => /^\/(qg|budget|admin)/.test(route.path))
+const pageLd = computed(() =>
+  route.path === '/' || isPrivate.value
+    ? []
+    : [{ key: 'ld-page', type: 'application/ld+json', innerHTML: jsonLdString(buildPageJsonLd(siteUrl, canonical.value)) }],
+)
 useHead({
   link: [{ rel: 'canonical', href: canonical }],
   meta: [{ property: 'og:url', content: canonical }],
+  script: pageLd,
 })
 
 // Compteur de visiteurs (pied de page) : on ne compte que sur les pages
@@ -27,8 +37,8 @@ const visits = useVisitCounter()
 onMounted(() => {
   watch(
     () => route.path,
-    (path) => {
-      if (!/^\/(qg|budget|admin)/.test(path)) visits.track()
+    () => {
+      if (!isPrivate.value) visits.track()
     },
     { immediate: true },
   )

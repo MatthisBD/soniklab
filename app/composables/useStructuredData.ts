@@ -69,23 +69,49 @@ function entryPrice(entry: string | null | undefined): number | null {
   return n ? Number(n.replace(',', '.')) : null
 }
 
-export function buildJsonLd(site: string, s: SiteSettings, upcoming: SonikEvent[]) {
-  const url = new URL('', site).href
-  const name = s.legal_name?.trim() || 'SONIKLAB'
-  const fallbackImage = new URL('og-image.png', site).href
-  // Logo carré sur fond noir : c'est l'image qu'on veut en vignette à côté du
-  // résultat Google. Sans indication, Google prend l'og:image (1200×630) et
-  // en découpe un carré dans le texte de gauche (« SONIKLAB / le son qui
-  // rassemble ») au lieu du logo.
-  const logoImage = {
+/**
+ * Logo carré sur fond noir : c'est l'image qu'on veut en vignette à côté du
+ * résultat Google. Sans indication, Google prend l'og:image (1200×630) et en
+ * découpe un carré dans le texte de gauche (« SONIKLAB / le son qui
+ * rassemble ») au lieu du logo.
+ */
+function logoObject(site: string, name = 'SONIKLAB') {
+  const src = new URL('soniklab-logo.jpg', site).href
+  return {
     '@type': 'ImageObject',
-    '@id': `${url}#logo`,
-    url: new URL('soniklab-logo.jpg', site).href,
-    contentUrl: new URL('soniklab-logo.jpg', site).href,
+    '@id': `${new URL('', site).href}#logo`,
+    url: src,
+    contentUrl: src,
     width: 1200,
     height: 1200,
     caption: `Logo ${name}`,
   }
+}
+
+/**
+ * Pages autres que l'accueil (/asso, /evenements…) : même vignette Google
+ * (le logo), sinon c'est l'og:image découpée qui s'affiche dans le résultat.
+ */
+export function buildPageJsonLd(site: string, pageUrl: string) {
+  const home = new URL('', site).href
+  const logo = logoObject(site)
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    '@id': `${pageUrl}#page`,
+    url: pageUrl,
+    inLanguage: 'fr-FR',
+    isPartOf: { '@type': 'WebSite', '@id': `${home}#site`, name: 'SONIKLAB', url: home },
+    primaryImageOfPage: logo,
+    image: { '@id': logo['@id'] },
+  }
+}
+
+export function buildJsonLd(site: string, s: SiteSettings, upcoming: SonikEvent[]) {
+  const url = new URL('', site).href
+  const name = s.legal_name?.trim() || 'SONIKLAB'
+  const fallbackImage = new URL('og-image.png', site).href
+  const logoImage = logoObject(site, name)
 
   const organization = {
     '@type': 'Organization',

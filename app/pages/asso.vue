@@ -9,6 +9,8 @@ useSeoMeta({
   ogDescription: "Association et collectif techno : qui on est, ce qu'on fait.",
 })
 
+const logoSrc = `${useRuntimeConfig().app.baseURL}soniklab-logo.webp`
+
 const settings = useSiteSettings()
 const body = computed(() => paragraphs(settings.value.about_body))
 const blocks = computed(() => pillars(settings.value.about_pillars))
@@ -28,13 +30,23 @@ useReveal()
       >
         <Vinyl />
       </div>
-      <div class="relative mx-auto max-w-6xl px-5 py-12">
-        <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// l'asso</p>
-        <h1 class="title-room mt-1 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
-          Plus qu'un<br />
-          <span class="glitch inline-block">collectif</span>
-        </h1>
-        <p class="mt-8 max-w-2xl text-xl text-bone">{{ settings.about_intro }}</p>
+      <div class="relative mx-auto grid max-w-6xl grid-cols-1 gap-10 px-5 py-12 md:grid-cols-[1.4fr_1fr] md:items-center">
+        <div>
+          <p class="font-mono text-xs uppercase tracking-[0.25em] text-ash">// l'asso</p>
+          <h1 class="title-room mt-1 font-display text-6xl uppercase leading-[0.98] tracking-[0.015em] sm:text-7xl md:text-8xl">
+            Plus qu'un<br />
+            <span class="glitch inline-block">collectif</span>
+          </h1>
+          <p class="mt-8 max-w-2xl text-xl text-bone">{{ settings.about_intro }}</p>
+        </div>
+
+        <!-- logo (même cadre que sur l'accueil) : c'est aussi la vignette Google de la page -->
+        <div class="mx-auto w-full max-w-[16rem] md:max-w-xs">
+          <div class="relative aspect-square overflow-hidden border border-line bg-ink">
+            <img :src="logoSrc" alt="Logo SONIKLAB" width="1200" height="1200" class="h-full w-full object-contain p-4" />
+            <span class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-bone/10" />
+          </div>
+        </div>
       </div>
     </section>
 
